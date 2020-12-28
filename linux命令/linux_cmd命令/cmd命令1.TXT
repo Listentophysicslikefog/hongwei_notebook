@@ -1,0 +1,4 @@
+1. grep命令
+
+   按照字符串绝对匹配 ：  ps aux | grep -w "hongwei11171"  ( 加 -w 参数即可)
+   排除包含某个字符串的行 ：ps aux | grep -v "hongwei11171" ( 加 -v 参数即可)
