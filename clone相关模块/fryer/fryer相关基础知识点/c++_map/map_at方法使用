@@ -1,0 +1,162 @@
+1. map的at用法 : https://www.nhooo.com/cpp/cpp-map-at-function.html
+
+C ++ map at()函数用于通过给定的键值访问map中的元素。如果map中不存在所访问的键，则抛出out_of _range异常。
+语法
+假设键值为k，语法为：
+mapped_type& at (const key_type& k);
+const mapped_type& at (const key_type& k) const;
+参数
+k：要访问其map值的元素的键值。
+返回值
+它使用键值返回对元素map值的引用。
+
+#############
+实例1
+让我们看一个访问元素的简单示例。
+示例
+#include <iostream>
+#include <string>
+#include <map>  
+
+int main ()
+{
+  map<string,int> m = {
+                { "A", 10 },
+                { "B", 20 },
+                { "C", 30 } };
+
+  for (auto& x: m) {
+    cout << x.first << ": " << x.second << '\n';
+  }
+  return 0;
+}
+输出：
+A: 10
+B: 20	
+C: 30
+在上面，at()函数用于访问map的元素。
+
+
+#######################
+实例2
+让我们看一个简单的示例，使用它们的键值添加元素。
+示例
+#include <iostream>  
+#include <string>  
+#include <map>  
+  
+using namespace std;  
+
+int main ()
+{
+  map<int,string> mymap= {
+                { 101, "" },
+                { 102, "" },
+                { 103, ""} };
+
+  mymap.at(101) = "nhooo"; 
+  mymap.at(102) = ".";
+  mymap.at(103) = "com";
+
+
+//打印键101的值，即nhooo
+  cout<<mymap.at(101); 
+ // 打印键102的值，即.
+  cout<<mymap.at(102);
+ // 打印键103的值，即 com	
+  cout<<mymap.at(103);
+
+  return 0;
+}
+输出：
+nhooo.com
+在上面的示例中，使用at()函数在初始化后使用关联的键值添加元素。
+
+
+######################3
+实例3
+让我们看一个简单的示例，以更改与键值关联的值。
+示例
+#include <iostream>  
+#include <string>  
+#include <map>  
+  
+using namespace std;  
+
+int main ()
+{
+  map<int,string> mymap= {
+                { 100, "Nikita"},
+                { 200, "Deep"  },
+                { 300, "Priya" },
+                { 400, "Suman" },
+                { 500, "Aman"  }};
+                
+  cout<<"元素是:" <<endl;
+  for (auto& x: mymap) {
+    	cout << x.first << ": " << x.second << '\n';
+  }
+
+
+  mymap.at(100) = "Nidhi"; // 将键100的值更改为Nidhi
+  mymap.at(300) = "Pinku"; // 将键300的值更改为 Pinku
+  mymap.at(500) = "Arohi"; // 将键500的值更改为 Arohi
+  
+  
+  cout<<"\n更改后元素是:" <<endl;
+  for (auto& x: mymap) {
+    	cout << x.first << ": " << x.second << '\n';
+  }
+  
+  return 0;
+}
+输出：
+元素是:
+100: Nikita
+200: Deep
+300: Priya
+400: Suman
+500: Aman
+
+更改后元素是:
+100: Nidhi
+200: Deep
+300: Pinku
+400: Suman
+500: Arohi
+在上面的示例中，at()函数用于更改与其键值关联的值。
+
+
+########################
+实例4
+让我们看一个简单的示例来处理“超出范围”？例外。
+示例
+#include <iostream>  
+#include <string>  
+#include <map>  
+  
+using namespace std;  
+
+int main ()
+{
+  map<char,string> mp= {
+                { 'a',"Java"},
+                { 'b', "C++"  },
+                { 'c', "Python" }};
+            
+    cout<<endl<<mp.at('a');
+    cout<<endl<<mp.at('b');
+    cout<<endl<<mp.at('c');
+    
+    try {
+        mp.at('z'); 
+          // 因为map中没有值为z的键，所以它会抛出一个异常
+        
+    } catch(const out_of_range &e) {
+        cout<<endl<<"Out of Range Exception at "<<e.what();
+}
+输出：
+Java
+C++
+Python
+Out of Range Exception at map::at

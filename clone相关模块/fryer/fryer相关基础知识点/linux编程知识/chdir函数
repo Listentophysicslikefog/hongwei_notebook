@@ -1,0 +1,18 @@
+头文件：#include <unistd.h> 
+
+定义函数：int chdir（const char * path）; 
+
+函数说明：chdir（）用户将当前的工作目录改变成以参数路径所指的目录。 
+
+返回值执行成功则返回0，失败返回-1，errno为错误代码。 
+
+范例 
+#include <unistd.h> 
+main（） 
+{ 
+    chdir（“/ tmp”）; 
+    printf（“当前工作目录：％s \ n”，getcwd（NULL，NULL））; 
+} 
+
+执行： 
+当前工作目录：/ tmp

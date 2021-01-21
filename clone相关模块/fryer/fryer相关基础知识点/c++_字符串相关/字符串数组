@@ -1,0 +1,2 @@
+1. char test[] = "test"
+   cout<<test<<endl;    //会输出test

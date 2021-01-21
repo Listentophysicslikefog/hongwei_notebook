@@ -1,0 +1,44 @@
+Linux 中C语言getcwd()函数的用法
+先来看该函数的声明：
+#include<unistd.h>
+char *getcwd(char *buf,size_t size);
+介绍： 
+参数说明：getcwd()会将当前工作目录的绝对路径复制到参数buffer所指的内存空间中,参数size为buf的空间大小。 
+普通的用法会是这样:
+
+#define MAX_SIZE 255
+char path(MAX_SIZE);
+getcwd(path,sizeof(path));
+puts(path);
+这样会将工作目录的绝对路径复制到buf所指向的空间中,但如果路径长度大于size,则会返回NULL,错误代码为ERANGE.所以我们在定义path的时候得定义的足够大,但这样又会使得内存浪费,Linux的文件名长度限制为255个英文字符,理论上绝对路径的大小应该可以足够大,故而这样使用总有返回NULL的时候,所以getcwd()个我们提供了下面的一种用法:
+可以采取令 buf 为 NULL并使 size 为零(百度百科里介绍可以使用负值但我测试的时候是段错误)来使 getcwd 调用 malloc 动态给 buf 分配,但是这种情况要特别注意使用后释放缓冲以防止内存泄漏。
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<unistd.h>
+int main(void)
+{
+  char *path = NULL;
+  path = getcwd(NULL,0);
+  puts(path);
+  free(path);
+  return 0;
+}
+
+
+
+
+获取当前目录方法2 ： 
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<unistd.h>
+int main(void)
+{
+  char path[0x100] = {0};
+  //char *path = NULL;
+  getcwd(path,0x100);
+  puts(path);  //输出当前目录
+  //free(path);
+  return 0;
+}

@@ -1,0 +1,272 @@
+C++ STL：unordered_map 自定义键值类型
+  
+相关内容： C++ STL: map自定义键值类型
+本文目录
+1. unordered_map的定义
+2. 问题分析
+3. 定义方法 
+3.1 方法1：std::function<>
+3.2 方法2：重载operator()的类
+3.3 方法3：模板定制
+4. 额外案例：等比函数的函数对象
+5. 参考文献
+1. unordered_map的定义
+下面是unordered_map的官方定义。
+template<class Key,
+    class Ty,
+    class Hash = std::hash<Key>,
+    class Pred = std::equal_to<Key>,
+    class Alloc = std::allocator<std::pair<const Key, Ty> > >
+    class unordered_map;
+    > class unordered_map
+
+第1个参数，存储key值。
+第2个参数，存储mapped value。
+第3个参数，为哈希函数的函数对象。它将key作为参数，并利用函数对象中的哈希函数返回类型为size_t的唯一哈希值。默认值为std::hash<key>。
+第4个参数，为等比函数的函数对象。它内部通过等比操作符’=='来判断两个key是否相等，返回值为bool类型。默认值是std::equal_to<key>。在unordered_map中，任意两个元素之间始终返回false。
+2. 问题分析 
+对于unordered_map而言，当我们插入<key, value>的时候，需要哈希函数的函数对象对key进行hash，又要利用等比函数的函数对象确保插入的键值对没有重复。然而，当我们自定义类型时，c++标准库并没有对应的哈希函数和等比函数的函数对象。因此需要分别对它们进行定义。
+因为都是函数对象，它们两个的实际定义方法并没有很大差别。不过后者比前者多了一个方法。因为等比函数的函数对象默认值std::equal_to<key>内部是通过调用操作符"=="进行等值判断，因此我们可以直接在自定义类里面进行operator==()重载（成员和友元都可以）。
+因此，如果要将自定义类型作为unordered_map的键值，需如下两个步骤：
+定义哈希函数的函数对象；
+定义等比函数的函数对象或者在自定义类里重载operator==()。
+3. 定义方法 
+本文所有案例在用g++编译时，需加上-std=c++11或者-std=c++0x；如果用VS编译，请选择2010年及以上版本。
+为了避免重复，下文以讨论哈希函数的函数对象为主，参数4则是通过直接在自定义类里面对operator==()进行重载。
+首先简要介绍一下函数对象的概念：在《C++ Primer Plus》里面，函数对象是可以以函数方式与()结合使用的任意对象。这包括函数名、指向函数的指针和重载了“operator()”操作符的类对象。基于此，我们提出3个方法。
+3.1 方法1：std::function 
+方法1就是利用std::function为person_hash()构建函数实例。初始化时，这个函数实例就会被分配那个指向person_hash()的指针（通过构造函数实现），如下所示。
+#include <iostream>
+#include <unordered_map>
+#include <string>
+#include <functional>
+
+using namespace std;
+
+class Person{
+public:
+	string name;
+	int age;
+
+	Person(string n, int a){
+		name = n;
+		age = a;
+	}
+	bool operator==(const Person & p) const 
+	{
+	   return name == p.name && age == p.age;
+	}
+};
+
+size_t person_hash( const Person & p ) 
+{
+    return hash<string>()(p.name) ^ hash<int>()(p.age);
+}
+
+int main(int argc, char* argv[])
+{
+    //ERRO: unordered_map<Person,int,decltype(&person_hash)> ids;
+    //ERRO: unordered_map<Person,int,person_hash> ids(100, person_hash );
+    //OK: unordered_map<Person, int, decltype(&person_hash)> ids(100, person_hash );
+    unordered_map<Person,int,function<size_t( const Person& p )>> ids(100, person_hash); //需要把person_hash传入构造函数
+    ids[Person("Mark", 17)] = 40561;
+    ids[Person("Andrew",16)] = 40562;
+    for ( auto ii = ids.begin() ; ii != ids.end() ; ii++ )
+        cout << ii->first.name 
+        << " " << ii->first.age 
+        << " : " << ii->second 
+        << endl;
+        return 0;
+}
+
+
+#####################################################
+
+
+因为std::function构建对象的表达过于复杂，我们可以利用C++11新增的关键字decltype。它可以直接获取自定义哈希函数的类型，并把它作为参数传送。因此，ids的声明可以改成下面这样。
+unordered_map<Person,int,decltype(&person_hash)> ids(100, person_hash);
+1
+另外，我们还可以引入c++11新支持的lambda expression，程序如下。
+#include <iostream>
+#include <unordered_map>
+#include <string>
+#include <functional>
+
+using namespace std;
+
+class Person{
+public:
+    string name;
+    int age;
+
+    Person(string n, int a){
+        name = n;
+        age = a;
+    }
+
+    bool operator==(const Person & p) const 
+    {
+        return name == p.name && age == p.age;
+    }
+};
+
+int main(int argc, char* argv[])
+{
+    unordered_map<Person,int,std::function<size_t (const Person & p)>>
+    ids(100, []( const Person & p)
+             {
+                 return hash<string>()(p.name) ^ hash<int>()(p.age);
+             } );
+    ids[Person("Mark", 17)] = 40561;
+    ids[Person("Andrew",16)] = 40562;
+    for ( auto ii = ids.begin() ; ii != ids.end() ; ii++ )
+        cout << ii->first.name 
+        << " " << ii->first.age
+        << " : " << ii->second 
+        << endl;
+        return 0;
+}
+
+#############################################
+
+但是，使用lambda有2个弊端：
+我们就无法使用decltype获取函数对象的类型，而只能用更复杂的std::function方法。
+程序的可读性下降。
+3.2 方法2：重载operator()的类 
+方法2就是利用重载operator()的类，将哈希函数打包成可以直接调用的类。此时，虽然我们仍然需要第3个参数，但是我们不需要将函数对象的引用传入构造器里。
+因为unordered_map会追踪类定义，当需要获得哈希时，它可以动态地构造对象并传递数据，如下所示。
+#include <iostream>
+#include <string>
+#include <unordered_map>
+#include <functional>
+using namespace std;
+
+class Person{
+public:
+    string name;
+    int age;
+
+    Person(string n, int a){
+        name = n;
+        age = a;
+    }
+
+    bool operator==(const Person & p) const 
+    {
+        return name == p.name && age == p.age;
+    }
+};
+
+struct hash_name{
+	size_t operator()(const Person & p) const{
+		return hash<string>()(p.name) ^ hash<int>()(p.age);
+	}
+};
+
+int main(int argc, char* argv[]){
+	unordered_map<Person, int, hash_name> ids; //不需要把哈希函数传入构造器
+	ids[Person("Mark", 17)] = 40561;
+    ids[Person("Andrew",16)] = 40562;
+    for ( auto ii = ids.begin() ; ii != ids.end() ; ii++ )
+        cout << ii->first.name 
+        << " " << ii->first.age
+        << " : " << ii->second
+        << endl;
+    return 0;
+}
+
+
+
+#########################################
+3.3 方法3：模板定制 
+unordered_map第3个参数的默认参数是std::hash<Key>，实际上就是模板类。那么我们就可以对它进行模板定制，如下所示。
+#include <iostream>
+#include <unordered_map>
+#include <string>
+#include <functional>
+using namespace std;
+
+typedef pair<string,string> Name;
+
+namespace std {
+    template <> //function-template-specialization
+        class hash<Name>{
+        public :
+            size_t operator()(const Name &name ) const
+            {
+                return hash<string>()(name.first) ^ hash<string>()(name.second);
+            }
+    };
+};
+
+int main(int argc, char* argv[])
+{
+    unordered_map<Name,int> ids;
+    ids[Name("Mark", "Nelson")] = 40561;
+    ids[Name("Andrew","Binstock")] = 40562;
+    for ( auto ii = ids.begin() ; ii != ids.end() ; ii++ )
+        cout << ii->first.first 
+             << " " << ii->first.second 
+             << " : " << ii->second
+             << endl;
+	return 0;
+}
+
+
+############################################
+
+
+当我们将模板订制包含在定义类的头文件中时，其他人无需额外工作，就可以直接用我们的类作为任何无序容器的键。这对于要使用我们自定义类的人来说，绝对是最方便的。
+因此，如果你想要在多个地方用这个类，方法3是最好的选择。当然，你要确保自己的hash function不会影响std空间里的其他类。
+4. 额外案例：等比函数的函数对象 
+下例是哈希函数对象和等比函数对象都采用模板定制的方法。
+#include <iostream>
+#include <string>
+#include <unordered_map>
+#include <functional>
+using namespace std;
+
+class Person{
+public:
+    string name;
+    int age;
+
+    Person(string n, int a){
+        name = n;
+        age = a;
+    }
+};
+
+namespace std{
+    template<>
+    struct hash<Person>{//哈希的模板定制
+    public:
+        size_t operator()(const Person &p) const 
+        {
+            return hash<string>()(p.name) ^ hash<int>()(p.age);
+        }
+        
+    };
+    
+    template<>
+    struct equal_to<Person>{//等比的模板定制
+    public:
+        bool operator()(const Person &p1, const Person &p2) const
+        {
+            return p1.name == p2.name && p1.age == p2.age;
+        }
+        
+    };
+}
+
+int main(int argc, char* argv[]){
+    unordered_map<Person, int> ids;
+    ids[Person("Mark", 17)] = 40561;
+    ids[Person("Andrew",16)] = 40562;
+    for ( auto ii = ids.begin() ; ii != ids.end() ; ii++ )
+        cout << ii->first.name 
+        << " " << ii->first.age
+        << " : " << ii->second
+        << endl;
+    return 0;
+}
