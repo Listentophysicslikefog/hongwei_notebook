@@ -1,0 +1,20 @@
+clone模块发布：
+
+./generate_idun_conf.py hn02 3102 tcp raw ssd   //生成配置
+./generate_hela_conf.py hn02 3102 tcp raw ssd
+./generate_freyr_conf.py hn02 3102 tcp raw ssd
+
+./generate_ip_list.py hn02 3102    //生成所有模块的ip
+./release.sh idun 21.01.12-b0e69d7-centos7-x86_64 idun_ips fast
+./release.sh hela 21.01.12-b0e69d7-centos7-x86_64 /root/limax/udisk/region/hn02/3102/host_info fast
+./release.sh freyr 21.01.12-b0e69d7-centos7-x86_64 /root/limax/udisk/region/hn02/3102/host_info fast
+
+
+测试：
+
+罗唐(tang.luo) 1-25 16:11:56
+ssh root@172.27.118.195
+
+罗唐(tang.luo) 1-25 16:16:20
+[root@hn02-udisk-support release]# pwd
+/root/limax/udisk/tool/release
