@@ -1,0 +1,214 @@
+./generate_idun_conf.py wdc02 12000 tcp raw ssd   //生成配置
+./generate_hela_conf.py wdc02 12000 tcp raw ssd
+./generate_freyr_conf.py wdc02 12000 tcp raw ssd
+
+./generate_ip_list.py hn02 3102    //生成所有模块的ip
+./release.sh idun 21.02.01-9b263a5-centos7-x86_64 idun_ips fast
+./release.sh hela 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/wdc02/12000/host_info fast
+./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/wdc02/12000/host_info fast
+
+
+
+1. 华盛顿
+wdc02 12000   11**干掉
+wdc02 3200
+wdc02 3201 
+wdc02 3202
+./generate_idun_conf.py wdc02 3202 tcp raw ssd
+./generate_hela_conf.py wdc02 3202 tcp raw ssd
+./generate_freyr_conf.py wdc02 3202 tcp raw ssd
+./generate_ip_list.py wdc02 3202 
+./release.sh idun 21.02.01-9b263a5-centos7-x86_64 idun_ips fast
+./release.sh hela 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/wdc02/3202/host_info fast
+./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/wdc02/3202/host_info fast
+wdc02 3202 
+
+2. tokyo01 5003、5002、5001、5000 rssd
+./generate_idun_conf.py tokyo01 5000 tcp raw ssd
+./generate_hela_conf.py tokyo01 5000 tcp raw ssd
+./generate_freyr_conf.py tokyo01 5000 tcp raw ssd
+./generate_ip_list.py tokyo01 5000 
+./release.sh idun 21.02.01-9b263a5-centos7-x86_64 idun_ips fast
+./release.sh hela 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/tokyo01/5000/host_info fast
+./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/tokyo01/5000/host_info fast
+
+3. taibei02 5007 5006 5005 5004 5003 5001 5000
+
+4. singapore02  1200 3200  3201 3202 3203
+./generate_idun_conf.py singapore02 3203 tcp raw ssd
+./generate_hela_conf.py singapore02 3203 tcp raw ssd
+./generate_freyr_conf.py singapore02 3203 tcp raw ssd
+./generate_ip_list.py singapore02 3203 
+./release.sh idun 21.02.01-9b263a5-centos7-x86_64 idun_ips fast
+./release.sh hela 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/singapore02/3203/host_info fast
+./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/singapore02/3203/host_info fast
+
+
+5. seoul02 5000 5001 5002
+
+./generate_idun_conf.py seoul02 5002 tcp raw ssd
+./generate_hela_conf.py seoul02 5002 tcp raw ssd
+./generate_freyr_conf.py seoul02 5002 tcp raw ssd
+./generate_ip_list.py seoul02 5002 
+./release.sh idun 21.02.01-9b263a5-centos7-x86_64 idun_ips fast
+./release.sh hela 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/seoul02/5002/host_info fast
+./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/seoul02/5002/host_info fast
+
+6. mumbai01 
+
+
+./generate_idun_conf.py mumbai01 3000 tcp raw ssd
+./generate_hela_conf.py mumbai01 3000 tcp raw ssd
+./generate_freyr_conf.py mumbai01 3000 tcp raw ssd
+./generate_ip_list.py mumbai01 3000 
+./release.sh idun 21.02.01-9b263a5-centos7-x86_64 idun_ips fast
+./release.sh hela 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/mumbai01/3000/host_info fast
+./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/mumbai01/3000/host_info fast
+
+
+3200 5000都有
+
+21.01.12-b0e69d7-centos7-x86_64
+./generate_idun_conf.py hb03 3211 tcp raw ssd
+./generate_hela_conf.py hb03 3211 tcp raw ssd
+./generate_freyr_conf.py hb03 3211 tcp raw ssd
+./generate_ip_list.py hb03 3211 
+./release.sh idun 21.01.12-b0e69d7-centos7-x86_64 idun_ips fast
+./release.sh hela 21.01.12-b0e69d7-centos7-x86_64 /root/limax/udisk/region/hb03/3211/host_info fast
+./release.sh freyr 21.01.12-b0e69d7-centos7-x86_64 /root/limax/udisk/region/hb03/3211/host_info fast
+
+
+
+
+
+
+
+
+
+
+  8. manila01  5000 5001 5002 5003
+
+./generate_idun_conf.py manila01 5003 tcp raw ssd
+./generate_hela_conf.py manila01 5003 tcp raw ssd
+./generate_freyr_conf.py manila01 5003 tcp raw ssd
+./generate_ip_list.py manila01 5003 
+./release.sh idun 21.02.01-9b263a5-centos7-x86_64 idun_ips fast
+./release.sh hela 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/manila01/5003/host_info fast
+./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/manila01/5003/host_info fast
+
+9. london01 3200 3201
+
+./generate_idun_conf.py london01 3200 tcp raw ssd
+./generate_hela_conf.py london01 3200 tcp raw ssd
+./generate_freyr_conf.py london01 3200 tcp raw ssd
+./generate_ip_list.py london01 3200 
+./release.sh idun 21.02.01-9b263a5-centos7-x86_64 idun_ips fast
+./release.sh hela 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/london01/3200/host_info fast
+./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/london01/3200/host_info fast
+
+10 la01 3200
+
+./generate_idun_conf.py la01 3200 tcp raw ssd
+./generate_hela_conf.py la01 3200 tcp raw ssd
+./generate_freyr_conf.py la01 3200 tcp raw ssd
+./generate_ip_list.py la01 3200 
+./release.sh idun 21.02.01-9b263a5-centos7-x86_64 idun_ips fast
+./release.sh hela 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/la01/3200/host_info fast
+./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/la01/3200/host_info fast
+
+11. jakarta02 3000 3001 3200  3201  3202 4000
+
+./generate_idun_conf.py jakarta02 4000 tcp raw ssd
+./generate_hela_conf.py jakarta02 4000 tcp raw ssd
+./generate_freyr_conf.py jakarta02 4000 tcp raw ssd
+./generate_ip_list.py jakarta02 4000 
+./release.sh idun 21.02.01-9b263a5-centos7-x86_64 idun_ips fast
+./release.sh hela 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/jakarta02/4000/host_info fast
+./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/jakarta02/4000/host_info fast
+
+12. hochiminh01 5002 5001 5000
+
+./generate_idun_conf.py hochiminh01 5000 tcp raw ssd
+./generate_hela_conf.py hochiminh01 5000 tcp raw ssd
+./generate_freyr_conf.py hochiminh01 5000 tcp raw ssd
+./generate_ip_list.py hochiminh01 5000 
+./release.sh idun 21.02.01-9b263a5-centos7-x86_64 idun_ips fast
+./release.sh hela 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/hochiminh01/5000/host_info fast
+./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/hochiminh01/5000/host_info fast
+
+13. bangkok01  3000  3001
+
+
+./generate_idun_conf.py bangkok01 3001 tcp raw ssd
+./generate_hela_conf.py bangkok01 3001 tcp raw ssd
+./generate_freyr_conf.py bangkok01 3001 tcp raw ssd
+./generate_ip_list.py bangkok01 3001 
+./release.sh idun 21.02.01-9b263a5-centos7-x86_64 idun_ips fast
+./release.sh hela 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/bangkok01/3001/host_info fast
+./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/bangkok01/3001/host_info fast
+
+
+
+14. bangkok02  5000 5001 5002
+
+./generate_idun_conf.py bangkok02 5000 tcp raw ssd
+./generate_hela_conf.py bangkok02 5000 tcp raw ssd
+./generate_freyr_conf.py bangkok02 5000 tcp raw ssd
+./generate_ip_list.py bangkok02 5000 
+./release.sh idun 21.02.01-9b263a5-centos7-x86_64 idun_ips fast
+./release.sh hela 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/bangkok02/5000/host_info fast
+./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/bangkok02/5000/host_info fast
+
+
+
+
+
+./generate_idun_conf.py bangkok02 5001 tcp raw ssd
+./generate_hela_conf.py bangkok02 5001 tcp raw ssd
+./generate_freyr_conf.py bangkok02 5001 tcp raw ssd
+./generate_ip_list.py bangkok02 5001 
+./release.sh idun 21.02.01-9b263a5-centos7-x86_64 idun_ips fast
+./release.sh hela 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/bangkok02/5001/host_info fast
+./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/bangkok02/5001/host_info fast
+
+
+
+
+./generate_idun_conf.py bangkok02 5002 tcp raw ssd
+./generate_hela_conf.py bangkok02 5002 tcp raw ssd
+./generate_freyr_conf.py bangkok02 5002 tcp raw ssd
+./generate_ip_list.py bangkok02 5002 
+./release.sh idun 21.02.01-9b263a5-centos7-x86_64 idun_ips fast
+./release.sh hela 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/bangkok02/5002/host_info fast
+./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/bangkok02/5002/host_info fast
+
+pssh -h /limax/udisk/region/wdc02/3201/host_info -l root -i "cd /var/log/udisk/freyr;grep -rn \"bsi-1wymwfg5\""
+
+
+
+
+hb06 5000
+
+5000 5009
+5010 5014
+5011 
+
+5015 5022
+5016 18 19 20
+
+5023 5028
+
+26
+
+5029 5031
+
+
+
+
+12 14  21
+
+
+3205 3208
+
+
+5006 7 8 9 10 12

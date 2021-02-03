@@ -1,4 +1,4 @@
-clone模块发布：
+clone模块发布： 在hn02 管理机上面执行 ssh root@172.27.5.103
 
 ./generate_idun_conf.py hn02 3102 tcp raw ssd   //生成配置
 ./generate_hela_conf.py hn02 3102 tcp raw ssd
@@ -18,3 +18,38 @@ ssh root@172.27.118.195
 罗唐(tang.luo) 1-25 16:16:20
 [root@hn02-udisk-support release]# pwd
 /root/limax/udisk/tool/release
+
+clone测试: ssh root@172.27.118.195
+
+
+
+
+# 编译后拷贝
+
+[hongwei.liu@shpre01-udisk-150-123 chaos]$ docker cp 6d2723a48ee5:/root/ymer/build/hela/hela-21.01.27-0fbebfb-centos7-x86_64 ./
+[hongwei.liu@shpre01-udisk-150-123 chaos]$ docker cp 6d2723a48ee5:/root/ymer/build/idun/idun-21.01.27-0fbebfb-centos7-x86_64 ./
+[hongwei.liu@shpre01-udisk-150-123 chaos]$ docker cp 6d2723a48ee5:/root/ymer/build/freyr/freyr-21.01.27-0fbebfb-centos7-x86_64 ./
+
+
+
+# 建立docker容器
+
+这个是通用的docker容器
+
+docker run -d --name compile.hongwei.liu --hostname compile-hongwei-liu  -it centos7.4.udisk.compile.dev:v20-05-06  创建容器
+docker start compile.hongwei.liu   启动容器
+docker exec -it compile.hongwei.liu scl enable devtoolset-8 bash  进入容器
+cd .ssh/   删除里面的key
+
+# 编译
+
+/root/ymer目录下执行  git submodule update --init
+
+编译message ：
+cd message  ./dep-rapid-make.sh 
+
+
+
+
+
+

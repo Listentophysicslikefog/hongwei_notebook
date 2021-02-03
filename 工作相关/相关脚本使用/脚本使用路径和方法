@@ -1,0 +1,7 @@
+/root/limax/udisk/tool/destroy_udisk.py              删除一块盘
+
+./destroy_ubs.py hongwei12021_1610727564             删除一块盘   注意acess的ip和port
+
+/root/ymer_auto_test_hn06/scripts/batch_clone.sh     clone检测全部流程
+
+/root/ymer_auto_test_hn06/scripts/auto_recycle.sh    删除回收盘

@@ -1,0 +1,3 @@
+docker拷贝文件： https://www.runoob.com/docker/docker-cp-command.html
+
+docker cp 6d2723a48ee5:/root/ymer/build/freyr/freyr-21.01.28-d9b8e82-centos7-x86_64 ./
