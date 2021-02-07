@@ -1,0 +1,164 @@
+函数模板：https://blog.csdn.net/low5252/article/details/94622335
+https://blog.csdn.net/lms1008611/article/details/81985815
+
+
+
+函数模板的目的
+设计通用的函数，以适应广泛的数据型式
+
+函数模板的定义格式
+
+template<模板型式参数列表> 返回值型式 函数名称(参数列表);
+原型： template<class T> void Swap( T& a, T& b )；
+实现： template<class T> void Swap( T& a, T& b )  { ... }
+
+函数模板的体化与特化
+
+针对特定型参数，在声明或第一次调用该函数模板时体化
+
+每次体化都形成针对特定型参数的重载函数版本
+
+文件最终只保留特定型参数的一份体化后的函体
+
+显式体化主要用于库设计；显式特化覆盖体化的同型函体，特化版本会覆盖体化版本
+
+
+//  函数模板
+template< class T >  void f( T t )  {  /*……*/  }
+
+//  显式体化：使用显式的长整型模板参数
+template  void f<long> ( long n );  //template后没有添加<>
+
+//  显式体化：使用d的型式推导模板参数型式
+template  void f( double d );
+
+//  显式特化：使用显式的整型参数
+template<>  void f<int> ( int n );  //template<>    显式特化：使用显式的整型参数
+
+//  显式特化：使用c的型式推导模板参数型式
+template<>  void f( char c );
+
+
+*********************************
+
+template< class T >  void Swap( T & a, T & b )
+{
+  T t;  t = a,  a = b,  b = t;
+}
+int main()
+{
+  int m = 11, n = 7;  char a = 'A', b = 'B';   double c = 1.0, d = 2.0;
+  //  正确调用，体化Swap( int &, int & )
+  Swap( m, n );
+  //  正确调用，体化Swap( char &, char & )
+  Swap<char>( m, n );
+  //  正确调用，体化Swap( double &, double & )
+  Swap<double>( c, d );
+  return 0;
+}
+
+
+
+
+
+****************************************
+函子
+
+编写函数，求某个数据集的最小元，元素型式为T
+实现策略：使用函数指针作为回调函数参数
+实现策略：使用函子（function object，functor）作为回调函数参数
+函数指针实现
+
+template< typename T >
+const T & Min( const T * a, int n, bool (*comparer)(const T&, const T&) )
+{
+  int index = 0;
+  for( int i = 1; i < n; i++)
+  {
+    if( comparer( a[i], a[index] ) )
+      index = i;
+  }
+  return a[index];
+}
+
+
+*********************************************
+
+函子
+
+函子的目的
+功能上：类似函数指针
+实现上：重载函数调用操作符，必要时重载小于比较操作符
+函子的优点
+函数指针不能内联，而函子可以，效率更高
+函子可以拥有任意数量的额外数据，可以保存结果和状态，提高代码灵活性
+编译时可对函子进行型式检查
+函子实现
+//  使用方法
+int a[8] = { 9, 2, 3, 4, 5, 6, 7, 8 };
+int min = Min( a, 8, Comparer<int>() );    //  构造匿名函子作为函数参数
+
+
+//函子
+template< typename T >  class Comparer
+{
+public:
+  //  确保型式T已存在或重载operator<
+  bool operator()( const T & a, const T & b )  {  return a < b;  }
+};
+
+template< typename T, typename Comparer >
+const T & Min( const T * a, int n, Comparer comparer )
+{
+  int index = 0;
+  for( int i = 1; i < n; i++)
+  {
+    if( comparer( a[i], a[index] ) )    index = i;
+  }
+  return a[index];
+}
+
+
+完美转发的意义
+库的设计者需要设计一个通用函数，将接收到的参数转发给其他函数
+转发过程中，所有参数保持原先语义不变
+完美转发的实现策略
+当需要同时提供移动语义与拷贝语义时，要求重载大量建构函数，编程工作量巨大，易出错
+右值引用与函数模板相互配合，可以实现完美转发，极大降低代码编写量
+
+class A
+{
+public:
+  A( const string & s, const string & t ) : _s(s), _t(t)  {  }
+  A( const string & s, string && t ) : _s(s), _t(move(t))  {  }
+  A( string && s, const string & t ) : _s(move(s)), _t(t)  {  }
+  A( string && s, string && t ) : _s(move(s)), _t(move(t))  {  }
+private:
+  string _s, _t;
+};
+
+int main()
+{
+  string s1("Hello");		const string s2("World");
+  A a1( s1, s2 );			A a2( s1, string("Bingo") );
+  A a3( string("Good"), s2 );	A a4( string("Good"), string("Bingo") );
+  return 0;
+}
+
+
+
+class A
+{
+public:
+  //  根据实际参数型式生成不同的左值或右值引用的建构函数版本
+  //  T1或T2可以为不同型，此处相同仅为示例
+  //  实参推演时，使用引用折叠机制
+  //  当形式参数为T&&型时，当且仅当实际参数为右值或右值引用时，
+  //  实际参数型式才为右值引用
+  //  引用折叠机制与const/volatile无关，保持其参数性质不变
+  //  std::forward<T>(t)转发参数的右值引用T&&
+  template<typename T1, typename T2>  A( T1 && s, T2 && t )
+    : _s(std::forward<T1>(s)), _t(std::forward<T2>(t))  {  }
+private:
+  std::string _s, _t;
+};

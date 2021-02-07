@@ -5,3 +5,5 @@
    排除包含某个字符串的行 ：ps aux | grep -v "hongwei11171" ( 加 -v 参数即可)
 
    同时grep多个字符串：    grep -E \"A\"\\|\"B\"           同时获取包含A和B的行
+
+   echo $?    linux查看上一次执行的结果是否出错

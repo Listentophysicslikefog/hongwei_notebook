@@ -1,0 +1,199 @@
+
+标准模板库的内容：
+
+标准模板类：复数、序偶
+迭代器
+标准容器：向量、表、栈、队列、集合、映射等
+标准算法：查找、排序等
+标准模板库型式的使用方法
+“<>”：模板名称<数据对象基型式> 数据对象名称;
+示例一：complex<double> a(1.0, 2.0);
+示例二：pair<string, string> name( "Zhang", "San" );
+示例三：vector<int> v(8);
+
+1. pair
+
+一般说明
+头文件：“utility”
+模板名：pair<>
+用于表示总是成对出现的两个对象
+示例一：pair<int, double> a( 1, 1.0 );
+示例二：pair<string, string> name( "Zhang", "San" );
+使用规则
+公开的数据成员：first、second
+示例：cout << name.first << ", " << name.second;
+序偶比较：先比较first大小，相同时比较second大小
+make_pair：构造序偶的辅助函数
+示例：pair<int, double> a;  a = make_pair( 1, 1.0 );
+
+2. vector
+
+向量的目的
+替代数组，可以像数组一样使用向量
+向量的使用
+定义格式：vector<int> v(8);  // 包含8个整数元素
+operator[]：已重载，使用格式v[i]访问第i个元素
+向量可以整体赋值
+size()：返回向量中元素数目
+capacity()：返回向量当前可存储的最多元素数目
+clear()：删除向量所有元素，但不释放向量本身
+resize(int newsize)：重新设置向量容量
+
+3. 迭代器
+
+迭代器的性质
+通过迭代器访问容器中的数据对象
+类似指针、数组索引的功能：通过指针加减与数组下标运算获得下一数据对象
+迭代器可以是指针，但并不必须是指针，也不必总是使用数据对象的地址
+
+迭代器的典型使用方法
+声明迭代器变量
+使用引领操作符访问迭代器指向的当前目标对象
+使用递增操作符获得下一对象的访问权
+若迭代器新值超出容器的元素范围，类似指针值变成NULL，目标对象不可引用
+
+
+迭代器的分类
+输入迭代器：提供对象的只读访问
+输出迭代器：提供对象的只写访问
+前向迭代器：提供对象的正向（递增）读写访问
+双向迭代器：提供对象的正向与反向（递增递减）读写访问
+随机访问迭代器：提供对象的随机读写访问
+
+3.1 调用标准模板库的find()函数查找数组元素
+指针作为迭代器
+
+#include <iostream>
+#include <algorithm>
+using namespace std;
+const int size = 16;
+int main()
+{
+  int a[size];
+  for( int i = 0; i < size; ++i )  a[i] = i;
+  int key = 7;
+  int * ip = find( a, a + size, key );
+  if( ip == a + size )    //  不要使用NULL做指针测试，直接使用过尾值
+    cout << key << " not found." << endl;
+  else
+    cout << key << " found." << endl;
+  return 0;
+}
+
+3.2 . 使用迭代器操作向量
+
+#include <iostream>
+#include <algorithm>
+#include <vector>
+using namespace std;
+int main()
+{
+  int key = 7;
+  vector<int> iv( 10 ); 
+  for( int i = 0; i < 10; i++ )  iv[i] = i;
+  vector<int>::iterator it, head = iv.begin(), tail = iv.end();
+  it = find( head, tail, key );
+  if( it != tail )
+    cout << "Vector contains the value " << key << endl;
+  else
+    cout << "Vector does NOT contain the value " << key << endl;
+  return 0;
+};
+
+3.3. 常迭代器
+若不想通过迭代器修改目标对象值，定义迭代器常量
+示　例
+const vector<int>::iterator it;
+非法操作：*it = 10;  // 不能修改常迭代器指向的对象
+
+3.4. 使用迭代器访问流
+
+将输入输出流作为容器
+使用方式：定义流迭代器对象
+示例一：ostream_iterator<int> oit( cout, "  " );
+示例二（从cin获取数据）：istream_iterator<int> iit( cin );
+示例三（使用空指针创建流结束迭代器）：istream_iterator<int> iit;
+凡是可以出现迭代器参数的标准算法都可以使用
+
+
+#include <iostream>
+#include <iterator>
+#include <algorithm>
+#include <vector>
+#include "random.h"
+using namespace std;
+const int size = 8;
+const int lower_bound = 10;
+const int upper_bound = 99;
+
+void Display( vector<int> & v, const char * s )
+{
+  cout << endl << s << endl;
+  vector<int>::iterator head = v.begin(), tail = v.end();
+  ostream_iterator<int> oit( cout, "; " );
+  copy( head, tail, oit );
+  cout << endl;
+}
+int main()  //输出流迭代器
+{
+  vector<int> a( size );
+  for( int i = 0; i < size; ++i )
+    a[i] = GenerateRandomNumber( 10, 99 );
+  Display( a, "Array generated:" );
+  vector<int>::iterator head = a.begin(), tail = a.end();
+  sort( head, tail );
+  Display( a, "Array sorted:" );
+  reverse( head, tail );
+  Display( a, "Array reversed:" );
+  return 0;
+}
+
+//输入流迭代器：
+
+#include <iostream>
+#include <iterator>
+#include <algorithm>
+#include <vector>
+using namespace std;
+int main()
+{
+  vector<int> v( 4 );
+  vector<int>::iterator it = v.begin();
+  cout << "Enter 4 ints separated by spaces & a char:\n";
+  istream_iterator<int> head( cin ), tail;
+  copy( head, tail, it );
+  cin.clear();
+  cout << "vector = ";
+  for( it = v.begin(); it != v.end(); it++ )
+    cout << *it << " ";
+  cout << endl;
+  return 0;
+}
+
+3.5 表
+
+表：标准模板库中的为双向链表
+表的使用
+定义包含Point对象的容器：list<Point> pts(8);
+插入：pts.insert( pts.begin(), Point(1,2) );
+表头插入：pts.push_front( Point(1,2) );
+插入：pts.insert( pts.end(), Point(1,2) );
+表尾插入：pts.push_back( Point(1,2) );
+定义包含Point指针的容器：list<Point*> ppts(8);
+插入：ppts.insert( ppts.begin(), new Point(1,2) );
+插入：ppts.insert( ppts.end(), new Point(1,2) );
+删除：delete ppts.front();  ppts.remove( ppts.front() );
+判断表是否为空：if( pts.empty() )  cout << "Empty!";
+
+表与迭代器
+迭代器可以和表协同工作，方式与向量相同
+    list<int> a(8);
+    list<int>::iterator it;
+    for( it = a.begin(); it != a.end(); it++ )
+      *it = GenerateRandomNumber( 10, 99 );
+表排序
+直接使用表的成员函数：a.sort();  // 默认升序
+降序排序之一：升序排序后调用成员函数reverse()
+降序排序之二（传入函子greater_equal<int>()）：
+    a.sort( greater_equal<int>() );
+对于自定义对象，需要重载operator<以进行比较 
