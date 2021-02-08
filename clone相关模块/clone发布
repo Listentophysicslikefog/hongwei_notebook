@@ -218,4 +218,43 @@ hb06 5000
 
 
 
+############################################################################
 
+变更没有p2p的freyr 
+
+1. 法兰克福变更完成 3000 3001 4000 
+./generate_freyr_conf.py frankfurt01 4000 tcp raw ssd
+./generate_ip_list.py frankfurt01 4000
+./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/frankfurt01/4000/host_info fast
+
+2. ap02  1200
+
+./generate_freyr_conf.py ap02 1200 tcp raw ssd
+./generate_ip_list.py ap02 1200
+./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/ap02/1200/host_info fast
+
+
+3. wdc02    3000 3001  4001  4000  全部验证
+
+
+./generate_freyr_conf.py wdc02 4000 tcp raw ssd
+./generate_ip_list.py wdc02 4000 
+./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/wdc02/4000/host_info fast
+
+4. tokyo01 3000 3001 4000  ssd  全部验证
+
+./generate_freyr_conf.py tokyo01 4000 tcp raw ssd
+./generate_ip_list.py tokyo01 4000 
+./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/tokyo01/4000/host_info fast
+
+5.  taibei02 1000未验证    3000 - 3006  4000-4002  全部验证
+
+./generate_freyr_conf.py taibei02 3000 tcp raw ssd
+./generate_ip_list.py taibei02 3000 
+./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/taibei02/3000/host_info fast
+
+6. singapore02 1000  1200未验证 
+
+./generate_freyr_conf.py singapore02 1000 tcp raw ssd
+./generate_ip_list.py singapore02 1000 
+./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/singapore02/1000/host_info fast
