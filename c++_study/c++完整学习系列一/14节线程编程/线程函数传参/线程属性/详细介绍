@@ -1,0 +1,32 @@
+线程属性：精细调整线程的行为
+设置线程属性的流程
+创建pthread_attr_t类型的对象
+调用pthread_attr_init()函数初始化线程的缺省属性，传递指向该线程属性对象的指针，就是pthread_attr_t类型对象
+原型：int pthread_attr_init( pthread_attr_t * attr );
+对线程属性进行必要修改
+调用pthread_create()函数时传递指向线程属性对象的指针
+
+设置线程属性的流程
+调用pthread_attr_destroy()函数清除线程属性对象， pthread_attr_t对象本身没有被销毁，因而可以调用pthread_attr_init()函数再次初始化
+原型：int pthread_attr_destroy( pthread_attr_t * attr );
+线程属性说明
+单一线程属性对象可以用于创建多个线程
+线程创建后，继续保留线程属性对象本身并没有意义，可以直接销毁它，就是销毁 pthread_attr_t
+对大多数Linux程序，线程最重要的属性为分离状态（detach state）
+
+
+线程分类
+可联线程（joinable thread）：缺省设置，终止时并不自动清除（类似僵尸进程），主线程必须调用pthread_join()获取其返回值，此后才能清除
+分离线程（detached thread）：结束时自动清除，不能调用pthread_join()进行线程同步
+可联线程可通过pthread_detach()函数分离，分离线程不能再次联结
+原型：int pthread_detach( pthread_t thread );
+
+
+pthread_attr_setdetachstate()函数：设置线程分离属性
+原型：int pthread_attr_setdetachstate ( pthread_attr_t * attr, int detachstate );
+传递线程属性对象指针和分离线程设置参数PTHREAD_CREATE_DETACHED
+
+
+pthread_attr_getdetachstate()函数：获取线程分离属性
+原型：int pthread_attr_getdetachstate ( pthread_attr_t * attr, int * detachstate );
+

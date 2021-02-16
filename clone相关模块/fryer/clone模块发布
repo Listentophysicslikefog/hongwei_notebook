@@ -20,7 +20,7 @@ ssh root@172.27.118.195
 /root/limax/udisk/tool/release
 
 clone测试: ssh root@172.27.118.195
-
+/root/ymer_auto_test_hn06/scripts/batch_clone.sh  发起测试
 
 
 

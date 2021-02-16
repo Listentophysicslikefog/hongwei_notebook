@@ -1,0 +1,61 @@
+pthread_cancel()函数：撤销线程
+
+原型：int pthread_cancel( pthread_t thread );
+已撤销的线程可以联结，且必须联结，以释放其资源，除非其为分离线程！！
+
+1. 线程撤销类型与状态
+异步可撤销：在其执行的任何时刻都可撤销
+同步可撤销：线程可撤销，但撤销操作首先进入队列排队，在线程执行到特定撤销点时才可撤销
+不可撤消：撤销不可撤消线程的企图被系统忽略，且没有任何消息反馈
+
+2. 设置线程的撤销类型
+
+pthread_setcanceltype()函数：设置线程的撤销类型
+原型： int pthread_setcanceltype( int type, int * oldtype );
+
+参数：type为撤销类型，oldtype用于保存原始线程撤销类型，NULL表示不保存，设置线程是否可以撤销
+PTHREAD_CANCEL_ASYNCHRONOUS：线程异步可撤销
+PTHREAD_CANCEL_DEFERRED：线程同步可撤销，即延迟到下一撤销点时撤销
+
+3. 设置线程的撤销状态，就是线程的撤销状态
+
+pthread_setcancelstate()函数：设置线程的撤销状态
+原型： int pthread_setcancelstate( int state, int * oldstate );
+第一个参数state为可撤销状态，第二个参数oldstate用于保存原始线程可撤销状态，NULL表示不保存
+PTHREAD_CANCEL_ENABLE：线程可撤销
+PTHREAD_CANCEL_DISABLE：线程不可撤销
+线程的撤销状态可多次设置
+
+4. 设置撤销点
+
+pthread_testcancel()函数：设置撤销点
+原型：void pthread_testcancel();
+在线程函数中调用pthread_testcancel()函数设置撤销点，到撤销点后根据设置的线程的撤销类型来撤销线程
+建议：周期性地设置撤销点，保证线程函数内部每隔一些代码就有一个撤销点，以保证资源能够正确释放
+
+使用撤销状态构造临界区（critical section）
+临界区：要么全部执行，要么一条都不执行的代码段
+设置线程的撤销状态，线程一旦进入临界区，就必须等到离开临界区，才可以被撤销
+例子：
+//  账户转账    会一边账户减一边账户加  必须要一块做   做成临界区
+void Transfer( double * accounts, int from, int to, double amount )
+{
+  int ocs;
+  //  数据有效性检查代码在此，确保转账操作合法有效
+
+  //  将线程设置为不可撤销的，进入临界区
+  pthread_setcancelstate( PTHREAD_CANCEL_DISABLE, &ocs );
+
+  accounts[to] += amount;    
+  accounts[from] -= amount;
+
+  //  恢复线程的撤销状态，离开临界区
+  pthread_setcancelstate( ocs, NULL );
+}
+
+
+
+
+
+
+

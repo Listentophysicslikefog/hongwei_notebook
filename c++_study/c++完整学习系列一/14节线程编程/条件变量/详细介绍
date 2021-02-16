@@ -1,0 +1,26 @@
+条件变量：必须和互斥量一块使用
+
+std::condition_variable类
+必须与std::unique_lock配合使用
+std::condition_variable_any类
+更加通用的条件变量，可以与任意型式的互斥锁配合使用，相比前者使用时会有额外的开销
+
+多线程通信同步原语
+阻塞一个或多个线程至收到来自其他线程的通知，超时或发生虚假唤醒
+两者具有同样的成员函数，且在等待条件变量前都必须要获得相应的锁
+
+成员函数notify_one()：通知一个等待线程
+原型：void motify_one() noexcept;
+成员函数notify_all()：通知全部等待线程
+原型：void motify_one() noexcept;
+成员函数wait()：阻塞当前线程至被唤醒
+原型：template<typename Lock> void wait( Lock & lock );
+原型：template<typename Lock, typename Predicate> void wait( Lock & lock, Predicate p );
+
+
+成员函数wait_for()：阻塞至被唤醒或超过指定时长
+原型： template<typename Lock, typename Rep, typename _Period> cv_status wait_for( Lock& lock, const chrono::duration<Rep, Period>& rtime );
+原型：template<typename Lock, typename Rep, typename Period, typename Predicate> bool wait_for( Lock& lock, const chrono::duration<Rep, Period>& rtime, Predicate p );
+成员函数wait_until()：阻塞至被唤醒或到达指定时点
+原型：template<typename Lock, typename Clock, typename Duration> cv_status wait_until( Lock & lock,  const chrono::time_point<Clock, Duration>& atime);
+原型：template<typename Lock, typename Clock, typename Duration, typename Predicate> bool wait_until( Lock& lock, const chrono::time_point<Clock, Duration>& atime, Predicate p );
