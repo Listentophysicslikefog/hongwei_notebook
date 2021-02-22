@@ -184,7 +184,7 @@ wdc02 3202
 
 pssh -h /limax/udisk/region/wdc02/3201/host_info -l root -i "cd /var/log/udisk/freyr;grep -rn \"bsi-1wymwfg5\""
 
-
+/root/limax/udisk/region/ap03/3001
 
 
 hb06 5000

@@ -89,3 +89,10 @@ void socket_event_cb(struct bufferevent *bev, short events, void *arg) {
 	bufferevent_free(bev);  //这将自动close套接字和free读写缓冲区
 
 }
+
+
+
+
+
+
+
