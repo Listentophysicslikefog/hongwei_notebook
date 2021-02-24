@@ -1,0 +1,63 @@
+1. 修复完成
+
+[2021-2-24 0:5:41.908165] [INFO] | RepairChunk | 4a6d7b2e-5383-4bbf-8031-393a93b2cd00 | c0a96322-d74c-4429-a5a1-7bf9960c1267 | after push, GlobalStack.Size() = 1 - chaos/manager/src/logic/methods.RepairChunk:methods/repair_chunk.go:291
+[2021-2-24 0:5:41.908271] [INFO]-------------------TRACK BEGIN---------------------
+[2021-2-24 0:5:41.908341] [INFO] {
+        "LogBeginSplit": "",
+        "CurrOpTk": {
+                "CurrentOperationId": 18,
+                "Schedule": "18/100",
+                "CurrentOperationDescrition": "给loki发送命令修复完成",
+                "CurrentOperationEndTime": "2021-02-24 00:05:41 AM",
+                "CurrentOperationCostTime": 0,
+                "IsRemoteOperation": false,
+                "RemoteOp": {
+                        "User": "root",
+                        "Ip": "10.189.149.70",
+                        "Password": "",
+                        "Cmd": ""
+                },
+                "CurrentOperationResult": "Succeed",
+                "ResultDescription": "Repaire Done succeed"
+        },
+        "AcTr": {
+                "Session": "4a6d7b2e-5383-4bbf-8031-393a93b2cd00",
+                "Action": "RepairChunk",
+                "SumStepsOfThisAction": 100,
+                "ActionBeginTime": "2021-02-23 22:30:30 PM",
+                "ActionEndTime": "",
+                "ActionCostTime": 0,
+                "ActionResult": ""
+        },
+        "Reserved": "New Chunk Message: id: 508, ip: 10.189.149.70, uuid: 0c05be95-08f0-4113-82b0-16885b15792f",
+        "LogEndSplit": ""
+}
+[2021-2-24 0:5:41.908685] [INFO]ip:"10.189.151.129" port:12500 reserved:"P\326a\240\001\325a"
+
+
+2. 当前运行状态   autorun_chaos.go 600
+
+[2021-2-24 0:5:41.915917] [INFO]CallBack Task succeed: &{name:RepairChunk Parms:map[ChildSession:[c0a96322-d74c-4429-a5a1-7bf9960c1267] ConcurrentRepairNum:[1] UDiskSetId:[5008] BadChunkId:[4294967295] Session:[4a6d7b2e-5383-4bbf-8031-393a93b2cd00] ChunkCapacity:[6394669432832] EmailReceiver:[hongwei.liu@ucloud.cn,morton.ma@ucloud.cn,sing.peng@ucloud.cn] TestMode:[1] Action:[RepairChunk]] Period:240 UserRunFlag:true Method:0xcf6c70 StartOperation:<nil>}
+[2021-2-24 0:5:41.915960] [INFO]Task: RepairChunk is changing status from:1, to:5, now RunTimeInfo is: {
+        "Name": "RepairChunk",
+        "Status": 5,
+        "Info": "debug",
+        "Loop": 1,
+        "SuccessTime": 0,
+        "Period": 240,
+        "ChaosStatus": 0,
+        "UserRunFlag": true
+}
+
+
+3. 准备停止部分任务进行三副本一致性检测
+
+AutoRunChaosStatus: 4
+[2021-2-24 0:5:41.915991] [INFO]TaskRunTimeInfo: &{Name:Vdbench Status:0 Info:debug Loop:1 SuccessTime:0 Period:0 ChaosStatus:0 UserRunFlag:true}
+[2021-2-24 0:5:41.915998] [INFO]TaskRunTimeInfo: &{Name:KillService Status:0 Info:debug Loop:1 SuccessTime:0 Period:0 ChaosStatus:0 UserRunFlag:true}
+[2021-2-24 0:5:41.916004] [INFO]TaskRunTimeInfo: &{Name:ThreeCopiesConsistentCheck Status:-1 Info:debug Loop:0 SuccessTime:0 Period:0 ChaosStatus:0 UserRunFlag:true}
+[2021-2-24 0:5:41.916011] [INFO]TaskRunTimeInfo: &{Name:Iotest Status:0 Info:debug Loop:1 SuccessTime:0 Period:0 ChaosStatus:0 UserRunFlag:true}
+[2021-2-24 0:5:41.916022] [INFO]TaskRunTimeInfo: &{Name:RepairChunk Status:5 Info:debug Loop:1 SuccessTime:0 Period:240 ChaosStatus:0 UserRunFlag:true}
+[2021-2-24 0:5:41.916028] [INFO]TaskRunTimeInfo: &{Name:GetIOstat Status:0 Info:debug Loop:1 SuccessTime:0 Period:0 ChaosStatus:0 UserRunFlag:true}
+
+

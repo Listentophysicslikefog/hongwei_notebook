@@ -304,7 +304,41 @@ hb06 5000
 ./generate_ip_list.py hochiminh01 1000 
 ./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/hochiminh01/1000/host_info fast
 
-4. bangkok01 4000
+14. bangkok01 4000
 ./generate_freyr_conf.py bangkok01 4000 tcp raw ssd
 ./generate_ip_list.py bangkok01 4000 
 ./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/bangkok01/4000/host_info fast
+
+
+国内 
+
+15. hb03 1000  1200 1201 1202 1203
+
+./generate_freyr_conf.py hb03 1000 tcp raw ssd
+./generate_ip_list.py hb03 1000 
+./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/hb03/1000/host_info fast
+
+16. hb04 1000 1001 1003 1004 1200 1201 1202 1203 2200
+
+./generate_freyr_conf.py hb04 1000 tcp raw ssd
+./generate_ip_list.py hb04 1000 
+./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/hb04/1000/host_info fast
+
+
+16. hb05  1000 1001 1002 1003 1004     全部验证：3000 3001 3002 ...... 3018   4000 4001 4002 4003 4004 4005
+
+./generate_freyr_conf.py hb05 1000 tcp raw ssd
+./generate_ip_list.py hb05 1000 
+./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/hb05/1000/host_info fast
+
+
+
+
+
+
+
+
+
+
+
+

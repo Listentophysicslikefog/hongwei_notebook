@@ -1,0 +1,48 @@
+回顾面向对象的编程风格封装线程类，一般这么做：写一个Thread base class，含有（纯）虚函数Thread::run()，然后应用程序派生一个derived class，覆写run()。程序里的每一种线程对应一个Thread的派生类。
+面向对象的编程风格主要还是围绕面向对象的三大特点“封装、继承、多态”来展开的——通过封装隐藏实现细节，只暴露需要对外提供的属性或方法；通过继承的特性来提高程序的可复用性；定义抽象基类（纯虚函数），让其派生类继承并实现它的接口方法。
+“面向对象”和“基于对象”都实现了“封装”的概念，但是面向对象实现了“继承和多态”，而“基于对象”是使用对象，无法利用现有的对象模板产生新的对象类型继而产生新的对象，没有实现“继承和多态”。
+二、基于对象的编程风格
+基于对象的编程风格要借助boost bind/function库来实现，用它来代替虚函数作为类的（回调）接口。它的出现替代了STL中的mem_fun、ptr_fun、bind1st、bin2nd等函数适配器，**其主要作用是使一种类型的函数接口适配成另一种类型的函数接口，但boost bind/function的通用性更好。**❗❗❗
+且boost bind/function现在已经成为C++11的标准了
+
+#include <iostream>
+#include <boost/function.hpp>// 需包含的对应头文件
+#include <boost/bind.hpp>
+
+using namespace std;
+
+class Foo
+{
+public:
+    void memberFunc(double d, int i, int j)
+    {
+        cout << d << endl; 
+        cout << i << endl;    
+        cout << j << endl; 
+    }
+};
+
+int main()
+{
+    Foo foo;
+    boost::function<void (int)> fp = boost::bind(&Foo::memberFunc, &foo, 0.5, _1, 10);//把一个成员函数适配成新的函数类型
+    //boost::function<void(int)>：这个类型可以看成是：“返回值void， 接收一个int类型的参数” 这样的一个接口， 
+    //原来的函数memberFun有三个参数，准确说是4个参数，在函数调用的时候隐含一个this指针，而我们适配成的只有1个参数，
+   //调用适配函数 fp(100), 实际上调用的函数原来的memberFunc函数，但原函数有四个参数嘛
+   //这个100实际放到的是谁的位置，传递的是哪一个参数呢，取决于 右边 bind()
+   //看bind里参数依次，&Foo::memberFunc，&foo 指向成员函数的指针, 绑定到this的对象, 其他几个参数
+   //0.5， _1, 10分别就i是那三个形参，其中第二个_1是占位符， 表示boost::function里面能接收的参数？↓
+  //表示我们不打算向成员函数绑定第2个参数，这里使用 _1 来占位，同理下边还会用到 _2 _3 这样的占位符.
+    fp(100);  //调用foo::memberFunc(0.5, 100, 10)，打印0.5，100，10
+    
+    boost::function<void (int, int)> fp2 = boost::bind(&Foo::memberFunc, boost::ref(foo), 0.5, _1, _2);  
+    fp2(100, 200); //调用foo::memberFunc(0.5, 100, 200)，打印0.5，100，200
+
+    return 0;
+}
+
+boost::function<返回类型(形参们)> 适配函数名fp = boost::bind(指向成员函数的指针，绑定到this的对象，参数们)
+调用适配器：fp(参数)
+这个参数是传给哪个形参的，就看bind中占位符
+了解了之后就看看基于对象用boost bind/function是怎么个编程风格👇
+
