@@ -40,3 +40,10 @@ du -h /var/log/ --max-depth=1     :查看/var/log 目录下内存占用情况
 5. 获取docker的短id
 
 docker ps -a 可以看到
+
+
+/var/log/sa
+
+
+6. top -Hp 40939   后面的是pid
+可以看到该服务的子进程

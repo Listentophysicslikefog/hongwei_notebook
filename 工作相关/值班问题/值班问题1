@@ -4,3 +4,12 @@
 1. 集群资源不足，扩容集群资源即可  
 
 2. 用户的盘资源信息和账单不存在，这会在用户扩容的时候报错资源不存在，这需要恢复资源信息和账单还需要用户账户有钱。
+
+
+错误码查询： https://uxiao.ucloudadmin.com/#/api-manager/errfield
+
+值班查询： https://uauto-alarm.ucloudadmin.com/duties/calendar/?ticket=ST-1353770-oaXhNqJBllv0Ipwk88rmhIdgbZolocalhost&ticket=ST-1491701-SLjdjAEnJWkKhRDDmQ0IUOawyyYlocalhost
+
+日志筛选： https://git.ucloudadmin.com/block/udisk_doc/-/issues/634#2-%E7%AD%9B%E9%80%89apiaccessmetaserver%E6%97%A5%E5%BF%97
+
+iptables 相关： https://pdf.us/2018/08/03/1685.html

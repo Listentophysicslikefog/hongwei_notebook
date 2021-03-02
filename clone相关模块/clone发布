@@ -333,6 +333,63 @@ hb06 5000
 
 
 
+17. hd02  1000   4000 
+
+./generate_freyr_conf.py hd02 1000 tcp raw ssd
+./generate_ip_list.py hd02 1000 
+./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/hd02/1000/host_info fast
+
+18. hd03 无未变更的
+
+./generate_freyr_conf.py hd03 1100 tcp raw ssd
+./generate_ip_list.py hd03 1100 
+./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/hd03/1100/host_info fast
+
+
+
+
+19. hd04 1002  1003 1004     2200      3001 3002  3003 ...... 3010  4000 ... 4003
+
+./generate_freyr_conf.py hd04 1002 tcp raw ssd
+./generate_ip_list.py hd04 1002 
+./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/hd04/1002/host_info fast
+
+
+
+
+20. hn02   1001 1002 1200  1200  2000 1100 1101 1102 1103 3100
+
+./generate_freyr_conf.py hn02 1101 tcp raw ssd
+./generate_ip_list.py hn02 1101 
+./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/hn02/1101/host_info fast
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+17. hb06  1001    1200   3000 ...... 3023   4003  4004 4006  还未变更              3012已经变更
+
+./generate_freyr_conf.py hb06 3012 tcp raw ssd
+./generate_ip_list.py hb06 3012 
+./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/hb06/3012/host_info fast
+
+
+
+
+
+
 
 
 

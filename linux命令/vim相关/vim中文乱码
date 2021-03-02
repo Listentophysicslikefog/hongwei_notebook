@@ -1,0 +1,10 @@
+解决方法的博客： https://blog.csdn.net/weixin_36250487/article/details/79888103
+
+
+解决linux下vim乱码的情况：(修改vimrc的内容）
+全局的情况下：即所有用户都能用这个配置
+文件地址：/etc/vimrc
+在文件中添加：
+set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
+set termencoding=utf-8
+set encoding=utf-8
