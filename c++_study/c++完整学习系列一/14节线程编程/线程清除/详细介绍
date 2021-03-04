@@ -1,0 +1,41 @@
+线程清除函数：回调函数，单void*参数，无返回值
+目的：销毁线程退出或被撤销时未释放的资源
+
+pthread_cleanup_push()函数：注册线程清除函数
+原型： void pthread_cleanup_push( void (*routine)(void*), void * arg );
+参数：routine为指向线程清除函数的函数指针，arg为传递给回调函数的附加数据对象
+
+pthread_cleanup_pop()函数：取消线程清除函数注册
+原型： void pthread_cleanup_pop( int execute );
+参数：整型值，非0调用回调函数释放资源，0不释放，传一个非0值就会调用注册的清除函数  ！！！！！
+
+
+//线程清除的问题
+C++的问题
+对象的析构函数在线程退出时可能没有机会被调用，因而线程栈上的数据未清除
+如何保证线程资源被正确释放？
+解决方法
+定义异常类，线程在准备退出时引发异常，然后在异常处理中退出线程执行
+引发异常时，C++确保析构函数被调用
+
+列：解决上面的问题
+#include <pthread.h>
+class EThreadExit  {
+public:
+  EThreadExit( void * ret_val ) : _thread_ret_val(ret_val)  {  }
+  //  实际退出线程，使用对象构造时的返回值
+  void* DoThreadExit ()  {  pthread_exit( _thread_ret_val );  }
+private:
+  void *  _thread_ret_val;
+};
+void *  ThreadFunc( void * arg )
+{
+  try  {
+    if( 线程需要立即退出 )   //当线程要退出的时候，我们throw异常
+      throw EThreadExit(  线程返回值 );
+  }
+  catch( const EThreadExit & e )  {    //catch抓住异常，执行下面的退出动作
+    e.DoThreadExit();    //  执行线程实际退出动作
+  }
+  return NULL;
+}

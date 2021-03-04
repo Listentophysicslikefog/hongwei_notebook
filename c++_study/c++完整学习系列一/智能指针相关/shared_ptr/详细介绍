@@ -1,0 +1,236 @@
+shared_ptr：
+    shared_ptr是一种智能指针（smart pointer），作用有如同指针，但会记录有多少个shared_ptrs共同指向一个对象。这便是所谓的引用计数（reference counting）。
+一旦最后一个这样的指针被销毁，也就是一旦某个对象的引用计数变为0，这个对象会被自动删除。这在非环形数据结构中防止资源泄露很有帮助。
+
+std::shared_ptr大概总结有以下几点:
+(1) 智能指针主要的用途就是方便资源的管理，自动释放没有指针引用的资源。
+(2) 使用引用计数来标识是否有多余指针指向该资源。(注意，shart_ptr本身指针会占1个引用)
+(3) 在赋值操作中, 原来资源的引用计数会减一，新指向的资源引用计数会加一。
+     std::shared_ptr<Test> p1(new Test);
+     std::shared_ptr<Test> p2(new Test);
+     p1 = p2;
+(4) 引用计数加一/减一操作是原子性的，所以线程安全的。
+(5) make_shared要优于使用new，make_shared可以一次将需要内存分配好。
+std::shared_ptr<Test> p = std::make_shared<Test>();
+std::shared_ptr<Test> p(new Test);
+(6) std::shared_ptr的大小是原始指针的两倍，因为它的内部有一个原始指针指向资源，同时有个指针指向引用计数。
+(7) 引用计数是分配在动态分配的，std::shared_ptr支持拷贝，新的指针获可以获取前引用计数个数。
+
+
+
+用法
+
+0.  详细用法
+
+  #include <iostream>
+  #include <memory>
+  #include <thread>
+  #include <chrono>
+  #include <mutex>
+  
+  struct Test
+  {
+      Test() { std::cout << "  Test::Test()\n"; }
+     ~Test() { std::cout << "  Test::~Test()\n"; }
+ };
+ 
+ //线程函数
+ void thr(std::shared_ptr<Test> p)
+ {
+     //线程暂停1s
+     std::this_thread::sleep_for(std::chrono::seconds(1));
+ 
+     //赋值操作, shared_ptr引用计数use_cont加1(c++11中是原子操作)
+     std::shared_ptr<Test> lp = p;
+     {   
+         //static变量(单例模式),多线程同步用
+         static std::mutex io_mutex;
+ 
+        //std::lock_guard加锁
+         std::lock_guard<std::mutex> lk(io_mutex);
+         std::cout << "local pointer in a thread:\n"
+                   << "  lp.get() = " << lp.get()
+                   << ", lp.use_count() = " << lp.use_count() << '\n';
+     }   
+ }
+ 
+ int main()
+ {
+     //使用make_shared一次分配好需要内存
+     std::shared_ptr<Test> p = std::make_shared<Test>();
+     //std::shared_ptr<Test> p(new Test);
+  
+     std::cout << "Created a shared Test\n"
+               << "  p.get() = " << p.get()
+               << ", p.use_count() = " << p.use_count() << '\n';
+ 
+     //创建三个线程,t1,t2,t3
+     //形参作为拷贝, 引用计数也会加1
+     std::thread t1(thr, p), t2(thr, p), t3(thr, p);
+     std::cout << "Shared ownership between 3 threads and released\n"
+               << "ownership from main:\n"
+               << "  p.get() = " << p.get()
+               << ", p.use_count() = " << p.use_count() << '\n';
+     //等待结束
+     t1.join(); t2.join(); t3.join();
+     std::cout << "All threads completed, the last one deleted\n";
+ 
+     return 0;
+ }
+
+1. 删除共享对象
+使用shared_ptr解决的主要问题是知道删除 一个被多个客户共享的资源的 正确时机。下面是一个简单易懂的例子，有两个类 A和 B, 它们共享一个int实例。使用 boost::shared_ptr, 你必须包含"boost/shared_ptr.hpp".
+
+类 A和 B都保存了一个 shared_ptr<int>. 在创建 A和 B的实例时，shared_ptr  temp被传送到它们的构造函数。这意味着共有三个 shared_ptr：a, b, 和 temp，它们都引向同一个int实例。如果我们用指针来实现对一个的共享
+，A和 B必须能够在某个时间指出这个int要被删除。在这个例子中，直到main的结束，引用计数为3，当所有 shared_ptr离开了作用域，计数将达到0，而最后一个智能指针将负责删除共享的 int.
+#include "boost/shared_ptr.hpp"
+#include <cassert>
+class A {
+    boost::shared_ptr<int> no_;
+public:
+    A(boost::shared_ptr<int> no) : no_(no) {}
+    void value(int i) {
+        *no_=i;
+    }
+};
+class B {
+    boost::shared_ptr<int> no_;
+public:
+    B(boost::shared_ptr<int> no) : no_(no) {}
+    int value() const {
+        return *no_;
+    }
+};
+int main() {
+    boost::shared_ptr<int> temp(new int(14));
+    A a(temp);
+    B b(temp);
+    a.value(28);
+    assert(b.value()==28);
+} 
+
+2. 标准容器
+
+把对象直接存入容器中有时会有些麻烦。以值的方式保存对象意味着使用者将获得容器中的元素的拷贝，对于那些复制是一种昂贵的操作的类型来说可能会有性能的问题。
+此外，有些容器，特别是 std::vector, 当你加入元素时可能会复制所有元素，这更加重了性能的问题。最后，传值的语义意味着没有多态的行为。
+如果你需要在容器中存放多态的对象而且你不想切割它们，你必须用指针。如果你用裸指针，维护元素的完整性会非常复杂。
+从容器中删除元素时，你必须知道容器的使用者是否还在引用那些要删除的元素，不用担心多个使用者使用同一个元素。这些问题都可以用shared_ptr来解决。
+
+下面是如何把共享指针存入标准库容器的例子。
+
+#include "boost/shared_ptr.hpp"
+#include <vector>
+#include <iostream>
+class A {
+public:
+    virtual void sing()=0;
+    protected:
+    virtual ~A() {};
+};
+class B : public A {
+public:
+    virtual void sing() {
+        std::cout << "Do re mi fa so la";
+    }
+};
+boost::shared_ptr<A> createA() {
+    boost::shared_ptr<A> p(new B());
+    return p;
+}
+int main() {
+    typedef std::vector<boost::shared_ptr<A> > container_type;
+    typedef container_type::iterator iterator;
+    container_type container;
+    for (int i=0;i<10;++i) {
+        container.push_back(createA());
+    }
+    std::cout << "The choir is gathered: \n";
+    iterator end=container.end();
+    for (iterator it=container.begin();it!=end;++it) {
+        (*it)->sing();
+    }
+} 
+这里有两个类, A和 B, 各有一个虚拟成员函数 sing. B从 A公有继承而来，并且如你所见，工厂函数 createA返回一个动态分配的B的实例，包装在shared_ptr<A>里。在 main里, 一个包含shared_ptr<A>的 std::vector被放入10个元素，最后对每个元素调用sing。如果我们用裸指针作为元素，那些对象需要被手工删除。而在这个例子里，删除是自动的，因为在vector的生存期中，每个shared_ptr的引用计数都保持为1；当 vector被销毁，所有引用计数器都将变为零，所有对象都被删除。有趣的是，即使 A的析构函数没有声明为 virtual, shared_ptr也会正确调用 B的析构函数！
+上面的例子示范了一个强有力的技术，它涉及A里面的protected析构函数。因为函数 createA返回的是 shared_ptr<A>, 因此不可能对shared_ptr::get返回的指针调用 delete。这意味着如果为了向某个需要裸指针的函数传送裸指针而从shared_ptr中取出裸指针的话，它不会由于意外地被删除而导致灾难。那么，又是如何允许 shared_ptr删除它的对象的呢？ 这是因为指针指向的真正类型是 B; 而B的析构函数不是protected的。这是非常有用的方法，用于给shared_ptr中的对象增加额外的安全性。 [2] 
+
+
+
+
+3. make_shared 
+
+make_shared<T>()函数
+再来看一下 share_ptr 创建语句：
+shared_ptr<Person> p1(new Person());
+该语句的执行涉及两个独立的内存分配：一个分配控制块，第二个则分配内存给被管理的 Person 对象。每个内存分配都会产生相当一部分开销，所以，更高效的做法是，分配一个足够大的内存块，以同时保存控制块和被管理的对象。
+
+下面这个库函数就可以做到这一点：
+make_shared<T>()
+
+使用该函数即可将上述共享指针创建语句改写为以下形式：
+shared_ptr<Person> p1 = make_shared<Person>();   //该版本的 make_Shared 语句可以使用默认构造函数初始化被管理的对象。
+
+还有一个版本的 make_shared 语句可以采用传递给非构造函数的形参。因此，以下面的语句为例：
+shared_ptr<Person> p2 (new Person ("Maria Wu", 23));
+该语句可以被改写为以下形式：
+shared_ptr<Person> p2 = make_shared<Person>("Maria Wu", 23);
+推荐使用 make_shared 函数方式创建共享指针。除了更高效之外，它还无须直接处理裸指针，因此也消除了双重管理的可能性。
+shared_ptr 成员函数
+
+表 1 列出了处理 share_ptr 时最用的成员函数。
+ 
+表 1 shared_ptr成员函数 
+成员函数                                             描 述
+
+T* get()                返回指向被管理对象的裸指针，如果没有被管理的对象，则返回空指针
+
+void reset()            释放任何可能存在的被管理对象的所有权。调用的共享指针被置为空
+
+void reset(T* ptr)      释放当前被管理的对象的所有权。获取由 ptr 指向的对象的所有权
+
+long use_count()        返回引用相同的被管理对象的共享指针数量
+
+
+除此之外，还可以通过测试共享指针的值，检查某个共享指针是否有被管理的对象， 示例如下：
+shared_ptr<T> p =....;
+if ( P )
+{
+    //被管理的对象
+}
+else
+{
+    //共享指针为空
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

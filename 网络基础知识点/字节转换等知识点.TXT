@@ -1,0 +1,5 @@
+1. 字节转换
+
+8 Bit = 1    Bytes
+1 KB = 1024  Bytes 
+1MB = 1024 KB = 1024 * 1024 Bytes = 1024*1024*8 Bit

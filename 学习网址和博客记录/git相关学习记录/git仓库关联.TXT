@@ -1,0 +1,21 @@
+
+ 一、  创建本地仓库并且与远程仓库关联: 
+
+1. 在本地创建一个文件夹然后进入该文件夹执行命令： git init（初始化本地仓库）
+
+2. 本地仓库和远程仓库关联：   git remote add master git@github.com:Listentophysicslikefog/Hongwei_Go_Study.git
+                            git@github.com:Listentophysicslikefog/Hongwei_Go_Study.git 是远程仓库地址
+
+3. git pull git@github.com:Listentophysicslikefog/Hongwei_Go_Study.git 拉取远程仓库代码
+
+参考博客: https://www.jianshu.com/p/dcbb8baa6e36
+
+
+二、  git pull报错   git 报错：Permanently added the RSA host key for IP address '13.229.188.59' to the list of known hosts.
+
+解决办法:  https://blog.csdn.net/Magic_Ninja/article/details/81437354 （更改文件时没有权限可以直接将该文件拉到桌面更改后拉回去即可）
+
+三. 在本地仓库git clone远程git上面代码没有权限时报错
+
+将本地机器的公钥添加到远程git仓库即可
+参考博客 : https://blog.csdn.net/qq_38741986/article/details/100137267

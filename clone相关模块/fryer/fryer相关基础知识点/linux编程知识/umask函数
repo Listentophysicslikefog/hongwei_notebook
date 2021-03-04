@@ -1,0 +1,61 @@
+linux下的umask()函数
+
+
+此函数的主要作用是在创建文件时设置或者屏蔽掉文件的一些权限。一般与open()函数配合使用。
+umask（设置建立新文件时的权限遮罩）
+相关函数 creat，open
+表头文件 #include<sys/types.h>
+#include<sys/stat.h>
+定义函数： mode_t umask(mode_t mask);
+函数说明： umask()会将系统umask值设成参数mask&0777后的值，然后将先前的umask值返回。在使用open()建立新文件时，该参数 mode并非真正建立文件的权限，而是(mode& ~umask)的权限值。例如，在建立文件时指定文件权限为0666，通常umask值默认为 022，则该文件的真正权限则为0666&～022＝0644，也就是rw-r--r--返回值此调用不会有错误值返回。
+返回值为原先系统的umask值。
+
+open函数原型：
+#include<sys/types.h>
+#include<sys/stat.h>
+#include<fcntl.h>
+int open( const char * pathname, int flags);
+int open( const char * pathname,int flags, mode_t mode);
+当创建一个文件并且要明确指定此文件的权限时，应该使用第二个open()函数，明确指定mode参数，所创建的文件最后的权限是：mode&(~mask)。默认的mask值是：022
+例：
+#include <sys/types.h>
+........
+........
+#include <fcntl.h>
+int main()
+{
+    int fd;
+    umask(0026);
+    fd = open("test.txt",O_RDWR | O_CREAT,0666);
+    if(fd < 0)
+        perror("open");
+    return 0;
+}
+则生成的test.txt文件的权限是：666&(~026)结果是：- rw- r-- ---.
+如果没有umask(0026);这条语句，则生成的test.txt文件的权限是：666&(~022)结果是：- rw- r-- r--
+注：open函数的mode参数只有在创建文件时才有效。
+----------------------------------------------------------------------------------------------------------------------------------------
+umask返回值实例：
+#include<stdio.h>
+#include<sys/stat.h>
+#include <fcntl.h>
+void main()
+{
+int fd;
+int a,b;
+a = umask(0);//当前umask值设置为0，先前umask值默认为0022
+printf("%o\n",a);//打印值为先前的umask值，即22(八进制)
+b = umask(a);//设置当前umask值为a=22，返回值为先前值0
+printf("%o\n",b);//0
+printf("%o\n",umask(0026));//当前26，返回值先前22
+printf("%o\n",umask(0066));//当前66，返回值先前26
+fd = open("22test22.txt",O_RDWR | O_CREAT,0666);
+if(fd < 0)
+   perror("open"); 
+}
+--------------------
+输出为:
+22
+0
+22
+26

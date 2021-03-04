@@ -1,0 +1,130 @@
+是由Init() 模块到 do_clone_udisk模块的：
+manage_handle.Start(); [freyr.cc]    ------->   register_proto();[manage_handle.cc]   ------->   REGISTE_PROTO_HANDLER(g_context->manage_handle()->loop(),
+                        ucloud::udisk::CLONE_INNER_REQUEST, CloneUDiskHandle); [register_proto.cc]   ------>   virtual void EntryInit(const uevent::ConnectionUeventPtr& conn,
+                         ucloud::UMessage* um) [clone_udisk.h]  ------->  void CloneUDiskHandle::EntryInit(const uevent::ConnectionUeventPtr& conn,
+                                 ucloud::UMessage* um) [clone_udisk.cc]  ------->   handle->Start(um) [clone_udisk.cc] ------>   void DoCloneUDisk::Start(ucloud::UMessage *um)  [do_clone_udisk.cc]------>
+                         bool DoCloneUDisk::GetDstLCInfo() [do_clone_udisk.cc] ------> void DoCloneUDisk::EntryGetDstLCInfo(ucloud::UMessage *um) [do_clone_udisk.cc] ------> bool DoCloneUDisk::GetArkInfo() [do_clone_udisk.cc]
+                         ------> void DoCloneUDisk::EntryGetArkInfo(ucloud::UMessage *um) [do_clone_udisk.cc] ------> bool DoCloneUDisk::CloneLogin() [do_clone_udisk.cc] ------>void DoCloneUDisk::EntryCloneLogin(uevent::ConnectorUeventPtr ark_connector,
+                                   ucloud::UMessage *um) [do_clone_udisk.cc] -------> bool DoCloneUDisk::InsertCloneTask() [do_clone_udisk.cc] ------> void DoCloneUDisk::EntryInsertCloneTask(ucloud::UMessage *um) [do_clone_udisk.cc]------> Finish(0, "")[do_clone_udisk.cc 522] ----->
+                        void DoCloneUDisk::Finish(uint32_t retcode, const std::string &message) ------>
+
+
+
+ping ark: p2p模型clone：
+
+manage_handle.Start(); [freyr.cc] ------> loop_->RunEvery(g_context->config()->ping_ark_interval(),
+                  std::bind(&ManageHandle::PingArk, this)) [manage_handle.cc] -----> void ManageHandle::PingArk() [manage_handle.cc] ------> void PingArkHandle::Start() [ping_ark.cc] ------> void PingArkHandle::PingArk() [ping_ark.cc] ------> void PingArkHandle::EntryPingArk(ucloud::UMessage *um) [ping_ark.cc] ---
+                  ----> handle->Start(chrono_id); [ping_ark.cc 121] ------>  void HelaCloneHandle::Start(const std::string &chrono_id) [hela_clone.cc] ------>case ucloud::utimemachine::HELA_CLONE_START:  // 0-克隆开始
+      assert(session.hela_status == ucloud::utimemachine::HELA_STATUS_CLONING);
+      DispatchCloneJob(job, HelaCloneJob::STATUS_PREPARE); [hela_clone.cc 41] ------> void HelaCloneHandle::DispatchCloneJob(HelaCloneJob *job, int status) [hela_clone.cc 81] ------> HandleJob(HELA_HANDLE_CLONE_PREPARE, job) [hela_clone.cc 94] ------> void HelaHandle::HandleJob(uint32_t type, HelaJob *job) [ hela_handle.cc 85]--
+      ------> handle->EntryInit(job) [hela_handle.cc 88]  ------> void HelaClonePrepareHandle::EntryInit(void *msg) [hela_clone_prepare.cc] ------> void HelaClonePrepareHandle::UpdateStartTick() [hela_clone_prepare.cc 102-->109] ------> void HelaClonePrepareHandle::EntryUpdateStartTick(ucloud::UMessage *um) [hela_clone_prepare.cc 159 --> 166]--
+      ------> GetShardRouter() [hela_clone_prepare.cc 185 --> 188] ------> void HelaClonePrepareHandle::EntryGetShardRouter(ucloud::UMessage *um) [hela_clone_prepare.cc 214 --> 221] ------> void HelaClonePrepareHandle::GetLCInfo() [hela_clone_prepare.cc 263 --> 266] ------> void HelaClonePrepareHandle::EntryGetLCInfo(ucloud::UMessage *um) [hela_clone_prepare.cc 291 --> 298]--
+      ------> void HelaClonePrepareHandle::CalculateRoute() [hela_clone_prepare.cc 342 --> 345 计算disk在chunk的分布情况] ------> void HelaClonePrepareHandle::LoginIdun() [hela_clone_prepare.cc 449 --> 452] ------> void HelaClonePrepareHandle::EntryLoginIdun(ucloud::UMessage *um) [hela_clone_prepare.cc 490 --> 497] ------> void HelaClonePrepareHandle::Finish() [hela_clone_prepare.cc 513 --> 516] --
+      ------> for (uint32_t hela_id : login_helas) DispatchCloneJob(job); [hela_clone_prepare.cc 585 多次] ------> void HelaCloneHandle::DispatchCloneJob(HelaCloneJob *job, int status) [hela_clone.cc 81] ------> HandleJob(HELA_HANDLE_CLONE_LOGIN, job); [hela_clone.cc 98] ------> void HelaHandle::HandleJob(uint32_t type, HelaJob *job) [hela_handle.cc 85] ------>  handle->EntryInit(job) [hela_handle.cc 88] --
+      ------> void HelaCloneLoginHandle::EntryInit(void *msg) [hela_clone_login.cc 32] ------> void HelaCloneLoginHandle::DoLogin() [hela_clone_login.cc 114 --> 117] ------> void HelaCloneLoginHandle::EntryLogin(ucloud::UMessage *um) [hela_clone_login.cc 225 --> 232  多次] ------> void HelaCloneLoginHandle::UpdateHelaChunk() [hela_clone_login.cc 248 --> 251] ------> void HelaCloneLoginHandle::EntryUpdateHelaChunk(ucloud::UMessage *um) [hela_clone_login.cc 287 --> 294  EntryUpdateHelaChunk 从这里到hela_clone_ping.cc 149 流程有多次循环直到hela clone ping all done ]--
+      ------> void HelaCloneLoginHandle::Finish() [hela_clone_login.cc 313 --> 316 ] ------> DispatchCloneJob(job_, HelaCloneJob::STATUS_PING) [会有多次 应该是有多个pc分片所以有多次, 进入ping流程 hela_clone_login.cc 353 ] ------> void HelaCloneHandle::DispatchCloneJob(HelaCloneJob *job, int status) [hela_clone.cc 81] ------> HandleJob(HELA_HANDLE_CLONE_PING, job) [hela_clone.cc 106] ------> void HelaHandle::HandleJob(uint32_t type, HelaJob *job) [hela_handle.cc 85 ] ------> handle->EntryInit(job) [hela_handle.cc 88] --     
+      ------> void HelaClonePingHandle::EntryInit(void *msg) [hela_clone_ping.cc 32] ------> void HelaClonePingHandle::DoPing() [hela_clone_ping.cc 108 --> 111] ------> void HelaClonePingHandle::EntryPing(ucloud::UMessage *um) [hela_clone_ping.cc 149 --> 156 ] ------> void HelaClonePingHandle::Finish() [hela_clone_ping.cc 195 --> 198 ] ------> hela clone ping all done后转入done流程  DispatchCloneJob(job_, HelaCloneJob::STATUS_DONE) [hela_clone_ping.cc 251]  ------> void HelaCloneHandle::DispatchCloneJob(HelaCloneJob *job, int status) [hela_clone.cc 81] ------> HandleJob(HELA_HANDLE_CLONE_DONE, job) [hela_clone.cc 110] --
+      ------> void HelaHandle::HandleJob(uint32_t type, HelaJob *job) [hela_handle.cc 85] ------> handle->EntryInit(job) [hela_handle.cc 88] ------> void HelaCloneDoneHandle::EntryInit(void *msg) [hela_clone_done.cc 34] ------> void HelaCloneDoneHandle::UpdateProgress() [hela_clone_done.cc 82 --> 85] ------> void HelaCloneDoneHandle::EntryUpdateProgress(ucloud::UMessage *um) [hela_clone_done.cc 135 --> 142] ------> void HelaCloneDoneHandle::IdunFinish() [hela_clone_done.cc 163 --> 166] ------> void HelaCloneDoneHandle::EntryIdunFinish(ucloud::UMessage *um) [hela_clone_done.cc 194 --> 201] ------> void HelaCloneDoneHandle::Finish() [hela_clone_done.cc 228 --> 231] --
+      ------>  DispatchCloneJob(job_, HelaCloneJob::STATUS_EXPIRED) [hela_clone_done.cc 252 转入expired流程] ------> void HelaCloneHandle::DispatchCloneJob(HelaCloneJob *job, int status) [hela_clone.cc 81] ------> HandleJob(HELA_HANDLE_CLONE_EXPIRED, job) [hela_clone.cc 114 ] ------> void HelaHandle::HandleJob(uint32_t type, HelaJob *job) [hela_handle.cc 85] ------>  handle->EntryInit(job) [hela_handle.cc 88] ------> void HelaCloneExpiredHandle::EntryInit(void *msg) [hela_clone_expired.cc 29 ] ------> void HelaCloneExpiredHandle::QueryExpired() [hela_clone_expired.cc 73 --> 76 ] ------> void HelaCloneExpiredHandle::EntryQueryExpired(ucloud::UMessage *um) [hela_clone_expired.cc 104 --> 111] --
+      ------> void HelaCloneExpiredHandle::Finish() [hela_clone_expired.cc 134 --> 137] --> DispatchCloneJob(job_, HelaCloneJob::STATUS_LOGOUT) [转入logout流程 hela_clone_expired.cc 158] ------> void HelaCloneHandle::DispatchCloneJob(HelaCloneJob *job, int status) [hela_clone.cc 81] ------> HandleJob(HELA_HANDLE_CLONE_LOGOUT, job) [hela_clone.cc 122 ] ------> void HelaHandle::HandleJob(uint32_t type, HelaJob *job) [hela_handle.cc 85] ------>  handle->EntryInit(job) [hela_handle.cc 88] ------> void HelaCloneLogoutHandle::EntryInit(void *msg) [hela_clone_logout.cc 31] ------> 这里有很多种情况： 情况 1 ：void HelaCloneLogoutHandle::LogoutIdun()  [hela_clone_logout.cc 69 --> 110] ------> void HelaCloneLogoutHandle::EntryLogoutIdun(ucloud::UMessage *um) [hela_clone_logout.cc 138 --> 145] --
+      ------> void HelaCloneLogoutHandle::Finish() [hela_clone_logout.cc 161 --> 237] ------>  情况1： void HelaCloneLogoutHandle::Finish1() [hela_clone_logout.cc 239 --> 245] ------>  DispatchCloneJob(job_, HelaCloneJob::STATUS_FINISH) [如果没有需要logout的hela, 则直接转入finish流程 hela_clone_logout.cc 278]          
+                                                                                               情况2： void HelaCloneLogoutHandle::Finish2() [hela_clone_logout.cc 241 --> 285] ------>  DispatchCloneJob(job_, HelaCloneJob::STATUS_FINISH) [ 所有hela logout完成, 包括成功和失败, 转入finish流程 hela_clone_logout.cc 318] ------> void HelaCloneHandle::DispatchCloneJob(HelaCloneJob *job, int status) [hela_clone.cc 81] ------> HandleJob(HELA_HANDLE_CLONE_FINISH, job) [hela_clone.cc 126] ------> void HelaHandle::HandleJob(uint32_t type, HelaJob *job) [hela_handle.cc 85 ] ------> handle->EntryInit(job) [hela_handle.cc 88] ------> void HelaCloneFinishHandle::EntryInit(void *msg) [hela_clone_finish.cc 32] ------> void HelaCloneFinishHandle::UpdateProgress() [hela_clone_finish.cc 72 --> 75] ------> void HelaCloneFinishHandle::EntryUpdateProgress(ucloud::UMessage *um) [hela_clone_finish.cc 131 --> 138] --
+      ------> void HelaCloneFinishHandle::Finish() [hela_clone_finish.cc 163 --> 166] ------> DispatchCloneJob(job_, HelaCloneJob::STATUS_END) [STATUS_END克隆结束 hela_clone_finish.cc 185 ] ------> void HelaCloneHandle::DispatchCloneJob(HelaCloneJob *job, int status) [hela_clone.cc 81] ------>   job->status = HelaCloneJob::STATUS_END1 [hela_clone.cc  130] ------> HandleJob(HELA_HANDLE_CLONE_END, job) [hela_clone.cc  133] ------>  void HelaHandle::HandleJob(uint32_t type, HelaJob *job) [hela_handle.cc 85] ------> handle->EntryInit(job) [hela_handle.cc 88] ------>  void HelaCloneEndHandle::EntryInit(void *msg) [hela_clone_end.cc 33] ------> 有多种情况 STATUS_END1 ： void HelaCloneEndHandle::CloneLogout() [hela_clone_end.cc 75 --> 88] ------> void HelaCloneEndHandle::EntryCloneLogout(ucloud::UMessage *um) [hela_clone_end.cc 113--> 120 ] ------> void HelaCloneEndHandle::Finish() [hela_clone_end.cc 134 --> 306]------> void HelaCloneEndHandle::Finish1() [hela_clone_end.cc 308 --> 316]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       STATUS_END2 ：UpdateMountInfo() [hela_clone_end.cc 82] ------> void HelaCloneEndHandle::UpdateMountInfo() [hela_clone_end.cc 185] ------> void HelaCloneEndHandle::EntryUpdateMountInfo(ucloud::UMessage *um) [hela_clone_end.cc 217 --> 224] ------> void HelaCloneEndHandle::UpdateCloneTask() [hela_clone_end.cc 238 --> 241] ------> void HelaCloneEndHandle::EntryUpdateCloneTask(ucloud::UMessage *um) [hela_clone_end.cc 282 --> 289] 
+
+
+ ping ark非p2p模型clone:
+
+ std::shared_ptr<PushDataHandle> handle =std::make_shared<PushDataHandle>(); handle->Start(chrono_id); [ping_ark.cc 125] ------> 
+
+
+ 
+InitHela()模块：
+
+manage_handle.Start(); [freyr.cc] ------>  InitHela() [manage_handle.cc 56] ------> void ManageHandle::InitHela() [manage_handle.cc 71] ------> AddHelaJob(new HelaJob(HELA_JOB_FETCH_ROUTE))[定时更新hela route manage_handle.cc 77] ------> AddHelaJob(new HelaJob(HELA_JOB_REPORTER)) [定时扫描hela session manage_handle.cc 79] ------> loop_->RunEvery(g_context->config()->schedule_hela_job_interval(),std::bind(&ManageHandle::ScheduleHelaJob, this)) [启动定时任务 manage_handle.cc 81] ------> void ManageHandle::ScheduleHelaJob() [定时任务 manage_handle.cc 107] ------> handle->Start() [manage_handle.cc 121] ------> void HelaScheduleHandle::Start() [hela_schedule.cc 21] ------> 开始定时执行任务
+                  
+
+Init() 模块： 
+
+manage_handle.Start(); [freyr.cc] ------> Init() [manage_handle.cc 55] ------> void ManageHandle::Init() [manage_handle.cc 65] ------> handle->Start() [manage_handle.cc 68] ------> void LoadMetaHandle::Start() [load_meta.cc 29] ------> bool LoadMetaHandle::GetMetaData() [load_meta.cc 36] ------> void LoadMetaHandle::EntryGetMetaData(ucloud::UMessage *um) [load_meta.cc 60 --> 68] ------>bool LoadMetaHandle::LoadCloneTask() [load_meta.cc 84 --> 91] ------> void LoadMetaHandle::EntryLoadCloneTask(ucloud::UMessage *um) [load_meta.cc 122 --> 130] ------> void LoadMetaHandle::ResumeCloneTask() [load_meta.cc 145 --> 148] ------> handle->Start(&msg) [load_meta.cc 178] ------> void DoCloneUDisk::Start(ucloud::UMessage *um) [do_clone_udisk.cc 34]       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2852 [20210205 16:21:50.979091Z ][30952 ][INFO  ]HelaCloneLogoutHandle(73973) desc:hela clone logout, chrono_id:bsi-hx0n0crl_v_1_19700101080000__1612513295_593, hela_id:0 - hela_clone_logout.cc:103
+2853 [20210205 16:21:50.979134Z ][30952 ][INFO  ]HelaCloneLogoutHandle(73974) desc:hela clone logout, chrono_id:bsi-hx0n0crl_v_1_19700101080000__1612513295_593, hela_id:1 - hela_clone_logout.cc:103
+2854 [20210205 16:21:50.979155Z ][30952 ][INFO  ]HelaCloneLogoutHandle(73975) desc:hela clone logout, chrono_id:bsi-hx0n0crl_v_1_19700101080000__1612513295_593, hela_id:2 - hela_clone_logout.cc:103
+2855 [20210205 16:21:50.979174Z ][30952 ][INFO  ]HelaCloneLogoutHandle(73976) desc:hela clone logout, chrono_id:bsi-hx0n0crl_v_1_19700101080000__1612513295_593, hela_id:3 - hela_clone_logout.cc:103
+2856 [20210205 16:21:50.979213Z ][30952 ][INFO  ]HelaCloneLogoutHandle(73977) desc:hela clone logout, chrono_id:bsi-hx0n0crl_v_1_19700101080000__1612513295_593, hela_id:4 - hela_clone_logout.cc:103
+2857 [20210205 16:21:50.979233Z ][30952 ][INFO  ]HelaCloneLogoutHandle(73978) desc:hela clone logout, chrono_id:bsi-hx0n0crl_v_1_19700101080000__1612513295_593, hela_id:5 - hela_clone_logout.cc:103
+2858 [20210205 16:21:50.989805Z ][30952 ][INFO  ]HelaCloneLogoutHandle(73973) desc:hela clone logout succ, chrono_id:bsi-hx0n0crl_v_1_19700101080000__1612513295_593, hela_id:0 - hela_clone_logout.cc:303
+2859 [20210205 16:21:50.989828Z ][30952 ][INFO  ]HelaCloneLogoutHandle(73978) desc:hela clone logout succ, chrono_id:bsi-hx0n0crl_v_1_19700101080000__1612513295_593, hela_id:5 - hela_clone_logout.cc:303
+2860 [20210205 16:21:50.990012Z ][30952 ][INFO  ]HelaCloneLogoutHandle(73974) desc:hela clone logout succ, chrono_id:bsi-hx0n0crl_v_1_19700101080000__1612513295_593, hela_id:1 - hela_clone_logout.cc:303
+2861 [20210205 16:21:50.990832Z ][30952 ][INFO  ]HelaCloneLogoutHandle(73975) desc:hela clone logout succ, chrono_id:bsi-hx0n0crl_v_1_19700101080000__1612513295_593, hela_id:2 - hela_clone_logout.cc:303
+2862 [20210205 16:21:50.991331Z ][30952 ][INFO  ]HelaCloneLogoutHandle(73977) desc:hela clone logout succ, chrono_id:bsi-hx0n0crl_v_1_19700101080000__1612513295_593, hela_id:4 - hela_clone_logout.cc:303
+2863 [20210205 16:21:50.991977Z ][30952 ][INFO  ]HelaCloneLogoutHandle(73976) desc:hela clone logout succ, chrono_id:bsi-hx0n0crl_v_1_19700101080000__1612513295_593, hela_id:3 - hela_clone_logout.cc:303
+2864 [20210205 16:21:50.991983Z ][30952 ][INFO  ]HelaCloneLogoutHandle(73976) desc:hela clone logout all done, chrono_id:bsi-hx0n0crl_v_1_19700101080000__1612513295_593 - hela_clone_logout.cc:314
+2865 [20210205 16:21:50.991990Z ][30952 ][INFO  ]HelaCloneFinishHandle(73979) desc:hela clone finish, chrono_id:bsi-hx0n0crl_v_1_19700101080000__1612513295_593 - hela_clone_finish.cc:59
+
+                                      
+
+
+type msgRepairChunk struct {
+	Action              string
+	ConcurrentRepairNum uint32
+	ChunkCapacity       string
+	EmailReceiver       string
+	UDiskSetId          string
+	TestMode            uint32
+	BadChunkId          uint32
+
+}
+
+
+func (ctx *YmerAutoRunTestContext) YmerAutoTestRepairChunkRequest() interface{} {
+	RepairChunkParams := map[string][]string{
+			"Session":             {ctx.Base.Session},
+			"ChildSession":     {ctx.Base.ChildSession},
+			"Action":              {"RepairChunk"},
+			"ChunkCapacity":       {ctx.Repair_chunk.ChunkCapacity},
+			"ConcurrentRepairNum": {strconv.Itoa(int(ctx.Repair_chunk.ConcurrentRepairNum))},
+			"EmailReceiver":       {ctx.Common_params.EmailReceiver},
+			"UDiskSetId":          {ctx.Common_params.UDiskSetId},
+			"TestMode":            {strconv.Itoa(int(ctx.Common_params.TestMode))},
+	"BadChunkId":          {strconv.FormatUint(uint64(math.MaxUint32), 10)},
+
+	}
+
+	ctx.Base.INFOF("RepairChunkParams: %+v", PrettyPrint(RepairChunkParams))
+	var Rsp interface{}
+	Rsp = RepairChunk(RepairChunkParams)
+	ctx.Base.INFOF("Rsp : %+v", Rsp)
+	return Rsp
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

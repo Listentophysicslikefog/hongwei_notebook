@@ -1,0 +1,6 @@
+
+pthread_equal()函数：确认两个线程是否相同
+原型：int pthread_equal( pthread_t t1, pthread_t t2 );
+pthread_self()函数：返回当前线程的ID
+原型：pthread_t pthread_self();
+示例：if( !pthread_equal( pthread_self(), other_tid ) )    pthread_join( other_tid, NULL );

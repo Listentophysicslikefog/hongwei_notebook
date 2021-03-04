@@ -1,0 +1,16 @@
+## 192.168.150.123编译服务器编译Chaoseris项目
+mkdir如下几个文件夹：
+YOUR_HOME_DIR/goPro/chaoseris/src
+
+在如上的src目录下拉代码：
+git clone git@git.ucloudadmin.com:block/chaos.git  (master or morton_develop 分支）
+git clone git@git.ucloudadmin.com:block/uframework.git (master分支）
+
+uframework修改点：
+路径： YOUR_HOME_DIR/goPro/chaoseris/src/uframework/message/proto/Makefile
+将 GO = protoc -I ~/message/proto 修改为：GO = /tools/bin/protoc -I ~/message/proto
+执行：sh allow_alias.sh revert
+
+开始编译chaoseris项目：
+路径： YOUR_HOME_DIR/goPro/chaoseris/src/chaos
+编译： make all
