@@ -364,26 +364,13 @@ hb06 5000
 ./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/hn02/1101/host_info fast
 
 
+3005 ...... 3023 
 
+21. hb06 3005 3006  3007 3008 3009 3010                        1001    1200      4003  4004 4006               3012已经变更
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-17. hb06  1001    1200   3000 ...... 3023   4003  4004 4006  还未变更              3012已经变更
-
-./generate_freyr_conf.py hb06 3012 tcp raw ssd
-./generate_ip_list.py hb06 3012 
-./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/hb06/3012/host_info fast
+./generate_freyr_conf.py hb06 3005 tcp raw ssd
+./generate_ip_list.py hb06 3005 
+./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/hb06/3005/host_info fast
 
 
 
