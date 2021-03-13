@@ -1,0 +1,226 @@
+1. 用户没写数据还是有io
+
+虚机上有io读写和udisk 云盘没有什么关系
+
+2. ymer clone流程
+
+3. rssd才有pod概念
+
+4. 云盘性能问题
+
+rssd 先看我们后端服务是否出现问题，看该盘是否有对应的告警，然后先计算iops bw的上线 ，看延时 以及系统盘的相关数据，有可能系统盘会影响数据盘的性能 
+
+普通云盘只需要看我们后端服务是否出现问题，看该盘是否有对应的告警
+
+官网性时延能是4k的小io，我们需要看用户io大小以及用户的业务是否部署到系统盘上面的
+
+5. login fail问题
+
+看是否为脏数据，先看该盘是否有卸载以及删除记录，如果有那么应该是脏数据，如果没有那么去看资源账单记录
+
+看虚机是否还挂载着这块盘，如果主机还是挂载着这块盘那么这块盘一般就不是脏数据，
+
+6. 方舟arker
+
+方舟的ark --> nvmf_gate ---> udisk (udisk创建的盘作为方舟的本地盘使用，用来存储方舟数据的备份)
+
+
+
+
+
+
+
+
+
+
+
+首先关闭出现问题的set
+
+6. clone失败，看日志是hela节点问题，下线limax上面没有的ip，由于已经下线的机器抢注册zk导致正常的节点无法注册导致clone失败
+
+问题原因
+已经下线的udisk机器10.66.184.13 已经清理业务，改了带重装，
+机器故障导致服务器重启，自启动了watchdog ，重新拉起了hela服务, 
+昨晚 hd03 5018 hela服务变更，导致 /NS/udisk/set5018/hela/4 节点被 
+10.66.184.13 抢注册上了，导致正常的10.66.168.219上的hela服务不可用。
+
+优化措施：
+1. 服务器下线流程：（今天完成）
+   添加移除 /root/quick_watchdog/conf/watchdog.d/* 文件步骤，
+   保证所有业务进程不会被重新拉起 
+2. 服务变更流程：（今天完成）
+   检查变更后的服务进程注册的IP是否和入库的IP信息是否一致
+3. zk注册逻辑： （使用重构的zk库改造）
+   后续使用顺序节点注册，保证不重复
+
+
+
+
+
+
+
+
+
+
+   1. metaserver给ark access注册vdisk
+
+   [20210308 18:24:02.751782Z ][ 8999 ][INFO  ]head {
+  version: 2
+  magic_flag: 305400199
+  random_num: 761169819
+  flow_no: 94959
+  session_no: "hongwei2021_1615199042"
+  message_type: 162832
+  worker_index: 0
+  tint_flag: false
+  source_entity: 0
+  dest_entity: 94959
+  call_purpose: "ApplyArk"
+}
+body {
+  [ucloud.utimemachine.access_apply_udataark_response] {
+    rc {
+      retcode: 0
+      error_message: ""
+    }
+  }
+}
+ - do_create_udisk.cc:261
+
+login 失败，本次问题是由于方舟access问题导致原本metaserver应该注册vdisk到hn08但是注册到了hn02
+导致方舟找vdisk失败所以clone失败
+
+ [20210308 18:24:02.915214Z ][ 8036 ][INFO  ]connect to 10.189.149.135:30000 success - manage_handle.cc:126
+[20210308 18:24:02.918445Z ][ 8036 ][INFO  ]head {
+  version: 2
+  magic_flag: 305400199
+  random_num: 2042810517
+  flow_no: 1471861
+  session_no: "hongwei2021_1615199042"
+  message_type: 161309
+  worker_index: 0
+  tint_flag: false
+  source_entity: 0
+  dest_entity: 1471861
+  call_purpose: "CloneLogin"
+}
+body {
+  [ucloud.utimemachine.chrono_clone_login_pb_response] {
+    rc {
+      retcode: -1
+      error_message: ""
+    } 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    def checkip(ip):
+  p = re.compile(
+      '^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$')
+  if p.match(ip):
+      return True
+  else:
+      return False
+
+
+def main():
+    if len(sys.argv[1:]) < 2:
+        help()
+        sys.exit()
+
+    region = sys.argv[1]
+    set_id = sys.argv[2]
+
+    host_file = os.path.join(os.environ['HOME'], "limax", "udisk",
+                             "region", region, set_id, "host_info")
+    vm_file = os.path.join(os.environ['HOME'], "limax", "udisk",
+                           "region", region, set_id, "vm_info")
+    p2p_file = os.path.join(os.environ['HOME'], "limax", "udisk",
+                           "region", region, set_id, "p2p_info")
+    host_ips = []
+    odin_ips = []
+    metaserver_ips = []
+    buddy_ips = []
+    loki_ips = []
+    thor_ips = []
+    idun_ips = []
+    host_info = open(host_file).read().split("\n")
+    vm_info = open(vm_file).read().split("\n")
+    for line in host_info:
+        line = line.strip()
+        if checkip(line) == False:
+            continue
+        host_ips.append(line)
+    for line in vm_info:
+        line_map = line.split()
+        if len(line_map) == 0:
+            continue
+        if line_map[0] == "metaserver":
+            metaserver_ips.append(line_map[1])
+        if line_map[0] == "buddy":
+            buddy_ips.append(line_map[1])
+        if line_map[0] == "loki":
+            loki_ips.append(line_map[1])
+        if line_map[0] == "thor":
+            thor_ips.append(line_map[1])
+        if line_map[0] == "odin":
+            odin_ips.append(line_map[1])
+    f = open("host_ips", 'w')
+    for line in host_ips:
+      f.write(line)
+      f.write("\n")
+    f.close()
+    f = open("metaserver_ips", 'w')
+    for line in metaserver_ips:
+      f.write(line)
+      f.write("\n")
+    f.close()
+    f = open("buddy_ips", 'w')
+    for line in buddy_ips:
+      f.write(line)
+      f.write("\n")
+    f.close()
+    f = open("loki_ips", 'w')
+    for line in loki_ips:
+      f.write(line)
+      f.write("\n")
+    f.close()
+    f = open("thor_ips", 'w')
+    for line in thor_ips:
+      f.write(line)
+      f.write("\n")
+    f.close()
+    f = open("odin_ips", 'w')
+    for line in odin_ips:
+      f.write(line)
+      f.write("\n")
+    f.close()
+
+    if os.path.exists(p2p_file):
+      p2p_info = open(p2p_file).read().split("\n")
+      for line in p2p_info:
+        line_map = line.split()
+        if len(line_map) == 0:
+            continue
+        if line_map[0] == "idun":
+            idun_ips.append(line_map[1])
+      f = open("idun_ips", 'w')
+      for line in idun_ips:
+        f.write(line)
+        f.write("\n")
+      f.close()
+    # 输出host_ips的hostname
+    os.system("pssh -l root -h host_ips -P hostname")
+

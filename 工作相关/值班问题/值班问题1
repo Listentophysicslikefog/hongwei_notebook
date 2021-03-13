@@ -19,3 +19,13 @@ iptables 相关： https://pdf.us/2018/08/03/1685.html
 
 
 RDMA监控： https://ushare.ucloudadmin.com/pages/viewpage.action?pageId=25539826
+
+日报： https://git.ucloudadmin.com/block/udisk_work_report/-/issues/37
+
+docker教程： https://git.ucloudadmin.com/block/udisk_doc/-/wikis/develop_spec
+
+
+官方文档  rssd压测方法 ： https://docs.ucloud.cn/udisk/introduction/performance/account
+
+盘做文件系统： https://docs.ucloud.cn/udisk/userguide/format/linux
+

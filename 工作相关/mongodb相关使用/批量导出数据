@@ -1,0 +1,3 @@
+/usr/bin/mongoexport -h 172.27.24.98 --port=37018 -d udisk -c t_lc_info -f extern_id --type=csv -q '{"status": 3}' -o udisk.drity
+
+// 批量导出  t_lc_info 表里面 extern_id  status状态为3的   extern_id  存放到 udisk.drity
