@@ -22,7 +22,7 @@ ssh root@172.27.118.195
 clone测试机器: ssh root@172.27.118.195
 /root/ymer_auto_test_hn06/scripts/batch_clone.sh  发起测试
 
-
+  全部发布的脚本： release_all.sh
 
 # 编译后拷贝
 
@@ -58,7 +58,7 @@ cd message  ./dep-rapid-make.sh
 https://git.ucloudadmin.com/block/udisk_doc/-/wikis/Ymer%E9%95%9C%E5%83%8FP2P%E5%88%86%E5%8F%91%E7%B3%BB%E7%BB%9F%E9%83%A8%E7%BD%B2%E6%94%BB%E7%95%A5
 
 
-
+./node-tester.js --host 10.189.149.135 --port 6000 --key ucloud.utimemachine.koala_access_clone_netdisk_image_request vdisk_id="hongwei_hn08220G_image" ubs_id="bsr-4f20cjbm" vdisk_cap=220 top_oid="50140849" oid="55741713"
 
 
 
@@ -116,3 +116,62 @@ ssh root@172.27.118.195 -i id_rsa
 ssh 172.27.118.195    //当前机器是什么权限登录172.27.118.195就是什么权限登录
 如果在0.0.0.机器的用户权限是 hongwei.liu  那么执行上面的命令相当于 ssh hongwei.liu@172.27.118.195
  
+
+
+
+
+
+目前熟悉ymer相关流程感觉存在的难点：
+
+1. 每一个ymer模块里面有很多的文件，不清楚这个文件是什么作用，只能通过文件名字去猜测(准备去问一下罗唐哥，介绍每一个文件的大体作用是什么)
+
+2. ymer相关文档只有一个时序调度图以及每个模块之间粗略的交互，阅读难度较大，对于细化每个模块内部的具体函数调用以及功能没有太大帮助
+
+3. 在看相关代码的时候不知道类里面的结构体以及变量的作用含义以及在clone过程中的状态转换
+
+4. 各个模块之间的交互点还不清楚比如fryer如何将clone请求下发给hela
+
+5. fryer、hela管理上下文模块的变量以及结构体信息不太清晰，管理上下文模块在clone的流程非常重要
+
+6. 部分定时任务以及注册的回调函数比较杂乱不清楚在什么时候调用是怎么调用的
+
+
+
+一.  熟悉ymer相关模块计划：
+
+阶段一：熟悉整体clone流程的每一个模块需要做什么有什么功能以及粗略的代码调用流程
+
+
+
+1 Access模块      了解Access在Clone的过程中需要做什么(查镜像原盘、选set)
+
+
+2 Metaserver模块  了解Metaserver在Clone的过程中需要做什么(创建盘、向方舟注册vdisk、选Fryer)
+
+
+3. Fryer模块(目前clone流程的函数调用流程已经梳理出来，通过函数名函数所在的行数以及文件名和函数的调用来梳理)
+
+p2p模型clone：方舟向chunk推数据
+
+非p2p模型clone：Fryer向hela分发任务，由hela向chunk、ark读取数据后写到hela所在的chunk上面
+
+
+4. Hela模块：向chunk、ark读取数据后写到hela所在的本地chunk(由于测试chunk限制hela队列所以目前在看hela读写chunk相关流程)
+
+
+
+5. Idun模块：管理clone的进度(暂时还未看)
+
+
+6. 所有模块完整的clone日志流程梳理
+
+阶段二：熟悉整体clone流程的详细代码
+
+
+
+
+二、 c++相关知识学习
+ 
+ 1. 学习Effective c++ 以及c++相关基础知识  目前已经看完1/3
+
+ 2. muduo net库学习 目前已看完1/6

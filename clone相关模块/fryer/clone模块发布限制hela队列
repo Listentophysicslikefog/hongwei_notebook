@@ -1,0 +1,139 @@
+clone模块发布： 在hn02 管理机上面执行 ssh root@172.27.5.103
+
+
+1. taibei02 : 5000  5001 5002  5003 5004     5005  5006 5007 5008     全部验证 
+
+3002  3004    3005 3006   hela idun freyr 
+
+./generate_idun_conf.py taibei02 4000 tcp raw ssd   //生成配置
+./generate_hela_conf.py taibei02 4000 tcp raw ssd
+./generate_freyr_conf.py taibei02 4000 tcp raw ssd
+
+./generate_ip_list.py taibei02 4000    //生成所有模块的ip
+./release.sh idun 21.03.12-6cc73fd-centos7-x86_64 idun_ips fast
+./release.sh hela 21.03.12-6cc73fd-centos7-x86_64 /root/limax/udisk/region/taibei02/4000/host_info fast
+./release.sh freyr 21.03.12-6cc73fd-centos7-x86_64 /root/limax/udisk/region/taibei02/4000/host_info fast
+
+ 4000 4001 4002 1000 freyr
+
+ 3001  3003 3000   
+
+
+
+#####################################################
+国外
+######################################################
+最新版本，更改日志，限制hela队列 
+
+freyr-21.03.23-482fb97-centos7-x86_64    hela-21.03.23-482fb97-centos7-x86_64    idun-21.03.23-482fb97-centos7-x86_64
+
+1. pc01  1000 无p2p    
+
+./generate_idun_conf.py taibei02 4000 tcp raw ssd   //生成配置
+./generate_hela_conf.py taibei02 4000 tcp raw ssd
+./generate_freyr_conf.py taibei02 4000 tcp raw ssd
+
+./generate_ip_list.py taibei02 4000    //生成所有模块的ip
+./release.sh idun 21.03.23-482fb97-centos7-x86_64 idun_ips fast
+./release.sh hela 21.03.23-482fb97-centos7-x86_64 /root/limax/udisk/region/taibei02/4000/host_info fast
+./release.sh freyr 21.03.23-482fb97-centos7-x86_64 /root/limax/udisk/region/taibei02/4000/host_info fast
+
+
+2. pc02  无p2p
+
+
+3. la01  3200
+
+
+./generate_idun_conf.py london01 3200 tcp raw ssd   //生成配置
+./generate_hela_conf.py london01 3200 tcp raw ssd
+./generate_freyr_conf.py london01 3200 tcp raw ssd
+
+./generate_ip_list.py london01 3200    //生成所有模块的ip
+./release.sh idun 21.03.23-482fb97-centos7-x86_64 idun_ips fast
+./release.sh hela 21.03.23-482fb97-centos7-x86_64 /root/limax/udisk/region/london01/3200/host_info fast
+./release.sh freyr 21.03.23-482fb97-centos7-x86_64 /root/limax/udisk/region/london01/3200/host_info fast
+
+
+4. mumbai01  3000 
+
+
+
+5. london01 3200 3201    验证
+
+./generate_idun_conf.py london01 3200 tcp raw ssd   //生成配置
+./generate_hela_conf.py london01 3200 tcp raw ssd
+./generate_freyr_conf.py london01 3200 tcp raw ssd
+
+./generate_ip_list.py london01 3200    //生成所有模块的ip
+./release.sh idun 21.03.23-482fb97-centos7-x86_64 idun_ips fast
+./release.sh hela 21.03.23-482fb97-centos7-x86_64 /root/limax/udisk/region/london01/3200/host_info fast
+./release.sh freyr 21.03.23-482fb97-centos7-x86_64 /root/limax/udisk/region/london01/3200/host_info fast
+
+
+6. wdc02   3200 3201  3202   变更验证完成
+
+
+./generate_idun_conf.py wdc02 3202 tcp raw ssd   //生成配置
+./generate_hela_conf.py wdc02 3202 tcp raw ssd
+./generate_freyr_conf.py wdc02 3202 tcp raw ssd
+
+./generate_ip_list.py wdc02 3202    //生成所有模块的ip
+./release.sh idun 21.03.23-482fb97-centos7-x86_64 idun_ips fast
+./release.sh hela 21.03.23-482fb97-centos7-x86_64 /root/limax/udisk/region/wdc02/3202/host_info fast
+./release.sh freyr 21.03.23-482fb97-centos7-x86_64 /root/limax/udisk/region/wdc02/3202/host_info fast
+
+
+
+7. ap02  3200 3201 3202 3203 
+
+
+./generate_idun_conf.py ap02 3202 tcp raw ssd   //生成配置
+./generate_hela_conf.py ap02 3202 tcp raw ssd
+./generate_freyr_conf.py ap02 3202 tcp raw ssd
+
+./generate_ip_list.py ap02 3202    //生成所有模块的ip
+./release.sh idun 21.03.23-482fb97-centos7-x86_64 idun_ips fast
+./release.sh hela 21.03.23-482fb97-centos7-x86_64 /root/limax/udisk/region/ap02/3202/host_info fast
+./release.sh freyr 21.03.23-482fb97-centos7-x86_64 /root/limax/udisk/region/ap02/3202/host_info fast
+
+
+
+
+
+8.    jakarta02    3000 3001   4000  3200  3201  3202   验证
+
+
+./release_all.sh jakarta02 3200 3202
+
+
+
+
+
+9. hochiminh01    5000   5001   5002   验证完成
+   
+
+
+
+
+8. ap03 3000 
+
+
+10.66.134.72	hd08-udisk-set5001-2	udisk	chunk-rssd	cn-sh2	cn-sh2-01	HD08
+  
+
+10.66.135.74   未知
+
+10.66.135.69
+
+
+10.66.135.138	hd03-udisk-set5004-3	udisk	chunk-rssd	cn-sh2	cn-sh2-01	HD08	
+
+10.66.135.72
+
+10.66.135.75
+
+
+
+
+

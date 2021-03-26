@@ -106,7 +106,7 @@ void Channel::handleEventWithGuard(Timestamp receiveTime)
   {
     if (readCallback_) readCallback_(receiveTime);   //我们调用回调函数
   }
-  if (revents_ & POLLOUT)  //POLLOUT 表示可写事件发生
+  if (revents_h & POLLOUT)  //POLLOUT 表示可写事件发生
   {
     if (writeCallback_) writeCallback_();   //调用可写事件的回调函数
   }

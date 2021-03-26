@@ -20,15 +20,23 @@ rssd 先看我们后端服务是否出现问题，看该盘是否有对应的告
 
 看虚机是否还挂载着这块盘，如果主机还是挂载着这块盘那么这块盘一般就不是脏数据，
 
+[ERROR ]Transport endpoint is not connected (errno=107) sendmsg error, ret: -1 - fd_dispatcher.cc:276  //这个一般是gate在重启，先确认是否为测试集群的，如果为测试集群的更改 
+
+/root/udisk/block_gate_proxy/conf/block_gate_proxy.ini
+/root/udisk/block_gate/conf/block_gate.ini
+
+的odin配置，随便把odin更改为一个无效的即可，重启block_gate_proxy.ini即可
+
+
 6. 方舟arker
 
 方舟的ark --> nvmf_gate ---> udisk (udisk创建的盘作为方舟的本地盘使用，用来存储方舟数据的备份)
 
 
+7. 多点挂载让主机处理，把挂载在错误的宿主机上面虚机的盘卸载掉就可以了
 
 
-
-
+内核版本看下 uname -r
 
 
 
@@ -52,6 +60,36 @@ rssd 先看我们后端服务是否出现问题，看该盘是否有对应的告
    检查变更后的服务进程注册的IP是否和入库的IP信息是否一致
 3. zk注册逻辑： （使用重构的zk库改造）
    后续使用顺序节点注册，保证不重复
+
+
+
+
+
+
+10.66.188.203 这个是bond 的IP 还是管理IP， cmdb 里没有搜到
+
+李丙洋(bruce.li) 3-25 11:34:03
+[root@hn02-udisk-support tool]# ./get_gate_config.py 10.66.188.203  17800
+uhost_login_ip: "10.66.188.197"
+rc {
+  retcode: 0
+  error_message: "success"
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -113,13 +151,18 @@ body {
 
 
 
+9. 设置超卖
 
+先更改数据库然后重启metaserver
 
+超卖20%  就是超卖总共的容量的20%
 
-
-
-
-
+udisk_hn08_part5009:PRIMARY> db.t_config_info.find()
+{ "_id" : ObjectId("5e75b2f641656c5f1f3e094f"), "oversold_percent" : 0 }
+udisk_hn08_part5009:PRIMARY> db.t_config_info.update({"oversold_percent" : 0},{$set:{"oversold_percent" : NumberInt(20)}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+udisk_hn08_part5009:PRIMARY> db.t_config_info.find()
+{ "_id" : ObjectId("5e75b2f641656c5f1f3e094f"), "oversold_percent" : 20 }
 
 
 
@@ -223,4 +266,56 @@ def main():
       f.close()
     # 输出host_ips的hostname
     os.system("pssh -l root -h host_ips -P hostname")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      源host             目的udisk
+	10.66.135.72	10.66.168.131（udisk hd03 5006） RC Acknowledge QP=0x0038ce 
+	10.66.135.69	10.66.168.29（udisk 5006）	     RC RDMA Write Only QP=0x0107a5 
+	10.66.135.75	10.66.168.30（udisk 5006）	     RC RDMA Write Only QP=0x011cb8  
+	10.66.135.74	10.66.168.130（udisk 5006）		   RC Acknowledge QP=0x00467e 
+	10.66.135.74	10.66.168.26（udisk 5006）		   RC Acknowledge QP=0x02621c 
+
+
+
+
+
+
+	10.66.135.138（udisk 5004）	10.66.188.19		RC RDMA Write Only QP=0x0010d1  
+	10.66.134.72（udisk 5002）	10.66.180.71		RC Acknowledge QP=0x001285 
+
+
+
+
+  10.66.145.73   	10.66.135.74	  10.66.168.130	 cub
+  10.66.180.71                    10.66.134.72
+  10.66.145.69    10.66.135.69    10.66.168.29  cub
+  10.66.145.75    10.66.135.75	  10.66.168.30  cub
+  10.66.145.71    10.66.135.72	  10.66.168.131   cub
+
+ 
+
+ 
+
+
+ 
+ 
+
+
+
+
 

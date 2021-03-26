@@ -1,3 +1,20 @@
+1. hela_clone_login.cc 72 原来已经发送的chunk为什么还要重新login
+
+2. hela_clone_login.cc  202 收集pc对应的shard,shared是什么
+
+3. ping 的定时任务有什么用，在分发任务的时候就会发起ping 直到clone成功，为什么还需要一个定时任务的ping
+
+4. hela_clone_done.cc hela_session_ 是什么
+
+5. hela_clone_logout.cc finish1和finish2有什么区别
+
+
+6. clone end1和end2有什么区别  end1 向chaono发送clone结束的信息  end2向metaserver发送clone结束
+
+
+
+
+
 是由Init() 模块到 do_clone_udisk模块的：
 manage_handle.Start(); [freyr.cc]    ------->   register_proto();[manage_handle.cc]   ------->   REGISTE_PROTO_HANDLER(g_context->manage_handle()->loop(),
                         ucloud::udisk::CLONE_INNER_REQUEST, CloneUDiskHandle); [register_proto.cc]   ------>   virtual void EntryInit(const uevent::ConnectionUeventPtr& conn,
@@ -51,8 +68,167 @@ manage_handle.Start(); [freyr.cc] ------> Init() [manage_handle.cc 55] ------> v
 
 
 
+配置文件解析   freyr
+
+[common]
+metaserver_heartbeat_interval = 2
+metaserver_timeout            = 5
+db_timeout                    = 5
+db_name                       = udisk
+ping_ark_interval             = 10
+concurrent_jobs               = 32
+concurrent_sectors            = 512
+enable_hela                   = 1
+schedule_hela_job_interval    = 1
+hela_job_retry_interval       = 5
+hela_job_retry_max_num        = 10
+hela_clone_timeout            = 86400
+hela_clone_expired_timeout    = 30
+
+[names]
+my_instance                   = 0
+my_name                       = /NS/udisk/set5009/freyr
+my_set                        = 5009
+umongo                        = /NS/udisk/set5009/umongo_gateway
+metaserver                    = /NS/udisk/set5009/metaserver
+access                        = /NS/udisk/set5009/fake_access
+ark_access                    = /NS/utimemachine/access
+hela                          = /NS/udisk/set5009/hela
+idun                          = /NS/udisk/set5009/idun
+
+[network]
+listen_ip                     = 10.189.149.66
+listen_port                   = 13900
+
+[log]
+path                          = /var/log/udisk/freyr
+level                         = info
+
+[zookeeper]
+server                        = 10.189.151.14:2181,10.189.151.15:2181,10.189.151.16:2181
+global_server                 = 10.189.151.14:2181,10.189.151.15:2181,10.189.151.16:2181,10.189.151.17:2181,10.189.151.18:2181
+timeout                       = 10
+zk_force_reconnect_timeout    = 180
+zk_get_route_interval         = 10
 
 
+
+hela  配置文件解析
+
+
+
+[common]
+subsys                                = ymer
+module                                = hela
+set                                   = set5009
+instance                              = 0
+thread_num                            = 6
+chunk_num                             = 6
+
+# 写本地chunk,  读本地chunk, 读远程(chunk,ark)
+max_chunk_write_mbps                  = 300
+max_chunk_read_mbps                   = 300
+max_read_remote_mbps                  = 300
+
+# 单个PC任务的重试回退参数, 总的错误次数, 读失败次数，等待调度重试时间
+# 读取koala的超时时间必须要比镜像读取磁盘的超时时间长(10s)
+# 超大镜像允许一段次数进入pending而不是错误计数而导致任务失败
+single_pc_retry_backoff_initial_ms    = 1000
+single_pc_retry_backoff_maximum_ms    = 20000
+single_pc_retry_backoff_step_ms       = 100
+single_pc_pending_change_koala_times  = 100
+single_pc_pending_wait_schedule_ms    = 200
+single_pc_pending_read_koala_ms       = 100
+single_pc_pending_read_chunk_ms       = 300
+single_pc_pending_write_chunk_ms      = 500
+single_pc_read_koala_timeout_second   = 15
+single_pc_read_chunk_timeout_second   = 10
+single_pc_write_chunk_timeout_second  = 10
+single_pc_huge_image_pending_times    = 5
+
+# 单个批量PC任务的超时时间, 理论上需要根据公式计算
+batch_hela_task_timeout_second        = 7200
+batch_hela_task_schedule_second       = 1
+batch_hela_task_statistics_on         = 0
+batch_hela_taks_schedule_shuffle_on   = 0
+
+# 管理线程生成批量任务的调度参数
+batch_task_dispatch_interval          = 5
+batch_task_dispatch_limit_num         = 40
+total_task_dispatch_limit_num         = 60
+task_merge_threshold                  = 20
+flow_report_interval                  = 1
+mem_check_interval                    = 300
+enable_dynamic_concurence_pc_num      = 0
+max_concurence_pc_num                 = 1024
+# 流控令牌桶相关参数
+concurence_sectors                    = 512
+# 本地源失效时间,防止Freyr一直不logout
+# 和Idun的盘失效时间策略保持一致
+resource_expiration_second            = 3600
+
+[names]
+my_name                               = /NS/udisk/@{common.set}/hela
+idun                                  = /NS/udisk/@{common.set}/idun
+metaserver                            = /NS/udisk/@{common.set}/metaserver
+
+[network]
+listen_ip                             = 10.189.149.66
+listen_port                           = 22000
+transmission_listen_port              = 22001
+
+[log]
+path                                  = /var/log/udisk/hela
+roll_size                             = 50M
+level                                 = info
+
+[zookeeper]
+server                                = 10.189.151.14:2181,10.189.151.15:2181,10.189.151.16:2181
+timeout                               = 10
+zk_force_reconnect_timeout            = 180
+zk_get_route_interval                 = 10
+
+
+idun配置文件解析
+
+[common]
+subsys                             = ymer
+module                             = idun
+set                                = set5009
+instance                           = 0
+
+[idun]
+db_name                            = ymer
+metaserver_heartbeat_interval      = 3
+metaserver_timeout                 = 5
+max_reserve_resource_num           = 10
+resource_timeout                   = 86400
+clear_resource_interval            = 3600
+slice_merge_insert_num             = 5
+max_return_host_pc_per_second      = 20
+max_return_chunk_pc_per_second     = 15
+idun_single_mode                   = 1
+peer_idun_ip                       = 127.0.0.1
+peer_idun_port                     = 60000
+
+[names]
+my_name                            = /NS/udisk/@{common.set}/idun
+umongo                             = /NS/udisk/@{common.set}/umongo_gateway
+metaserver                         = /NS/udisk/@{common.set}/metaserver
+
+[network]
+listen_ip                          = 10.189.149.66
+listen_port                        = 60000
+
+[log]
+path                               = /var/log/udisk/idun
+roll_size                          = 50M
+level                              = info
+
+[zookeeper]
+server                             = 10.189.151.14:2181,10.189.151.15:2181,10.189.151.16:2181
+timeout                            = 10
+zk_force_reconnect_timeout         = 180
 
 
 
@@ -127,4 +303,4 @@ func (ctx *YmerAutoRunTestContext) YmerAutoTestRepairChunkRequest() interface{} 
 
 
 
-
+tram  io线程开始创建6个线程  pctask获取io线程进行chunk 读写

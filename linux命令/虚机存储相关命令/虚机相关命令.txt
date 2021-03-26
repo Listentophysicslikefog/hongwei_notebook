@@ -47,3 +47,9 @@ docker ps -a 可以看到
 
 6. top -Hp 40939   后面的是pid
 可以看到该服务的子进程
+
+
+
+7. iptables相关知识
+
+https://pdf.us/2018/08/03/1685.html
