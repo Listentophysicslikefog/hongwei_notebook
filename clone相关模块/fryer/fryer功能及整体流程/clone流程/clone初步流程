@@ -11,9 +11,9 @@
 
 6. clone end1和end2有什么区别  end1 向chaono发送clone结束的信息  end2向metaserver发送clone结束
 
+7. do_hela_task.cc 200 为什么还有一个函数 ScheduleHelaPcTask();    SetScheduleTimer();里面已经执行过该函数了。
 
-
-
+8. fryer向hela下发任务的粒度
 
 是由Init() 模块到 do_clone_udisk模块的：
 manage_handle.Start(); [freyr.cc]    ------->   register_proto();[manage_handle.cc]   ------->   REGISTE_PROTO_HANDLER(g_context->manage_handle()->loop(),

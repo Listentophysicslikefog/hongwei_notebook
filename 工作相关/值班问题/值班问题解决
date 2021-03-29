@@ -40,11 +40,23 @@ rssd 先看我们后端服务是否出现问题，看该盘是否有对应的告
 
 
 
+8.  unoc让卸载文件系统的盘的时候，停止chunk
 
+到运营平台看下线chunk是什么机型
+
+v5机型：
+
+停止chunk服务： 先移除watch dog
+umount /51615791-1105-4635-bdc9-47bfe4bda22a
+
+v4机型： 关机重启载停止chunk 卸载盘，这样会下线所有的chunk服务
+风险大先问一下是否可以操作
 
 首先关闭出现问题的set
 
-6. clone失败，看日志是hela节点问题，下线limax上面没有的ip，由于已经下线的机器抢注册zk导致正常的节点无法注册导致clone失败
+
+
+9. clone失败，看日志是hela节点问题，下线limax上面没有的ip，由于已经下线的机器抢注册zk导致正常的节点无法注册导致clone失败
 
 问题原因
 已经下线的udisk机器10.66.184.13 已经清理业务，改了带重装，
@@ -68,7 +80,7 @@ rssd 先看我们后端服务是否出现问题，看该盘是否有对应的告
 
 10.66.188.203 这个是bond 的IP 还是管理IP， cmdb 里没有搜到
 
-李丙洋(bruce.li) 3-25 11:34:03
+李丙洋(bruce.li) 3-25 11:34:03      //获取该ip的bond ip
 [root@hn02-udisk-support tool]# ./get_gate_config.py 10.66.188.203  17800
 uhost_login_ip: "10.66.188.197"
 rc {
