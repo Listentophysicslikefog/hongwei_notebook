@@ -13,6 +13,7 @@
 运营平台通过盘id也可以在最下面看到
 
 
+
 10.66.188.203 这个是bond 的IP 还是管理IP， cmdb 里没有搜到
 
 李丙洋(bruce.li) 3-25 11:34:03      //获取该ip的bond ip
@@ -25,6 +26,7 @@ rc {
 
 
 //获取盘的实际挂载点
+
 /root/limax/udisk/tool/get_attach_info.py hb03 5028 bsi-d1nhdivj
 
 
