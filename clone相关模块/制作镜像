@@ -1,0 +1,32 @@
+1. 创建一块盘制作文件系统挂载到虚机上面，盘名字为： bsr-4f20cjbm
+
+2. 将该盘制作为镜像
+
+自己设置镜像的名字，这里设置为： vdisk_id="lhw_hn08220G_image"    需要制作为镜像的盘的名字为： ubs_id="bsr-4f20cjbm"       盘的大小为： vdisk_cap=220 
+方舟的access的ip : 10.189.149.135
+方舟的access的port：6000
+
+./node-tester.js --host 10.189.149.135 --port 6000 --key ucloud.utimemachine.koala_access_clone_netdisk_image_request vdisk_id="lhw_hn08220G_image" ubs_id="bsr-4f20cjbm" vdisk_cap=220 top_oid="50140849" oid="55741713"
+
+3. 查看制作镜像的进度
+
+./node-tester.js --host 10.189.149.135 --port 6000 --key ucloud.utimemachine.koala_access_describe_image_request vdisk_id="lhw_hn08220G_image"
+
+
+
+
+
+pssh使用
+
+
+pssh -h host_info -l root -i "cd /var/log/udisk/hela/;cat Hela.20210316* | grep \"desc: write chunk queue full\""
+
+
+tailf grep结合使用：
+
+显示meta_get_set_capacity_response 关键字以及其后面9行
+
+tailf Metaserver.20210318-160340.hn02-udisk-set3102-meta0.22101.log | grep -A 9 "meta_get_set_capacity_response"
+
+
+

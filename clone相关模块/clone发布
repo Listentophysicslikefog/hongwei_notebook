@@ -348,7 +348,7 @@ hb06 5000
 
 
 
-19. hd04 1002  1003 1004     2200      3001 3002  3003 ...... 3010  4000 ... 4003
+19. hd04 1002  1003 1004  1100   2200      3001 3002  3003 ...... 3010  4000 ... 4003
 
 ./generate_freyr_conf.py hd04 1002 tcp raw ssd
 ./generate_ip_list.py hd04 1002 
@@ -373,6 +373,292 @@ hb06 5000
 ./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/hb06/3005/host_info fast
 
 
+
+20. hd06   1000
+
+./generate_freyr_conf.py hd06 1000 tcp raw ssd
+./generate_ip_list.py hd06 1000 
+./release.sh freyr 21.02.01-9b263a5-centos7-x86_64 /root/limax/udisk/region/hd06/1000/host_info fast
+
+
+
+
+发布先pull一次
+
+
+
+
+
+
+
+
+#!/bin/bash
+
+version=$2
+server_name=$1
+array=(${version//// })
+region=${array[4]}
+set_id=${array[5]}
+for var in ${array[@]}
+do
+        echo $var
+done
+echo $server_name  ${array[4]} ${array[5]}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#!/bin/bash
+
+version=$2
+server_name=$1
+array=(${version//// })
+region=${array[4]}
+set_id=${array[5]}
+#for var in ${array[@]}
+#do
+#       echo $var
+#done
+#echo $server_name  ${array[4]} ${array[5]}
+#python /root/limax/udisk/tool/release/check_limax_zk_address.py ${region} ${set_id} ${server_name}
+#echo $?
+retucode=`$(python -c 'import check_limax_zk_address;print check_limax_zk_address.check_limax_zk_ip_address("'${region}'","'${set_id}'","'${server_name}'")')
+echo $retucode
+
+
+
+
+
+
+
+
+
+
+#!/bin/bash
+
+deploy_center="172.20.180.156"
+module_chunk="chunk"
+
+function usage {
+	echo "please execute this script under release directory"
+	echo "$0 <module_name> <version> <host_list> <fast/slow> [1/0(compare pids, default 1)]"
+	echo "example: $0 chunk 20.04.27-998b18e-centos7 /root/limax/udisk/region/hn02/1100/host_info fast"
+	exit 1
+}
+
+function fetch_binary {
+	output=`ssh root@${deploy_center} "md5sum /root/deploy_center/${module_name}/${binary_file}"`
+	md5=`echo $output | awk '{print $1}'`
+	echo $md5
+	scp root@${deploy_center}:/root/deploy_center/${module_name}/${binary_file} .
+	localmd5=`md5sum ./${binary_file} | awk '{print $1}'`
+	echo $localmd5
+	if [ "$md5" != "$localmd5" ]; then
+		echo "md5sum are not the same"
+		exit 1
+	fi
+}
+
+function copy_binary {
+	localmd5=`md5sum ./${binary_file} | awk '{print $1}'`
+	for i in `cat $host_file`
+	do
+		scp $binary_file root@$i:/root/udisk/${module_name}/
+		if [ $? -ne 0 ]; then
+			echo "scp failed"
+			exit $?
+		fi
+		output=`ssh root@$i "md5sum /root/udisk/${module_name}/${binary_file}"`
+		remotemd5=`echo $output | awk '{print $1}'`
+		if [ "$localmd5" != "$remotemd5" ]; then
+			echo "md5sum are not the same"
+			exit 1
+		fi
+	done
+}
+
+function release_fast {
+	fetch_binary
+	copy_binary
+  if [ "${module_name}" = "${module_chunk}" ]; then
+    mkdir -p machine_hugepages
+    pssh -l root -o machine_hugepages -h $host_file -i "cat /proc/meminfo | grep HugePages"
+    ./check_machine_hugepages.py $host_file
+		if [ $? -ne 0 ]; then
+			echo "machine hugepages check failed, hugepages details are under dir ./machine_hugepages"
+			exit $?
+		fi
+    echo "${module_name} check hugepages done"
+  else
+    echo "${module_name} do not need check hugepages"
+  fi   
+
+	pssh -l root -h $host_file -i "ps -ef | grep quick_watchdog | grep -v \$\$"
+	if [ $? -ne 0 ]; then
+		echo "quick_watchdog not running, please check"
+		exit $?
+	fi
+	pssh -l root -h $host_file -i "cp /root/udisk/${module_name}/${module_name} /root/udisk/${module_name}/${module_name}.bak"
+	if [ $? -ne 0 ]; then
+		echo "back up old binary failed"
+		exit $?
+	fi
+	pssh -l root -h $host_file -i "ln -sf /root/udisk/${module_name}/${binary_file} /root/udisk/${module_name}/${module_name}"
+	if [ $? -ne 0 ]; then
+		echo "make symbolic link failed"
+		exit $?
+	fi
+	mkdir -p before_kill/${module_name}
+	pssh -l root -o before_kill/${module_name} -h $host_file -i "ps -ef | grep ${module_name} | grep -v guard | grep -v grep"
+	if [ $? -ne 0 ]; then
+		echo "${module_name} not running, please check"
+		exit $?
+	fi
+	mkdir -p killing/${module_name}
+	echo "kill old process in 10 seconds"
+	sleep 10
+	pssh -l root -o killing/${module_name} -h $host_file -i "ps -ef | grep ${module_name} | grep -v guard | grep -v grep| awk '{print \$2}' | xargs -r kill -9"
+	if [ $? -ne 0 ]; then
+		echo "kill old process failed, please check"
+		exit $?
+	fi
+	mkdir -p first_look/${module_name}
+	mkdir -p second_look/${module_name}
+	echo "take a first look in 5 seconds, and take a second look in 10 seconds"
+	sleep 5
+	pssh -l root -o first_look/${module_name} -h $host_file -i "ps -ef | grep ${module_name} | grep -v guard | grep -v grep"
+	if [ $? -ne 0 ]; then
+		echo "${module_name} not running, please check"
+		exit $?
+	fi
+	sleep 5
+	pssh -l root -o second_look/${module_name} -h $host_file -i "ps -ef | grep ${module_name} | grep -v guard | grep -v grep"
+	if [ $? -ne 0 ]; then
+		echo "${module_name} not running, please check"
+		exit $?
+	fi
+	if [ $check_pid -ne 0 ]; then
+		echo "check whether pids from every look are the same"
+		./check_pids.py $host_file ${module_name}
+		if [ $? -ne 0 ]; then
+			echo "pid check failed, pid details are under before_kill first_look and second_look"
+			exit -1
+		fi
+	else
+		echo "no pid check"
+	fi
+	echo "release success"
+}
+
+function release_slow {
+	fetch_binary
+	copy_binary
+  if [ "${module_name}" = "${module_chunk}" ]; then
+    mkdir -p machine_hugepages
+    pssh -l root -o machine_hugepages -h $host_file -i "cat /proc/meminfo | grep HugePages"
+    ./check_machine_hugepages.py $host_file
+		if [ $? -ne 0 ]; then
+			echo "machine hugepages check failed, hugepages details are under dir ./machine_hugepages"
+			exit $?
+		fi
+    echo "${module_name} check hugepages done"
+  else
+    echo "${module_name} do not need check hugepages"
+  fi
+    
+	for i in `cat $host_file`
+	do
+		echo "start release on ${i}"
+		ssh root@$i "ps -ef | grep quick_watchdog | grep -v grep"
+		if [ $? -ne 0 ]; then
+			echo "quick_watchdog not running, please check"
+			exit $?
+		fi
+		ssh root@$i "cp /root/udisk/${module_name}/${module_name} /root/udisk/${module_name}/${module_name}.bak"
+		if [ $? -ne 0 ]; then
+			echo "back up old binary failed"
+			exit $?
+		fi
+		ssh root@$i "ln -sf /root/udisk/${module_name}/${binary_file} /root/udisk/${module_name}/${module_name}"
+		if [ $? -ne 0 ]; then
+			echo "make symbolic link failed"
+			exit $?
+		fi
+		ssh root@$i "ps -ef | grep ${module_name} | grep -v guard | grep -v grep"
+		if [ $? -ne 0 ]; then
+			echo "${module_name} not running, please check"
+			exit $?
+		fi
+		echo "kill old process in 5 seconds"
+		sleep 5
+		ssh root@$i "ps -ef | grep ${module_name} | grep -v guard | grep -v grep | awk '{print \$2}' | xargs -r kill -9"
+		if [ $? -ne 0 ]; then
+			echo "kill old process failed, please check"
+			exit $?
+		fi
+		echo "take a first look in 2 second, and take a second look in 5 seconds"
+		sleep 2
+		ssh root@$i "ps -ef | grep ${module_name} | grep -v guard | grep -v grep"
+		if [ $? -ne 0 ]; then
+			echo "${module_name} not running, please check"
+			exit $?
+		fi
+		sleep 3
+		ssh root@$i "ps -ef | grep ${module_name} | grep -v guard | grep -v grep"
+		if [ $? -ne 0 ]; then
+			echo "${module_name} not running, please check"
+			exit $?
+		fi
+		echo "release success on ${i}"
+		sleep 300
+	done
+}
+
+if [ $# -lt 4 ]; then
+	usage
+fi
+
+module_name=$1
+version=$2
+binary_file="$1-$2"
+host_file=$3
+check_pid=1
+
+#if [ $# -eq 5 ]; then
+#	check_pid=$4
+#fi
+
+#if [ $4 == "fast" ]; then
+#release_fast
+#elif [ $4 == "slow" ]; then
+#	release_slow
+#else
+#	usage
+#fi
+
+if [ $1 == "idun" || $1 == "freyr" || $1 == "hela" ]; then
+  split_array=(${host_file//// })
+  region=${split_array[4]}
+  set_id=${split_array[5]}
+  server_name=${module_name}
+  python /root/limax/udisk/tool/release/check_limax_zk_address.py ${region} ${set_id} ${server_name}
+  if [ $? -ne 0 ]; then
+    echo "exec check limax and zk ip script fail"
+  fi
+  echo $?
+fi
 
 
 

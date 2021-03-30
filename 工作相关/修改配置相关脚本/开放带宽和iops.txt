@@ -130,3 +130,4 @@ filename=/dev/sda  指定被测试的盘符
 
 //查看设置结果
 python rpc.py get_bdevs -b InnerUDisk-ablynxcj
+

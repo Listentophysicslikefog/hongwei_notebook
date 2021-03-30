@@ -1,0 +1,333 @@
+1. 用户没写数据还是有io
+
+虚机上有io读写和udisk 云盘没有什么关系
+
+2. ymer clone流程
+
+3. rssd才有pod概念
+
+4. 云盘性能问题
+
+rssd 先看我们后端服务是否出现问题，看该盘是否有对应的告警，然后先计算iops bw的上线 ，看延时 以及系统盘的相关数据，有可能系统盘会影响数据盘的性能 
+
+普通云盘只需要看我们后端服务是否出现问题，看该盘是否有对应的告警
+
+官网性时延能是4k的小io，我们需要看用户io大小以及用户的业务是否部署到系统盘上面的
+
+5. login fail问题
+
+看是否为脏数据，先看该盘是否有卸载以及删除记录，如果有那么应该是脏数据，如果没有那么去看资源账单记录
+
+看虚机是否还挂载着这块盘，如果主机还是挂载着这块盘那么这块盘一般就不是脏数据，
+
+[ERROR ]Transport endpoint is not connected (errno=107) sendmsg error, ret: -1 - fd_dispatcher.cc:276  //这个一般是gate在重启，先确认是否为测试集群的，如果为测试集群的更改 
+
+/root/udisk/block_gate_proxy/conf/block_gate_proxy.ini
+/root/udisk/block_gate/conf/block_gate.ini
+
+的odin配置，随便把odin更改为一个无效的即可，重启block_gate_proxy.ini即可
+
+
+6. 方舟arker
+
+方舟的ark --> nvmf_gate ---> udisk (udisk创建的盘作为方舟的本地盘使用，用来存储方舟数据的备份)
+
+
+7. 多点挂载让主机处理，把挂载在错误的宿主机上面虚机的盘卸载掉就可以了
+
+
+内核版本看下 uname -r
+
+
+
+8.  unoc让卸载文件系统的盘的时候，停止chunk
+
+到运营平台看下线chunk是什么机型
+
+v5机型：
+
+停止chunk服务： 先移除watch dog
+umount /51615791-1105-4635-bdc9-47bfe4bda22a
+
+v4机型： 关机重启载停止chunk 卸载盘，这样会下线所有的chunk服务
+风险大先问一下是否可以操作
+
+首先关闭出现问题的set
+
+
+
+9. clone失败，看日志是hela节点问题，下线limax上面没有的ip，由于已经下线的机器抢注册zk导致正常的节点无法注册导致clone失败
+
+问题原因
+已经下线的udisk机器10.66.184.13 已经清理业务，改了带重装，
+机器故障导致服务器重启，自启动了watchdog ，重新拉起了hela服务, 
+昨晚 hd03 5018 hela服务变更，导致 /NS/udisk/set5018/hela/4 节点被 
+10.66.184.13 抢注册上了，导致正常的10.66.168.219上的hela服务不可用。
+
+优化措施：
+1. 服务器下线流程：（今天完成）
+   添加移除 /root/quick_watchdog/conf/watchdog.d/* 文件步骤，
+   保证所有业务进程不会被重新拉起 
+2. 服务变更流程：（今天完成）
+   检查变更后的服务进程注册的IP是否和入库的IP信息是否一致
+3. zk注册逻辑： （使用重构的zk库改造）
+   后续使用顺序节点注册，保证不重复
+
+
+
+
+
+
+10.66.188.203 这个是bond 的IP 还是管理IP， cmdb 里没有搜到
+
+李丙洋(bruce.li) 3-25 11:34:03      //获取该ip的bond ip
+[root@hn02-udisk-support tool]# ./get_gate_config.py 10.66.188.203  17800
+uhost_login_ip: "10.66.188.197"
+rc {
+  retcode: 0
+  error_message: "success"
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   1. metaserver给ark access注册vdisk
+
+   [20210308 18:24:02.751782Z ][ 8999 ][INFO  ]head {
+  version: 2
+  magic_flag: 305400199
+  random_num: 761169819
+  flow_no: 94959
+  session_no: "hongwei2021_1615199042"
+  message_type: 162832
+  worker_index: 0
+  tint_flag: false
+  source_entity: 0
+  dest_entity: 94959
+  call_purpose: "ApplyArk"
+}
+body {
+  [ucloud.utimemachine.access_apply_udataark_response] {
+    rc {
+      retcode: 0
+      error_message: ""
+    }
+  }
+}
+ - do_create_udisk.cc:261
+
+login 失败，本次问题是由于方舟access问题导致原本metaserver应该注册vdisk到hn08但是注册到了hn02
+导致方舟找vdisk失败所以clone失败
+
+ [20210308 18:24:02.915214Z ][ 8036 ][INFO  ]connect to 10.189.149.135:30000 success - manage_handle.cc:126
+[20210308 18:24:02.918445Z ][ 8036 ][INFO  ]head {
+  version: 2
+  magic_flag: 305400199
+  random_num: 2042810517
+  flow_no: 1471861
+  session_no: "hongwei2021_1615199042"
+  message_type: 161309
+  worker_index: 0
+  tint_flag: false
+  source_entity: 0
+  dest_entity: 1471861
+  call_purpose: "CloneLogin"
+}
+body {
+  [ucloud.utimemachine.chrono_clone_login_pb_response] {
+    rc {
+      retcode: -1
+      error_message: ""
+    } 
+
+
+
+9. 设置超卖
+
+先更改数据库然后重启metaserver
+
+超卖20%  就是超卖总共的容量的20%
+
+udisk_hn08_part5009:PRIMARY> db.t_config_info.find()
+{ "_id" : ObjectId("5e75b2f641656c5f1f3e094f"), "oversold_percent" : 0 }
+udisk_hn08_part5009:PRIMARY> db.t_config_info.update({"oversold_percent" : 0},{$set:{"oversold_percent" : NumberInt(20)}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+udisk_hn08_part5009:PRIMARY> db.t_config_info.find()
+{ "_id" : ObjectId("5e75b2f641656c5f1f3e094f"), "oversold_percent" : 20 }
+
+
+
+
+
+
+    def checkip(ip):
+  p = re.compile(
+      '^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$')
+  if p.match(ip):
+      return True
+  else:
+      return False
+
+
+def main():
+    if len(sys.argv[1:]) < 2:
+        help()
+        sys.exit()
+
+    region = sys.argv[1]
+    set_id = sys.argv[2]
+
+    host_file = os.path.join(os.environ['HOME'], "limax", "udisk",
+                             "region", region, set_id, "host_info")
+    vm_file = os.path.join(os.environ['HOME'], "limax", "udisk",
+                           "region", region, set_id, "vm_info")
+    p2p_file = os.path.join(os.environ['HOME'], "limax", "udisk",
+                           "region", region, set_id, "p2p_info")
+    host_ips = []
+    odin_ips = []
+    metaserver_ips = []
+    buddy_ips = []
+    loki_ips = []
+    thor_ips = []
+    idun_ips = []
+    host_info = open(host_file).read().split("\n")
+    vm_info = open(vm_file).read().split("\n")
+    for line in host_info:
+        line = line.strip()
+        if checkip(line) == False:
+            continue
+        host_ips.append(line)
+    for line in vm_info:
+        line_map = line.split()
+        if len(line_map) == 0:
+            continue
+        if line_map[0] == "metaserver":
+            metaserver_ips.append(line_map[1])
+        if line_map[0] == "buddy":
+            buddy_ips.append(line_map[1])
+        if line_map[0] == "loki":
+            loki_ips.append(line_map[1])
+        if line_map[0] == "thor":
+            thor_ips.append(line_map[1])
+        if line_map[0] == "odin":
+            odin_ips.append(line_map[1])
+    f = open("host_ips", 'w')
+    for line in host_ips:
+      f.write(line)
+      f.write("\n")
+    f.close()
+    f = open("metaserver_ips", 'w')
+    for line in metaserver_ips:
+      f.write(line)
+      f.write("\n")
+    f.close()
+    f = open("buddy_ips", 'w')
+    for line in buddy_ips:
+      f.write(line)
+      f.write("\n")
+    f.close()
+    f = open("loki_ips", 'w')
+    for line in loki_ips:
+      f.write(line)
+      f.write("\n")
+    f.close()
+    f = open("thor_ips", 'w')
+    for line in thor_ips:
+      f.write(line)
+      f.write("\n")
+    f.close()
+    f = open("odin_ips", 'w')
+    for line in odin_ips:
+      f.write(line)
+      f.write("\n")
+    f.close()
+
+    if os.path.exists(p2p_file):
+      p2p_info = open(p2p_file).read().split("\n")
+      for line in p2p_info:
+        line_map = line.split()
+        if len(line_map) == 0:
+            continue
+        if line_map[0] == "idun":
+            idun_ips.append(line_map[1])
+      f = open("idun_ips", 'w')
+      for line in idun_ips:
+        f.write(line)
+        f.write("\n")
+      f.close()
+    # 输出host_ips的hostname
+    os.system("pssh -l root -h host_ips -P hostname")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      源host             目的udisk
+	10.66.135.72	10.66.168.131（udisk hd03 5006） RC Acknowledge QP=0x0038ce 
+	10.66.135.69	10.66.168.29（udisk 5006）	     RC RDMA Write Only QP=0x0107a5 
+	10.66.135.75	10.66.168.30（udisk 5006）	     RC RDMA Write Only QP=0x011cb8  
+	10.66.135.74	10.66.168.130（udisk 5006）		   RC Acknowledge QP=0x00467e 
+	10.66.135.74	10.66.168.26（udisk 5006）		   RC Acknowledge QP=0x02621c 
+
+
+
+
+
+
+	10.66.135.138（udisk 5004）	10.66.188.19		RC RDMA Write Only QP=0x0010d1  
+	10.66.134.72（udisk 5002）	10.66.180.71		RC Acknowledge QP=0x001285 
+
+
+
+
+  10.66.145.73   	10.66.135.74	  10.66.168.130	 cub
+  10.66.180.71                    10.66.134.72
+  10.66.145.69    10.66.135.69    10.66.168.29  cub
+  10.66.145.75    10.66.135.75	  10.66.168.30  cub
+  10.66.145.71    10.66.135.72	  10.66.168.131   cub
+
+ 
+
+ 
+
+
+ 
+ 
+
+
+
+
+

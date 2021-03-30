@@ -1,0 +1,183 @@
+
+
+//init()模块
+
+ void ManagerHandle::Start(const std::string& ip, int port) [manager_handle.cc 41] ------>Init();[manager_handle.cc 56] ------> handle->Start();[manager_handle.cc 77] ------> void LoadMetaHandle::Start() [load_meta.cc 29] 
+
+
+定时任务1：FlowReportTimerCb
+
+void ManagerHandle::Start(const std::string& ip, int port) [manager_handle.cc 41]------>manager_loop_->RunEvery(g_context->config().flow_report_interval(),std::bind(&ManagerHandle::FlowReportTimerCb, this)); [manager_handle.cc 65] ------> DumpHelaTask() [manager_handle.cc 556] ------> void ManagerHandle::DumpHelaTask() [manager_handle.cc 288] ------> g_context->flow_monitor()->DumpFlowInfo()[manager_handle.cc  558] ------>void FlowMonitor::DumpFlowInfo() [flow_monitor.cc 17]
+
+
+
+定时任务2：HelaTaskScheduleRoutine
+
+void ManagerHandle::Start(const std::string& ip, int port) [manager_handle.cc 41] ------> manager_loop_->RunEvery(g_context->config().batch_task_dispatch_interval(),std::bind(&ManagerHandle::HelaTaskScheduleRoutine, this));[manager_handle.cc 60] ------> void ManagerHandle::HelaTaskScheduleRoutine() [manager_handle.cc 364]
+
+
+
+定时任务3：MetaServerHeartBeat
+
+void ManagerHandle::Start(const std::string& ip, int port) [manager_handle.cc 41] ------> manager_loop_->RunEvery(1,std::bind(&ManagerHandle::MetaServerHeartBeat, this));[manager_handle.cc 63]------>void ManagerHandle::MetaServerHeartBeat()[manager_handle.cc 102]
+
+
+
+定时任务4：CheckHelaMemory
+
+void ManagerHandle::Start(const std::string& ip, int port) [manager_handle.cc 41] ------> manager_loop_->RunEvery(g_context->config().mem_check_interval(),std::bind(&ManagerHandle::CheckHelaMemory, this)); ------> void ManagerHandle::CheckHelaMemory() [manager_handle.cc 80]
+
+
+
+
+
+
+clone一块盘hela日志的流程： 
+
+
+// manager模块启动
+  uevent::UeventLoop *manager_loop = manager_handle->GetLoop();
+  manager_loop->RunInLoop(std::bind(&ManagerHandle::Start, manager_handle,
+                                    g_context->config().listen_ip(),
+                                    g_context->config().listen_port())); [hela.cc 154] ------> void ManagerHandle::Start(const std::string& ip, int port) [manager_handle.cc 41] ------>manager_loop_->RunEvery(g_context->config().flow_report_interval(),std::bind(&ManagerHandle::FlowReportTimerCb, this)); [manager_handle.cc 65] ------> DumpHelaTask() [manager_handle.cc 556] ------> void ManagerHandle::DumpHelaTask() [manager_handle.cc 288] ------> g_context->flow_monitor()->DumpFlowInfo()[manager_handle.cc  558] ------>void FlowMonitor::DumpFlowInfo() [flow_monitor.cc 17]
+
+
+------> 
+
+
+
+
+// HelaTaskLoginRequest 请求
+void HelaTaskLoginHandle::Finish(int retcode, const std::string& message) [hela_task_login.cc 29] ------> void HelaTaskLoginHandle::EntryInit(const uevent::ConnectionUeventPtr& conn,ucloud::UMessage* um)[hela_task_login.cc 41] ------> bool HelaTaskLoginHandle::LoadIdunResource() [hela_task_login.cc 65] ------> void HelaTaskLoginHandle::EntryLoadIdunResource(ucloud::UMessage* um) [hela_task_login.cc 111] ------> void HelaTaskLoginHandle::BuildHelaTask()[hela_task_login.cc 136 --> 401] ------> return BuildNormalHelaTask(); [hela_task_login.cc 408 --> 235] --
+------> void HelaTaskLoginHandle::DumpHelaTask(const HelaTaskPtr& hela_task); [hela_task_login.cc 281 --> 139] ------> Finish(VDISK_RET_SUCCESS, "HelaTaskLogin succ"); [hela_task_login.cc 283 --> 29] ------>>>>>>>>>>>
+
+
+//hela_task_ping_request 
+void HelaTaskPingHandle::EntryInit(const uevent::ConnectionUeventPtr &conn,
+                                   ucloud::UMessage *um) [hela_task_ping.cc 33] -----> return Finish(VDISK_RET_SUCCESS, "get hela task status succ"); [hela_task_ping.cc 56 --> 19]
+
+
+
+
+
+
+
+
+
+// 
+ manager_loop_->RunEvery(g_context->config().flow_report_interval(),
+                          std::bind(&ManagerHandle::FlowReportTimerCb, this)); [manager_handle.cc 65]------>void ManagerHandle::FlowReportTimerCb() [manage_handle.cc 555] ------> DumpHelaTask(); [manage_handle.cc 556] ------> void ManagerHandle::DumpHelaTask() [manage_handle.cc 288] ------> 
+
+
+
+void DoHelaTaskHandle::Start(const HelaTaskPtrList& task_list)[do_hela_task.cc]
+
+
+
+
+
+manager_loop_->RunEvery(
+      g_context->config().batch_task_dispatch_interval(),                                       //do_hela_task.cc:580
+      std::bind(&ManagerHandle::HelaTaskScheduleRoutine, this));[manage_handle.cc 60] ------> void ManagerHandle::HelaTaskScheduleRoutine() [manage_handle.cc 364] ------> DispatchHelaTask(dispatch_list); [manage_handle.cc 434 423 -->548 ]  ------> void ManagerHandle::DispatchHelaTask(const HelaTaskPtrList& task_list)[manage_handle.cc 548] ------> handle->Start(task_list); [manage_handle.cc 551 ] ------> void DoHelaTaskHandle::Start(const HelaTaskPtrList& task_list)[do_hela_task.cc 172]
+
+
+
+
+
+
+// p2p clone  hela模块流程
+
+
+// hela 一个任务的开始和成功结束的标志是什么  主要功能分为那几个模块  有哪些定时任务   
+
+
+
+
+
+cns201 hd08
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
