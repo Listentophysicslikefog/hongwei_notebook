@@ -115,6 +115,38 @@ freyr-21.03.23-482fb97-centos7-x86_64    hela-21.03.23-482fb97-centos7-x86_64   
 
 
 
+10. tokyo01  5000 5001 5002 5003  验证完成
+
+
+
+
+11. singapore02  3200 3201 3202 3203 验证完成
+
+
+./generate_idun_conf.py singapore02 3200 tcp raw ssd   //生成配置
+./generate_hela_conf.py singapore02 3200 tcp raw ssd
+./generate_freyr_conf.py singapore02 3200 tcp raw ssd
+
+./generate_ip_list.py singapore02 3200    //生成所有模块的ip
+./release.sh idun 21.03.23-482fb97-centos7-x86_64 idun_ips fast
+./release.sh hela 21.03.23-482fb97-centos7-x86_64 /root/limax/udisk/region/singapore02/3200/host_info fast
+./release.sh freyr 21.03.23-482fb97-centos7-x86_64 /root/limax/udisk/region/singapore02/3200/host_info fast
+
+
+12 . seoul02 5000 5001 5002  验证完成
+
+
+
+13. nigeria01  5000 5001 5002 验证完成
+
+
+
+14 . moscow01   没有p2p
+
+
+15. manila01 5000 5001 5002 5003 验证完成
+
+
 
 8. ap03 3000 
 
