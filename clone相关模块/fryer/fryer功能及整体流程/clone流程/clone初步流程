@@ -15,6 +15,14 @@
 
 8. fryer向hela下发任务的粒度
 
+
+9. idun源失效是按照盘的粒度来失效的
+
+10. idun有主从节点么
+
+11. fryer向hela发起login请求后hela向idun发起idun_load_resource_request请求有什么用
+
+
 是由Init() 模块到 do_clone_udisk模块的：
 manage_handle.Start(); [freyr.cc]    ------->   register_proto();[manage_handle.cc]   ------->   REGISTE_PROTO_HANDLER(g_context->manage_handle()->loop(),
                         ucloud::udisk::CLONE_INNER_REQUEST, CloneUDiskHandle); [register_proto.cc]   ------>   virtual void EntryInit(const uevent::ConnectionUeventPtr& conn,
