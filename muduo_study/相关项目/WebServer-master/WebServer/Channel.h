@@ -17,8 +17,8 @@ class Channel {
   typedef std::function<void()> CallBack;
   EventLoop *loop_;
   int fd_;
-  __uint32_t events_;
-  __uint32_t revents_;
+  __uint32_t events_;  //注册的事件，也就是用户关注的事件
+  __uint32_t revents_;  // epoll实际返回的事件
   __uint32_t lastEvents_;
 
   // 方便找到上层持有该Channel的对象
@@ -56,24 +56,24 @@ class Channel {
   }
   void setConnHandler(CallBack &&connHandler) { connHandler_ = connHandler; }
 
-  void handleEvents() {
-    events_ = 0;
-    if ((revents_ & EPOLLHUP) && !(revents_ & EPOLLIN)) {
+  void handleEvents() {  //负责对发生的事件进行处理，事件到来会调用该函数
+    events_ = 0;                 // 这里加了一个 ！
+    if ((revents_ & EPOLLHUP) && !(revents_ & EPOLLIN)) { //EPOLLHUP 对端关闭连接  EPOLLIN 可读事件    
       events_ = 0;
-      return;
+      return;   
     }
-    if (revents_ & EPOLLERR) {
+    if (revents_ & EPOLLERR) {   // 错误事件
       if (errorHandler_) errorHandler_();
       events_ = 0;
       return;
     }
-    if (revents_ & (EPOLLIN | EPOLLPRI | EPOLLRDHUP)) {
-      handleRead();
+    if (revents_ & (EPOLLIN | EPOLLPRI | EPOLLRDHUP)) {   // 可读事件
+      handleRead();   // 调用读的回调函数
     }
-    if (revents_ & EPOLLOUT) {
+    if (revents_ & EPOLLOUT) {  // EPOLLOUT 可写事件
       handleWrite();
     }
-    handleConn();
+    handleConn();  // 应该是输出连接的信息
   }
   void handleRead();
   void handleWrite();

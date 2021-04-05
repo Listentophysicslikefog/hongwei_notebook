@@ -101,6 +101,11 @@ void MimeType::init() {
   mime["default"] = "text/html";
 }
 
+/*
+int pthread_once(pthread_once_t *once_control, void (*init_routine) (void))；
+本函数使用初值为PTHREAD_ONCE_INIT的once_control变量保证init_routine()函数在本进程执行序列中仅执行一次
+*/
+
 std::string MimeType::getMime(const std::string &suffix) {
   pthread_once(&once_control, MimeType::init);
   if (mime.find(suffix) == mime.end())

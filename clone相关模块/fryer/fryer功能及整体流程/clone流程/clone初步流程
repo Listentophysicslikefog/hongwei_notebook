@@ -26,6 +26,7 @@
 
 13. fryer向chono获取到ark的路由后hela可以根据路由向ark直接读取数据，读取的数据怎么知道写到chunk的哪一个chunk的具体哪一个地方
 
+14. hela key是pc value是盘udisk 读一个pc写多块盘
 
 是由Init() 模块到 do_clone_udisk模块的：
 manage_handle.Start(); [freyr.cc]    ------->   register_proto();[manage_handle.cc]   ------->   REGISTE_PROTO_HANDLER(g_context->manage_handle()->loop(),
