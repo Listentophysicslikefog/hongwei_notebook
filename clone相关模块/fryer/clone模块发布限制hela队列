@@ -162,6 +162,52 @@ freyr-21.03.23-482fb97-centos7-x86_64    hela-21.03.23-482fb97-centos7-x86_64   
 
 ###########################################################################################################
 
+
+1. hd02 3000 变更验证完成
+
+./generate_idun_conf.py hd02 3000 tcp raw ssd   //生成配置
+./generate_hela_conf.py hd02 3000 tcp raw ssd
+./generate_freyr_conf.py hd02 3000 tcp raw ssd
+
+./generate_ip_list.py hd02 3000    //生成所有模块的ip
+./release.sh idun 21.03.23-482fb97-centos7-x86_64 idun_ips fast
+./release.sh hela 21.03.23-482fb97-centos7-x86_64 /root/limax/udisk/region/hd02/3000/host_info fast
+./release.sh freyr 21.03.23-482fb97-centos7-x86_64 /root/limax/udisk/region/hd02/3000/host_info fast
+
+
+
+
+2. hd03 1201  1202   3200 3201 3202 3203 3204 3205   变更完成
+
+5000 5001 5002 5003 5004 5005 5006 5007 5008 5009 ....... 5019
+
+
+
+
+3. hd04  3200   3201  3202  3203  变更验证完成
+
+
+
+4. hd06   3001 ...... 3010  、  3200 ...... 3204 变更验证完成
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 1. hb03 5000   5001               5010   变更验证完成                                               ~ 5037
 
 
@@ -212,6 +258,130 @@ freyr-21.03.23-482fb97-centos7-x86_64    hela-21.03.23-482fb97-centos7-x86_64   
 10.66.135.72
 
 10.66.135.75
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    源host            rdma ip                                       目的udisk
+	10.66.135.72 (10.66.145.71)                     10.66.168.131（udisk hd03 5006） RC Acknowledge QP=0x0038ce 
+	10.66.135.69 (10.66.145.69)                    10.66.168.29（udisk 5006）	     RC RDMA Write Only QP=0x0107a5 
+	10.66.135.75 (10.66.145.75)                     10.66.168.30（udisk 5006）	     RC RDMA Write Only QP=0x011cb8  
+	10.66.135.74 (10.66.145.73)                    10.66.168.130（udisk 5006）		   RC Acknowledge QP=0x00467e 
+	10.66.135.74 (10.66.145.73)                    10.66.168.26（udisk 5006）		   RC Acknowledge QP=0x02621c 
+
+
+
+
+
+set 5014
+
+
+
+
+
+extern_id: bsi-4cr4uplj, size: 220, create_time: 2021-04-02 21:27:36,  start_tick: 2021-04-02 21:27:46, done_tick: 2021-04-02 21:37:03, end_tick: 2021-04-02 21:37:03, clone_use_time: 557, end_use_time: 0 
+extern_id: bsi-erwzl4ux, size: 220, create_time: 2021-04-02 21:27:39,  start_tick: 2021-04-02 21:27:43, done_tick: 2021-04-02 21:37:00, end_tick: 2021-04-02 21:37:05, clone_use_time: 557, end_use_time: 5 
+extern_id: bsi-nw04ajzm, size: 220, create_time: 2021-04-02 21:40:20,  start_tick: 2021-04-02 21:40:29, done_tick: 2021-04-02 22:36:18, end_tick: 2021-04-02 22:50:18, clone_use_time: 3349, end_use_time: 840 
+extern_id: bsi-l3k0jt3l, size: 220, create_time: 2021-04-02 21:44:06,  start_tick: 2021-04-02 21:44:10, done_tick: 2021-04-02 22:50:18, end_tick: 2021-04-02 22:50:29, clone_use_time: 3968, end_use_time: 11 
+extern_id: bsi-svxjqtgo, size: 220, create_time: 2021-04-02 21:44:09,  start_tick: 2021-04-02 21:44:11, done_tick: 2021-04-02 22:50:20, end_tick: 2021-04-02 22:50:23, clone_use_time: 3969, end_use_time: 3 
+extern_id: bsi-rqzpvfve, size: 220, create_time: 2021-04-02 21:44:12,  start_tick: 2021-04-02 21:44:19, done_tick: 2021-04-02 22:49:23, end_tick: 2021-04-02 22:50:18, clone_use_time: 3904, end_use_time: 55 
+extern_id: bsi-izzdyzi2, size: 220, create_time: 2021-04-02 21:44:21,  start_tick: 2021-04-02 21:44:31, done_tick: 2021-04-02 22:49:00, end_tick: 2021-04-02 22:50:17, clone_use_time: 3869, end_use_time: 77 
+extern_id: bsi-alp4okod, size: 220, create_time: 2021-04-02 21:44:27,  start_tick: 2021-04-02 21:44:33, done_tick: 2021-04-02 22:49:37, end_tick: 2021-04-02 22:50:17, clone_use_time: 3904, end_use_time: 40 
+extern_id: bsi-vomws1l3, size: 220, create_time: 2021-04-02 21:44:39,  start_tick: 2021-04-02 21:44:49, done_tick: 2021-04-02 22:50:18, end_tick: 2021-04-02 22:50:28, clone_use_time: 3929, end_use_time: 10 
+extern_id: bsi-yioomzlo, size: 220, create_time: 2021-04-02 21:44:50,  start_tick: 2021-04-02 21:44:51, done_tick: 2021-04-02 22:50:20, end_tick: 2021-04-02 22:50:23, clone_use_time: 3929, end_use_time: 3 
+extern_id: bsi-frxoc3gj, size: 220, create_time: 2021-04-02 21:44:54,  start_tick: 2021-04-02 21:44:56, done_tick: 2021-04-02 22:49:55, end_tick: 2021-04-02 22:50:21, clone_use_time: 3899, end_use_time: 26 
+extern_id: bsi-klwyf53j, size: 220, create_time: 2021-04-02 21:45:15,  start_tick: 2021-04-02 21:45:23, done_tick: 2021-04-02 22:50:17, end_tick: 2021-04-02 22:50:27, clone_use_time: 3894, end_use_time: 10 
+extern_id: bsi-idxnmaoq, size: 220, create_time: 2021-04-02 21:45:18,  start_tick: 2021-04-02 21:45:22, done_tick: 2021-04-02 22:50:17, end_tick: 2021-04-02 22:50:27, clone_use_time: 3895, end_use_time: 10 
+extern_id: bsi-ztmauobh, size: 220, create_time: 2021-04-02 21:45:29,  start_tick: 2021-04-02 21:45:33, done_tick: 2021-04-02 22:49:47, end_tick: 2021-04-02 22:50:17, clone_use_time: 3854, end_use_time: 30 
+extern_id: bsi-crsllztk, size: 220, create_time: 2021-04-02 21:45:32,  start_tick: 2021-04-02 21:45:42, done_tick: 2021-04-02 22:50:17, end_tick: 2021-04-02 22:50:27, clone_use_time: 3875, end_use_time: 10 
+extern_id: bsi-bkfsrb3o, size: 220, create_time: 2021-04-02 21:45:36,  start_tick: 2021-04-02 21:45:41, done_tick: 2021-04-02 22:50:20, end_tick: 2021-04-02 22:50:23, clone_use_time: 3879, end_use_time: 3 
+extern_id: bsi-rjrfeqwp, size: 220, create_time: 2021-04-02 21:45:46,  start_tick: 2021-04-02 21:45:49, done_tick: 2021-04-02 22:50:18, end_tick: 2021-04-02 22:50:28, clone_use_time: 3869, end_use_time: 10 
+extern_id: bsi-knz35uto, size: 220, create_time: 2021-04-02 21:45:49,  start_tick: 2021-04-02 21:45:50, done_tick: 2021-04-02 22:50:18, end_tick: 2021-04-02 22:50:29, clone_use_time: 3868, end_use_time: 11 
+extern_id: bsi-5cumou1m, size: 220, create_time: 2021-04-02 21:45:57,  start_tick: 2021-04-02 21:46:01, done_tick: 2021-04-02 22:49:50, end_tick: 2021-04-02 22:50:17, clone_use_time: 3829, end_use_time: 27 
+extern_id: bsi-gca05i0o, size: 220, create_time: 2021-04-02 21:46:02,  start_tick: 2021-04-02 21:46:10, done_tick: 2021-04-02 22:49:55, end_tick: 2021-04-02 22:50:18, clone_use_time: 3825, end_use_time: 23 
+extern_id: bsi-ynryziyp, size: 220, create_time: 2021-04-02 21:46:10,  start_tick: 2021-04-02 21:46:11, done_tick: 2021-04-02 22:49:50, end_tick: 2021-04-02 22:50:17, clone_use_time: 3819, end_use_time: 27 
+extern_id: bsi-wifjpkzk, size: 220, create_time: 2021-04-02 21:46:10,  start_tick: 2021-04-02 21:46:21, done_tick: 2021-04-02 22:50:20, end_tick: 2021-04-02 22:50:23, clone_use_time: 3839, end_use_time: 3 
+extern_id: bsi-pgxmyhiu, size: 220, create_time: 2021-04-02 21:46:15,  start_tick: 2021-04-02 21:46:22, done_tick: 2021-04-02 22:50:02, end_tick: 2021-04-02 22:50:27, clone_use_time: 3820, end_use_time: 25 
+extern_id: bsi-uyijkhvz, size: 220, create_time: 2021-04-02 21:46:15,  start_tick: 2021-04-02 21:46:19, done_tick: 2021-04-02 22:50:18, end_tick: 2021-04-02 22:50:28, clone_use_time: 3839, end_use_time: 10 
+extern_id: bsi-jwwm2tan, size: 220, create_time: 2021-04-02 21:46:19,  start_tick: 2021-04-02 21:46:29, done_tick: 2021-04-02 22:49:53, end_tick: 2021-04-02 22:50:19, clone_use_time: 3804, end_use_time: 26 
+extern_id: bsi-bfq1ulbl, size: 220, create_time: 2021-04-02 21:46:39,  start_tick: 2021-04-02 21:46:40, done_tick: 2021-04-02 22:49:53, end_tick: 2021-04-02 22:50:19, clone_use_time: 3793, end_use_time: 26 
+extern_id: bsi-4od5mdak, size: 220, create_time: 2021-04-02 21:46:56,  start_tick: 2021-04-02 21:47:00, done_tick: 2021-04-02 22:50:00, end_tick: 2021-04-02 22:50:26, clone_use_time: 3780, end_use_time: 26 
+extern_id: bsi-ze5moh5l, size: 220, create_time: 2021-04-02 21:47:09,  start_tick: 2021-04-02 21:47:09, done_tick: 2021-04-02 22:50:03, end_tick: 2021-04-02 22:50:28, clone_use_time: 3774, end_use_time: 25 
+extern_id: bsi-0dv4bxkr, size: 220, create_time: 2021-04-02 21:47:33,  start_tick: 2021-04-02 21:47:39, done_tick: 2021-04-02 22:50:03, end_tick: 2021-04-02 22:50:28, clone_use_time: 3744, end_use_time: 25 
+extern_id: bsi-ejbtmo4d, size: 220, create_time: 2021-04-02 21:49:06,  start_tick: 2021-04-02 21:49:11, done_tick: 2021-04-02 22:50:20, end_tick: 2021-04-02 22:50:23, clone_use_time: 3669, end_use_time: 3 
+extern_id: bsi-yixkouu4, size: 220, create_time: 2021-04-02 21:49:09,  start_tick: 2021-04-02 21:49:16, done_tick: 2021-04-02 22:49:50, end_tick: 2021-04-02 22:50:20, clone_use_time: 3634, end_use_time: 30 
+extern_id: bsi-wdvxm2lr, size: 220, create_time: 2021-04-02 21:49:13,  start_tick: 2021-04-02 21:49:16, done_tick: 2021-04-02 22:50:20, end_tick: 2021-04-02 22:50:29, clone_use_time: 3664, end_use_time: 9 
+extern_id: bsi-yr1x431b, size: 220, create_time: 2021-04-02 21:49:16,  start_tick: 2021-04-02 21:49:23, done_tick: 2021-04-02 22:50:17, end_tick: 2021-04-02 22:50:27, clone_use_time: 3654, end_use_time: 10 
+extern_id: bsi-ngder143, size: 220, create_time: 2021-04-02 21:49:20,  start_tick: 2021-04-02 21:49:22, done_tick: 2021-04-02 22:50:17, end_tick: 2021-04-02 22:50:27, clone_use_time: 3655, end_use_time: 10 
+extern_id: bsi-4tgjcqri, size: 220, create_time: 2021-04-02 21:49:35,  start_tick: 2021-04-02 21:49:42, done_tick: 2021-04-02 22:50:17, end_tick: 2021-04-02 22:50:27, clone_use_time: 3635, end_use_time: 10 
+extern_id: bsi-5xtaxtvf, size: 220, create_time: 2021-04-02 21:49:41,  start_tick: 2021-04-02 21:49:50, done_tick: 2021-04-02 22:49:55, end_tick: 2021-04-02 22:50:18, clone_use_time: 3605, end_use_time: 23 
+extern_id: bsi-jdbnkuth, size: 220, create_time: 2021-04-02 21:49:44,  start_tick: 2021-04-02 21:49:46, done_tick: 2021-04-02 22:50:20, end_tick: 2021-04-02 22:50:29, clone_use_time: 3634, end_use_time: 9 
+extern_id: bsi-ujzvv3zn, size: 220, create_time: 2021-04-02 21:51:31,  start_tick: 2021-04-02 21:51:36, done_tick: 2021-04-02 22:49:55, end_tick: 2021-04-02 22:50:21, clone_use_time: 3499, end_use_time: 26 
+extern_id: bsi-tj1a2bnq, size: 220, create_time: 2021-04-02 23:21:25,  start_tick: 2021-04-02 23:21:33, done_tick: 2021-04-02 23:27:35, end_tick: 2021-04-02 23:27:36, clone_use_time: 362, end_use_time: 1 
+
+
+
+
+
+
+
+set 5015
+extern_id: bsi-zw4abshn, size: 220, create_time: 2021-04-02 21:24:32, status: 2, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:24:32, done_tick: 2021-04-02 21:48:52, end_tick: 2021-04-02 22:42:51, clone_use_time: 1460, end_use_time: 3239 
+extern_id: bsi-mpyv1ufb, size: 220, create_time: 2021-04-02 21:24:35, status: 2, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:24:42, done_tick: 2021-04-02 22:42:21, end_tick: 2021-04-02 22:42:52, clone_use_time: 4659, end_use_time: 31 
+extern_id: bsi-22laxes2, size: 220, create_time: 2021-04-02 21:24:38, status: 2, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:24:39, done_tick: 2021-04-02 22:42:19, end_tick: 2021-04-02 22:42:57, clone_use_time: 4660, end_use_time: 38 
+extern_id: bsi-imdhbrfg, size: 220, create_time: 2021-04-02 21:24:48, status: 2, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:24:49, done_tick: 2021-04-02 21:52:03, end_tick: 2021-04-02 22:42:55, clone_use_time: 1634, end_use_time: 3052 
+extern_id: bsi-q3me3ljl, size: 220, create_time: 2021-04-02 21:27:29, status: 0, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:27:34, done_tick: 2021-04-02 21:53:43, end_tick: 2021-04-02 22:42:54, clone_use_time: 1569, end_use_time: 2951 
+extern_id: bsi-zcanhs3j, size: 220, create_time: 2021-04-02 21:27:32, status: 2, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:27:42, done_tick: 2021-04-02 21:54:19, end_tick: 2021-04-02 22:42:51, clone_use_time: 1597, end_use_time: 2912 
+extern_id: bsi-rhwxy351, size: 220, create_time: 2021-04-02 21:27:42, status: 2, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:27:52, done_tick: 2021-04-02 22:27:06, end_tick: 2021-04-02 22:42:37, clone_use_time: 3554, end_use_time: 931 
+extern_id: bsi-zplaizmp, size: 220, create_time: 2021-04-02 21:27:48, status: 2, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:27:57, done_tick: 2021-04-02 22:37:42, end_tick: 2021-04-02 22:42:48, clone_use_time: 4185, end_use_time: 306 
+extern_id: bsi-cffdsnt4, size: 220, create_time: 2021-04-02 21:27:51, status: 2, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:27:58, done_tick: 2021-04-02 22:37:41, end_tick: 2021-04-02 22:42:41, clone_use_time: 4183, end_use_time: 300 
+extern_id: bsi-rinx3il1, size: 220, create_time: 2021-04-02 21:41:08, status: 2, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:41:14, done_tick: 2021-04-02 22:41:54, end_tick: 2021-04-02 22:42:54, clone_use_time: 3640, end_use_time: 60 
+extern_id: bsi-dtrkiqvh, size: 220, create_time: 2021-04-02 21:44:17, status: 0, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:44:23, done_tick: 2021-04-02 22:41:59, end_tick: 2021-04-02 22:42:55, clone_use_time: 3456, end_use_time: 56 
+extern_id: bsi-kgpsyfkm, size: 220, create_time: 2021-04-02 21:44:24, status: 0, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:44:33, done_tick: 2021-04-02 22:42:46, end_tick: 2021-04-02 22:42:59, clone_use_time: 3493, end_use_time: 13 
+extern_id: bsi-pa0oxirc, size: 220, create_time: 2021-04-02 21:44:32, status: 0, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:44:34, done_tick: 2021-04-02 22:42:44, end_tick: 2021-04-02 22:42:54, clone_use_time: 3490, end_use_time: 10 
+extern_id: bsi-fdzu4gcy, size: 220, create_time: 2021-04-02 21:44:35, status: 0, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:44:37, done_tick: 2021-04-02 22:41:45, end_tick: 2021-04-02 22:42:57, clone_use_time: 3428, end_use_time: 72 
+extern_id: bsi-05wwnefr, size: 220, create_time: 2021-04-02 21:44:42, status: 0, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:44:47, done_tick: 2021-04-02 22:42:30, end_tick: 2021-04-02 22:42:57, clone_use_time: 3463, end_use_time: 27 
+extern_id: bsi-zeyorm5d, size: 220, create_time: 2021-04-02 21:44:46, status: 0, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:44:54, done_tick: 2021-04-02 22:42:49, end_tick: 2021-04-02 22:43:00, clone_use_time: 3475, end_use_time: 11 
+extern_id: bsi-4jansc0m, size: 220, create_time: 2021-04-02 21:44:58, status: 0, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:45:09, done_tick: 2021-04-02 22:42:57, end_tick: 2021-04-02 22:42:59, clone_use_time: 3468, end_use_time: 2 
+extern_id: bsi-33kt04bm, size: 220, create_time: 2021-04-02 21:45:04, status: 0, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:45:12, done_tick: 2021-04-02 22:42:56, end_tick: 2021-04-02 22:43:04, clone_use_time: 3464, end_use_time: 8 
+extern_id: bsi-d4mdlezu, size: 220, create_time: 2021-04-02 21:45:08, status: 0, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:45:13, done_tick: 2021-04-02 22:42:56, end_tick: 2021-04-02 22:43:04, clone_use_time: 3463, end_use_time: 8 
+extern_id: bsi-es2ro4ep, size: 220, create_time: 2021-04-02 21:45:11, status: 0, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:45:13, done_tick: 2021-04-02 22:42:54, end_tick: 2021-04-02 22:43:01, clone_use_time: 3461, end_use_time: 7 
+extern_id: bsi-xyw2qxwg, size: 220, create_time: 2021-04-02 21:45:41, status: 0, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:45:50, done_tick: 2021-04-02 22:42:49, end_tick: 2021-04-02 22:43:02, clone_use_time: 3419, end_use_time: 13 
+extern_id: bsi-gr14ruqo, size: 220, create_time: 2021-04-02 21:45:54, status: 0, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:46:03, done_tick: 2021-04-02 22:42:54, end_tick: 2021-04-02 22:43:01, clone_use_time: 3411, end_use_time: 7 
+extern_id: bsi-4m31htxc, size: 220, create_time: 2021-04-02 21:45:59, status: 0, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:46:08, done_tick: 2021-04-02 22:42:42, end_tick: 2021-04-02 22:42:53, clone_use_time: 3394, end_use_time: 11 
+extern_id: bsi-ejmyhqsc, size: 220, create_time: 2021-04-02 21:46:02, status: 0, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:46:03, done_tick: 2021-04-02 22:42:56, end_tick: 2021-04-02 22:43:04, clone_use_time: 3413, end_use_time: 8 
+extern_id: bsi-ldxmncz1, size: 220, create_time: 2021-04-02 21:46:06, status: 0, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:46:14, done_tick: 2021-04-02 22:42:14, end_tick: 2021-04-02 22:42:54, clone_use_time: 3360, end_use_time: 40 
+extern_id: bsi-ikhbv25m, size: 220, create_time: 2021-04-02 21:46:18, status: 0, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:46:28, done_tick: 2021-04-02 22:42:47, end_tick: 2021-04-02 22:42:58, clone_use_time: 3379, end_use_time: 11 
+extern_id: bsi-wi3cdzlf, size: 220, create_time: 2021-04-02 21:46:28, status: 0, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:46:37, done_tick: 2021-04-02 22:42:30, end_tick: 2021-04-02 22:42:57, clone_use_time: 3353, end_use_time: 27 
+extern_id: bsi-qlv2me1q, size: 220, create_time: 2021-04-02 21:46:42, status: 0, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:46:52, done_tick: 2021-04-02 22:42:46, end_tick: 2021-04-02 22:42:59, clone_use_time: 3354, end_use_time: 13 
+extern_id: bsi-0zumc30g, size: 220, create_time: 2021-04-02 21:46:51, status: 0, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:46:58, done_tick: 2021-04-02 22:41:02, end_tick: 2021-04-02 22:42:52, clone_use_time: 3244, end_use_time: 110 
+extern_id: bsi-q2warud1, size: 220, create_time: 2021-04-02 21:47:04, status: 0, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:47:08, done_tick: 2021-04-02 22:42:47, end_tick: 2021-04-02 22:42:58, clone_use_time: 3339, end_use_time: 11 
+extern_id: bsi-lrexj3c4, size: 220, create_time: 2021-04-02 21:47:21, status: 0, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:47:23, done_tick: 2021-04-02 22:42:34, end_tick: 2021-04-02 22:42:56, clone_use_time: 3311, end_use_time: 22 
+extern_id: bsi-q02ji1rn, size: 220, create_time: 2021-04-02 21:47:30, status: 0, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:47:38, done_tick: 2021-04-02 22:42:47, end_tick: 2021-04-02 22:42:57, clone_use_time: 3309, end_use_time: 10 
+extern_id: bsi-ky31qubd, size: 220, create_time: 2021-04-02 21:49:03, status: 0, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:49:07, done_tick: 2021-04-02 22:42:50, end_tick: 2021-04-02 22:43:04, clone_use_time: 3223, end_use_time: 14 
+extern_id: bsi-nobkjoed, size: 220, create_time: 2021-04-02 21:49:23, status: 0, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:49:28, done_tick: 2021-04-02 22:42:55, end_tick: 2021-04-02 22:43:02, clone_use_time: 3207, end_use_time: 7 
+extern_id: bsi-ksa3fgye, size: 220, create_time: 2021-04-02 21:49:27, status: 2, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:49:27, done_tick: 2021-04-02 22:42:55, end_tick: 2021-04-02 22:43:02, clone_use_time: 3208, end_use_time: 7 
+extern_id: bsi-pelbdncn, size: 220, create_time: 2021-04-02 21:49:30, status: 0, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:49:32, done_tick: 2021-04-02 22:42:56, end_tick: 2021-04-02 22:43:04, clone_use_time: 3204, end_use_time: 8 
+extern_id: bsi-miwntsuq, size: 220, create_time: 2021-04-02 21:49:48, status: 0, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:49:53, done_tick: 2021-04-02 22:42:49, end_tick: 2021-04-02 22:43:00, clone_use_time: 3176, end_use_time: 11 
+extern_id: bsi-p4hverkd, size: 220, create_time: 2021-04-02 21:51:24, status: 0, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:51:29, done_tick: 2021-04-02 22:42:42, end_tick: 2021-04-02 22:42:53, clone_use_time: 3073, end_use_time: 11 
+extern_id: bsi-bnmal3t4, size: 220, create_time: 2021-04-02 21:51:34, status: 0, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:51:38, done_tick: 2021-04-02 22:42:37, end_tick: 2021-04-02 22:42:53, clone_use_time: 3059, end_use_time: 16 
+extern_id: bsi-zybtehdm, size: 220, create_time: 2021-04-02 21:57:18, status: 0, clone_purpose: 0, clone_status: 2, start_tick: 2021-04-02 21:57:28, done_tick: 2021-04-02 22:42:50, end_tick: 2021-04-02 22:43:04, clone_use_time: 2722, end_use_time: 14 
+
+
+
+
+
 
 
 

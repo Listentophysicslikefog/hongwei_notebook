@@ -8,7 +8,7 @@ class Thread
 {
 public:
     typedef boost::function<void ()> ThreadFunc; //⭐一种新的类型 1⭐
-    explicit Thread(const ThreadFunc& func);  // 单参数用explicit阻止隐式的转换构造，只能显示调用   3  那多了这个函数的话就去cpp文件中实现一下
+    explicit  (const ThreadFunc& func);  // 单参数用explicit阻止隐式的转换构造，只能显示调用   3  那多了这个函数的话就去cpp文件中实现一下
     //传进去的是一个(未定的)新类型，⭐这跟重要！！！为后面做铺垫
 
     void Start();//创建线程 pthread_create()出处

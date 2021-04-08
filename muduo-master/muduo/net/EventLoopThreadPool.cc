@@ -42,11 +42,11 @@ void EventLoopThreadPool::start(const ThreadInitCallback& cb)
     char buf[name_.size() + 32];
     snprintf(buf, sizeof buf, "%s%d", name_.c_str(), i);
     EventLoopThread* t = new EventLoopThread(cb, buf);
-    threads_.push_back(std::unique_ptr<EventLoopThread>(t));
+    threads_.push_back(std::unique_ptr<EventLoopThread>(t));  //启动EventLoopThread线程，在进入事件循环前会调用cb
     loops_.push_back(t->startLoop());
   }
   if (numThreads_ == 0 && cb)
-  {
+  { // 只有一个eventloop,在这个eventloop进入事件循环前调用cb
     cb(baseLoop_);
   }
 }
@@ -55,9 +55,9 @@ EventLoop* EventLoopThreadPool::getNextLoop()
 {
   baseLoop_->assertInLoopThread();
   assert(started_);
-  EventLoop* loop = baseLoop_;
+  EventLoop* loop = baseLoop_; //这个baseloop_就是acceptor属于的loop mainreactor  //如果loops_为空，则loop指向baseloop_ 
 
-  if (!loops_.empty())
+  if (!loops_.empty())  //如果loops_不为空 按照round-robin(轮叫)的调度方式选择一个eventloop
   {
     // round-robin
     loop = loops_[next_];

@@ -59,7 +59,7 @@ void TcpServer::setThreadNum(int numThreads)
   threadPool_->setThreadNum(numThreads);
 }
 
-void TcpServer::start() //多次调用无害
+void TcpServer::start() //多次调用无害 启动线程池
 {
   if (started_.getAndSet(1) == 0)  //？？？？？
   {
@@ -70,7 +70,7 @@ void TcpServer::start() //多次调用无害
         std::bind(&Acceptor::listen, get_pointer(acceptor_)));  //get_pointer返回acceptor_的原生指针  通过原生指针调用listen函数
   }
 }
-
+ 
 
 /*
 在TcpServer::newConnection()中，我们把TcpServer::removeConnection()注册到TcpConnection的setCloseCallback上，用于接收连接断开的消息。
