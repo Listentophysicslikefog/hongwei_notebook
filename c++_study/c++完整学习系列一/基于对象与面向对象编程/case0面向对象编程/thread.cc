@@ -22,13 +22,13 @@ void Thread::Join()
 	pthread_join(threadId_, NULL);
 }
 //
-void* Thread::ThreadRoutine(void* arg)//静态成员函数
+void* Thread::ThreadRoutine(void* arg)//静态成员函数 这个arg就是创建线程时传的this指针
 {
 	//Run();//但也不能直接调用啦， 因为ThreadRoutine是静态成员函数，不能调用非静态的
 	//可以靠传递过来的this⭐妙
 	Thread* thread = static_cats<Thread*>(arg);//this指针转换成基类指针，
 	//到时候this指针一定是一个派生类对象的指针，现在将基类指针指向派生类对象
 	//并且调用Run函数
-	thread->Run();
+	thread->Run();   // run()这个才是真的线程需要运行的函数,这个函数需要派生类来实现
 	return NULL;
 }
