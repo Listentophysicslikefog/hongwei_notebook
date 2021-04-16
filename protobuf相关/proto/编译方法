@@ -1,0 +1,25 @@
+1. 先写pb文件
+
+文件名字： person.proto
+
+
+package test;   // 后面使用这个pb的时候需要using namespace test 这个命名空间
+
+message Person {
+  required string name = 1;
+  required int32 id = 2;
+  optional string email = 3;
+}
+
+2. 将pb文件编译为c++使用的文件
+
+命令： protoc ./person.proto --cpp_out=./
+
+会生成： person.pb.cc  person.pb.h 两个文件
+
+
+3. 
+
+进一步理解epoll_create、epoll_ctl、epoll_wait方法
+学习并尝试自定义body+head传输协议
+完善EchoServer和EchoClient，
