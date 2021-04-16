@@ -1,0 +1,35 @@
+syntax = "proto2";
+
+package tutorial;
+
+// 通用的返回码
+message ResponseCode {
+    required int32 retcode = 1;                 // 返回值
+    optional string error_message = 2;          // 当返回值不为0时，包含错误信息
+};
+
+enum DISK_TYPE {
+    DISK_TYPE_DATA = 0;
+    DISK_TYPE_SYSTEM = 1;
+    DISK_TYPE_SSD_DATA = 2;
+    DISK_TYPE_SSD_SYSTEM = 3;
+    DISK_TYPE_RSSD_DATA = 4;
+    DISK_TYPE_RSSD_SYSTEM = 5;
+};
+
+// Client发起的请求
+message CreateUDiskRequest {
+    required uint32 top_oid = 10;
+    required uint32 oid     = 20;
+    required string extern_id   = 30; // extern_id;
+    required string name = 40;
+    required uint32 size    = 50;
+    optional string owner   = 60;
+    optional DISK_TYPE disk_type = 70 [default = DISK_TYPE_DATA];
+};
+
+// Server的响应
+message CreateUDiskResponse {
+    required ResponseCode rc = 10;
+    optional string extern_id    = 20; // extern_id;
+};
