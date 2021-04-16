@@ -28,6 +28,59 @@
 
 14. hela key是pc value是盘udisk 读一个pc写多块盘
 
+
+1. shard路由失效怎么办 ，ark有三副本，会切换路由向其他的ark读取,全部路由失败就会clone失败
+
+2. 回收盘的时候，该盘作为的源信息失效
+
+3. io流
+
+4. chunk下线（写的时候会写同一个pg组里的三个chunk，如果chunk下线直接不写这个chunk  和修复的情况应该一样的）、chunk修复(hela 与metaserver有心跳，感知集群路由变化，在读chunk的时候如果发现路由变化直接将pctask结束掉，然后fryer来ping hela发现task任务没有完成那么就会重新的login 分发任务，重新分配路由)
+
+5. 数据盘clone 
+
+6. 一块盘clone 有没有p2p
+
+7. ark盘上线，什么时候可以去读取shard信息 读shard信息是一次读取真个shad还是一次读256k
+
+8. ark上下线很快，ip没有变化，这个时候怎么获取shard信息 。 获取shard信息是根据ip port(ark ip port配死的，重启还是不会变)去获取的 
+
+9. 为什么开关set
+
+10 . p2p解决了什么，没有解决什么
+
+11. chunk的路由是怎么获取的 (fryer通过与metaserver的定时心跳信息获取udisk集群的相关信息)?? 哈希函数计算pc 计算出pgid --> pginfo
+
+12. hela怎么写chunk的
+
+13. 三副本是怎么保证的
+
+14. 为什么用ymer还有其他方法么
+
+15. hela本地源、远端源怎么共享 
+
+16. 怎么知道hela的路由（是定时从zk获取的hela和idun路由信息）
+
+17 . fryer重启会在init()时重新从mongo load相关clone信息，然后在inithela()里有一个定时任务，根据clone任务的状态去分发不同的clone任务
+
+fryer为什么有一个定时任务去获取所有的job 然后根据状态再进行下发该job，应该是用来处理下发任务时由于出现不同问题导致下发任务终止的任务
+
+chono知道镜像源盘是在那一个ark 以及对应的shard路由
+向chono获取shard信息
+
+18. 有数据的shard的数据是不是满的,不一定是满的
+
+19. shard是不是三副本，shard只会返回给fryer有数据的shard么
+
+
+
+fryer通过和metaserver的心跳信息感知到集群路由变化有新chunk上线那么就会将还没有开始下发的clone任务，更改状态然后走修复流程，获取先上线的chunk然后再次login
+如果已经下发任务给hela后，hela和metaserver有心跳信息会感知到然后会进行处理
+
+
+
+
+
 是由Init() 模块到 do_clone_udisk模块的：
 manage_handle.Start(); [freyr.cc]    ------->   register_proto();[manage_handle.cc]   ------->   REGISTE_PROTO_HANDLER(g_context->manage_handle()->loop(),
                         ucloud::udisk::CLONE_INNER_REQUEST, CloneUDiskHandle); [register_proto.cc]   ------>   virtual void EntryInit(const uevent::ConnectionUeventPtr& conn,

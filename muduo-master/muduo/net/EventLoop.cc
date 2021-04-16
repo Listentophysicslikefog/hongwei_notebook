@@ -111,7 +111,7 @@ void EventLoop::loop()  //事件循环，该函数不可以跨线程调用，只
   while (!quit_)   //应该是让工作线程一直工作，一个while循环
   {
     activeChannels_.clear();  //先清空一下，避免里面有数据， 这个是存放poller返回的活动通道，就是产生事件的通道
-    pollReturnTime_ = poller_->poll(kPollTimeMs, &activeChannels_);  //poller_是poller对象的智能指针，封装poll或者epoll。调用poll返回活动的通道
+    pollReturnTime_ = poller_->poll(kPollTimeMs, &activeChannels_);  //poller_是poller对象的智能指针，封装poll或者epoll。调用poll返回活动的通道  ，传的是 &activeChannels_，将活跃通道存放到这里
     ++iteration_;
     if (Logger::logLevel() <= Logger::TRACE)  //日志级别
     {
