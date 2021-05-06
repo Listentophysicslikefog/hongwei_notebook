@@ -33,7 +33,7 @@ int main()
   // dtor calls quit()
   EventLoopThread thr2;
   EventLoop* loop = thr2.startLoop();
-  loop->runInLoop(std::bind(print, loop));
+  loop->runInLoop(std::bind(print, loop));  // 析构函数调用quit
   CurrentThread::sleepUsec(500 * 1000);
   }
 
@@ -41,7 +41,7 @@ int main()
   // quit() before dtor
   EventLoopThread thr3;
   EventLoop* loop = thr3.startLoop();
-  loop->runInLoop(std::bind(quit, loop));
+  loop->runInLoop(std::bind(quit, loop));  //在析构函数之前调用 quit
   CurrentThread::sleepUsec(500 * 1000);
   }
 }

@@ -93,9 +93,16 @@ rc {
 
 
 
+11. 虚机相关
+
+/etc/libvirt/qemu  下面是该宿主机所有虚机的xmal文件
+
+virsh start  uuid  启动该虚机
 
 
+如果启动报错那么可能是盘没有挂载上去，使用脚本挂载即可： add_udisk.py
 
+virsh dumpxml  77059861-e7f6-4393-a358-0c80ed382acc  // dump 虚机的xmal文件信息
 
 
 

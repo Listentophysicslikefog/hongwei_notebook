@@ -30,3 +30,29 @@ rc {
 /root/limax/udisk/tool/get_attach_info.py hb03 5028 bsi-d1nhdivj
 
 
+db.t_chunk_repair_task_job.remove({state:1})  // 清理task job表
+
+
+
+
+潘小荧 4-26 下午 5:24
+ 172.27.246.217
+ 潘小荧 4-26 下午 5:24
+ /root/node-tester
+
+hn08 指定set创建盘： ./node-tester.js --host 10.189.151.126 --port 10086 --key ucloud.ubs2.allocate_ubs_request "lc_info={\"lc_name\": \"json50g\", \"disk_type\": 2, \"id\": \"bsm-json50g\", \"size\": 50, \"comment\": \"\",\"company_id\": 50140849,\"account_id\": 50302161}" set_id=5009
+
+
+
+
+扩容：
+
+
+
+
+
+
+
+1. chaos清理测试环境的task job表：
+
+ db.t_chunk_repair_task_job.remove({state:1})

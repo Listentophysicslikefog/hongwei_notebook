@@ -29,6 +29,10 @@
 14. hela key是pc value是盘udisk 读一个pc写多块盘
 
 
+
+
+
+
 1. shard路由失效怎么办 ，ark有三副本，会切换路由向其他的ark读取,全部路由失败就会clone失败
 
 2. 回收盘的时候，该盘作为的源信息失效
@@ -39,7 +43,7 @@
 
 5. 数据盘clone 
 
-6. 一块盘clone 有没有p2p
+6. 一块盘clone 有没有p2p 
 
 7. ark盘上线，什么时候可以去读取shard信息 读shard信息是一次读取真个shad还是一次读256k
 
@@ -50,16 +54,17 @@
 10 . p2p解决了什么，没有解决什么
 
 11. chunk的路由是怎么获取的 (fryer通过与metaserver的定时心跳信息获取udisk集群的相关信息)?? 哈希函数计算pc 计算出pgid --> pginfo
+hela 也是通过与metaserver的定时心跳信息获取udisk的集群相关信息。
 
-12. hela怎么写chunk的
+12. hela怎么写chunk的（hela是直接写chunk的三副本）
 
-13. 三副本是怎么保证的
+13. 三副本是怎么保证的，hela直接写chunk的三副本
 
 14. 为什么用ymer还有其他方法么
 
-15. hela本地源、远端源怎么共享 
+15. hela本地源、远端源怎么共享 （hela 、idun 都管理源信息，ark(管理镜像源信息) hela只管理本地的源信息   idun 管理所有的源信息  hela管理的源信息只供自己的task任务来查源   idun管理的源信息供所有的hela来查）
 
-16. 怎么知道hela的路由（是定时从zk获取的hela和idun路由信息）
+16. 怎么知道hela的路由（fryer是定时从zk获取的hela和idun路由信息）
 
 17 . fryer重启会在init()时重新从mongo load相关clone信息，然后在inithela()里有一个定时任务，根据clone任务的状态去分发不同的clone任务
 
@@ -73,9 +78,195 @@ chono知道镜像源盘是在那一个ark 以及对应的shard路由
 19. shard是不是三副本，shard只会返回给fryer有数据的shard么
 
 
+20. 向chunk发读数据的pb后，怎么调用的：数据读完后调用读完数据的回调函数
+
+21. BuildChunkWriteRequest do_hela_pc_task.cc 792 有什么用
+
+
+22. do_hela_task.cc 为什么可以直接获取一个loop然后在runinloop执行pc任务。 为什么一定可以获取到loop ，如果这个loop之前有pc任务在执行怎么办
+
+runinloop 内部会处理的，如果之前有任务就把这个任务放到pending队列里面。
+
+
+23. 发送读数据的请求后，会根具objid去获取对应的回调函数
+
+
+24. 为什么开始的时候 transmission_listener 需要注册回调
+
+
+向chaono读数据举例子：
+
+TransmissionHandle::SendRequest()注册超时回调函数和回应回调函数
+
+SendRequest()函数首先会：
+1. uevent::ConnectionUeventPtr TransmissionHandle::GetOutConnection(
+    const std::string& ip, int port)  获取连接，如果没有该连接就建立连接，然后设置该连接的消息到来回调函数connector->SetMessageReadCb(
+      std::bind(&TransmissionHandle::MessageReadHandle, std::placeholders::_1))，如果该连接有可读数据到来那么就执行MessageReadHandle函数
+
+2. 设置该函数的超时以及回应的回调函数：
+TransmissionHandle::RegisterResponse(uint32_t obj_id, HandleCb res_cb,
+                                          TimerCb timeout_cb,
+                                          const std::string& timeout_desc,
+                                          double time)------> HandleCbEntry* entry = new HandleCbEntry();
+  entry->obj_id = obj_id;  // 标识某个连接，查找某个连接的回调函数会需要这个
+  entry->res_cb = std::move(res_cb); // 设置response的回调函数
+  entry->timeout_cb = timeout_cb;  //设置超时的回调函数
+
+  3. MessageReadHandle函数会调用函数TransmissionHandle::DecodeMsg(const uevent::ConnectionUeventPtr& conn,
+                                   uint8_t msg_type, char** msg_hdr,
+                                   char** msg_data)解析数据,将数据获取出来放到msg_data、msg_hdr里
+
+数据解析后就会调用本次读取chono数据建立的连接的loop进行处理消息，oop_handle->HandleMessage(tmp_hdr.msg_type, msg_hdr, msg_data, conn);
+
+首先根据消息类型去进行不同的处理,通过obj_id去找到注册的回调函数，it = map_response_cb_entry_.find(obj_id) ，然后先loop_->CancelTimer(it->second->timer_id);  // 取消超时定时
+
+接受到数据后调用SendRequest()注册的回调函数：it->second->res_cb(msg_hdr, msg_data, conn);
+
+
+
+25. hela的io线程怎么知道metaserver的路由信息更新
+
+
+hela的管理线程manager handle和metaserver有心跳感知到路由变化后managerhandle会runinloop到io线程去更新相应的路由信息
+
+
+
+
+
+
+
+26 . 修复  
+
+和metaserver的心跳感知到有修复在进行或者路由变化那么就会获取hela_session_manager里session任务的状态，然后根据不同的状态去做不同的处理
+
+// 找到还在克隆中的task, session->progress != HELA_CLONE_START，如果已经start那么就是hela来处理对应的事件，没有start就发起repair流程，然后修复流程: 会根据
+某一个任务去处理，先获取pc在新增加的chunk上面的分布然后计算好对应关系后将任务放到分发队列里面，然后再分发任务，然后更新每一个任务的最新集群路由信息。
+
+fryer与metaserver的心跳路由感知到集群版本变化，判断有没有新chunk上线如果有就进入下面的判断，如果没有直接返回(不会更新任务session的集群版本信息，因为其他情况需要在自己的流程处理，让在对应的流程感知到版本变化然后做对应的处理然后更新任务的最新集群路由信息)，在这里只会处理修复导致的集群版本变化
+1. 任务是否login  已经login 还没有start（还没有把task分发给hela） 那么进入repair流程
+
+2. 还没有login 进入login流程(这个流程由fryer的分发的过程中自己login处理)
+
+3. prepare过程不触发repair, 由prepare自己检查是否需要prepare
+
+
+// prepare过程不触发repair, 由prepare自己检查是否需要prepare
+
+fryer 在计算shard与pc对应的路由时只会计算在线的chunk
+
+
+
+
+
+hela感知到路由变化：在进行某个pc任务时，直接停止任务，返回VDISK_RET_SOURCE_UNAVAILABLE
+
+感知到路由变化： 先更新task的集群路由信息
+
+1. hela写chunk时：
+
+如果源是chunk的那么首先检测源chunk是否在线，如果不在线  chunk_source_info_.offline_ = true; 然后这个task就失败
+
+如果源是hela的那么就直接检测 目标pc所在的chunk是否在线，如果不再线那么设置写的目标chunk下线 it->set_offline(true)，然后再重试
+
+返回 ： chunk_source_info_.offline_ 如果为true那么这个pc task返回FinishHelaPcTask(VDISK_RET_SOURCE_UNAVAILABLE);
+
+为false就重试
+
+2. hela读chunk也和上面一样
+
+在写chunk前不判断集群路由变化，写chunk后获取到返回值判断是否发送集群版本号变化，写成功应该就不用检测是否版本变化了。如果返回RETCODE_CLUSTER_VERSION_ERR
+那么就检测版本变化，如果没有变化直接返回写的chunk的在线状态  
+
+3. chono读也一样
+
+DoHelaTaskHandle::HandlePcTaskResult(int retcode, uint32_t pc_no) 解析对应返回值。
+
+retcode == VDISK_RET_SOURCE_UNAVAILABLE  //从src读失败，则强制其从镜像源读
+然后分发本次失败的task 
+
+
+对于修复的时候任务已经下发了，那么就是通过主chunk同步数据给修复中的chunk
+
+
+fryer怎么知道hela clone完的
+
+// 遍历已login的hela
+      for (auto &itr : hela_send_chunks) {
+        uint32_t hela_id = itr.first;
+        // 全部恢复ping
+        ping_helas.insert(hela_id);
+      }
+
+ for (uint32_t hela_id : ping_helas) {   // ping hela获取clone状态
+        HelaCloneJob *job = hela_session_->NewJob(HelaCloneJob::STATUS_PING);
+        job->hela_id = hela_id;
+        DispatchCloneJob(job);
+      }
+
+
+ping hela获取clone任务的状态,hela_session_->status != HELA_STATUS_CLONING 就销毁这个任务
+
+
+fryer没有新chunk上线不会走修复流程
+
+
+      // 找到还在克隆中的task, 发起repair流程
+      // prepare过程不触发repair, 由prepare自己检查是否需要prepare
+      if (session->status == HELA_STATUS_CLONING &&
+          session->progress != HELA_CLONE_START) {   // 表示非prepare流程
+        assert(session->progress == HELA_CLONE_PING);
+
+        2. prepare时是否发起repair由prepare自己检查是否需要
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+qos拦住用户io突发
+
+一次下发io后等待一会再下发模拟这种情况
+
+
+
+
+
 
 fryer通过和metaserver的心跳信息感知到集群路由变化有新chunk上线那么就会将还没有开始下发的clone任务，更改状态然后走修复流程，获取先上线的chunk然后再次login
 如果已经下发任务给hela后，hela和metaserver有心跳信息会感知到然后会进行处理
+
+session->status == HELA_STATUS_CLONING &&
+          session->progress != HELA_CLONE_START 的task进入修复流程
+
+    计算pc在新增加的chunk分布情况然后将task放到未发送队列里面，然后更新task session的集群路由信息
+    根据hela status判断该hela是否login过 如果没有就进入login流程  如果已经login 那么进入repair流程
+    然后分发任务      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

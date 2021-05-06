@@ -175,3 +175,49 @@ p2p模型clone：方舟向chunk推数据
  1. 学习Effective c++ 以及c++相关基础知识  目前已经看完1/3
 
  2. muduo net库学习 目前已看完1/6
+
+
+
+
+
+
+
+
+
+manager 配置文件：
+
+
+ {
+  "common": {
+    "listen_port": 6003,
+    "超时时间设置": "超时时间设置，给Loki发送请求 LokiRepairChunkPrepareRequest 耗时较长，此处设置超时时间为20min",
+    "request_timeout": 1200,
+    "internal_url": "http://internal.api.ucloud.cn",
+    "external_url": "http://163.177.145.190:5009"
+  },
+  "log": {
+    "log_dir": "/root/chaos/chaos-hn08-5009/log",
+    "log_prefix": "manager",
+    "log_suffix": ".log",
+    "log_size": 50,
+    "log_level": "DEBUG",
+    "log_func_file_line": true
+  },
+  "chaos_env":{
+    "mongodbIpPort": "mongodb://163.177.145.190:1970",
+    "db_name": "chaoseris_hn08_5009",
+    "kill_chunk_iplist": "10.189.152.70,10.189.152.130,10.189.152.131,10.189.152.132,10.189.152.133,10.189.152.66",
+    "kill_block_get_iplist": ""
+  },
+  "udisk_env":{
+    "zk_addr" : "10.189.151.14:2181,10.189.151.15:2181,10.189.151.16:2181,10.189.151.17:2181,10.189.151.18:2181",
+    "access_path": "/NS/udisk/global/access",
+    "global_zk_addr": "10.189.151.14:2181,10.189.151.15:2181,10.189.151.16:2181,10.189.151.17:2181,10.189.151.18:2181",
+    "metaserver_path" : "/NS/udisk/set5009/metaserver",
+    "mongodbIpPort": "mongodb://10.189.151.130:27020",
+    "loki_ip": "10.189.151.130",
+    "loki_port": 32500,
+    "thor_ip": "172.18.210.88",
+    "thor_port": 22500
+  }
+}

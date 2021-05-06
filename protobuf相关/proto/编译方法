@@ -18,8 +18,8 @@ message Person {
 会生成： person.pb.cc  person.pb.h 两个文件
 
 
-3. 
+3.  编译的时候生成的pb.cc文件也需要编译
 
-进一步理解epoll_create、epoll_ctl、epoll_wait方法
-学习并尝试自定义body+head传输协议
-完善EchoServer和EchoClient，
+g++  test.cc person.pb.cc -o test  -lprotobuf -pthread -std=c++11
+
+

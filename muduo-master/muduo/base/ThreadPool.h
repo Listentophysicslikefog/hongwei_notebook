@@ -22,7 +22,7 @@ class ThreadPool : noncopyable
  public:
   typedef std::function<void ()> Task;
 
-  explicit ThreadPool(const string& nameArg = string("ThreadPool"));
+  explicit ThreadPool(const string& nameArg = string("ThreadPool"));  //构造函数对成员变量进行初始化，互斥锁条件变量的构造，任务队列的默认任务数量为0；
   ~ThreadPool();
 
   // Must be called before start().
@@ -52,14 +52,14 @@ class ThreadPool : noncopyable
   Task take();
 
   mutable MutexLock mutex_;
-  Condition notEmpty_ GUARDED_BY(mutex_);
+  Condition notEmpty_ GUARDED_BY(mutex_);  //两个条件变量，notEmpty_，notFull_用来判断任务池中任务的数量
   Condition notFull_ GUARDED_BY(mutex_);
   string name_;
-  Task threadInitCallback_;
-  std::vector<std::unique_ptr<muduo::Thread>> threads_;
-  std::deque<Task> queue_ GUARDED_BY(mutex_);
+  Task threadInitCallback_;  //线程的初始化函数，可以没有，就是不用初始化
+  std::vector<std::unique_ptr<muduo::Thread>> threads_; // 存放工作线程  线程队列，内部存储的线程指针
+  std::deque<Task> queue_ GUARDED_BY(mutex_);  //任务对列，内部元素类型为typedef boost::function<void ()> Task;是一个任务执行函数
   size_t maxQueueSize_;
-  bool running_;
+  bool running_;  //线程池是否运行
 };
 
 }  // namespace muduo

@@ -86,7 +86,7 @@ void EventLoop::queueInLoop(Functor&& cb) {
     pendingFunctors_.emplace_back(std::move(cb));
   }
 
-  if (!isInLoopThread() || callingPendingFunctors_) wakeup();
+  if (!isInLoopThread() || callingPendingFunctors_) wakeup();  
 }
 
 void EventLoop::loop() {

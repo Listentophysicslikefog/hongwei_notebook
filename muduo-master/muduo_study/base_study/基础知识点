@@ -1,0 +1,69 @@
+1. 虚假唤醒
+参考博客： https://blog.csdn.net/abc1990fly/article/details/79469216
+
+处于等待的添加变量可以通过notify_one/notify_all进行唤醒（并不是真的唤醒，这个只是使用函数强制唤醒，也就是虚唤醒），调用函数进行信号的唤醒时，处于等待的条件变量会重新进行互斥锁的竞争。
+没有得到互斥锁的线程就会发生等待转移（wait morphing），从等待信号量的队列中转移到等待互斥锁的队列中，一旦获取到互斥锁的所有权就会接着向下执行，但是此时其他线程已经执行并重置了执行条件，这是该线程执行就可并引发未定义的错误。
+
+
+
+while 可以换为 if么？？，不可以
+
+
+muduo线程Thread.cc里面为什么要latch_.wait()
+
+
+
+2. muduo线程池使用及原理： https://www.freesion.com/article/7531690809/
+
+
+使用例子：
+
+
+#include <muduo/base/ThreadPool.h>
+#include <muduo/base/CountDownLatch.h>
+#include <muduo/base/CurrentThread.h>
+ 
+#include <boost/bind.hpp>
+#include <stdio.h>
+ 
+void print()
+{
+  printf("tid=%d\n", muduo::CurrentThread::tid());
+}
+ 
+void printString(const std::string& str)
+{
+  printf("tid=%d, str=%s\n", muduo::CurrentThread::tid(), str.c_str());
+}
+ 
+int main()
+{
+  muduo::ThreadPool pool("MainThreadPool");//线程池名称
+ 
+  printf("pid=%d, tid=%d\n", ::getpid(), muduo::CurrentThread::tid());
+ 
+  pool.start(5);//创建5个线程的线程池，并启动，但任务队列中无任务，等待...
+ 
+  pool.run(print);//创建任务，notify：随机唤醒等待队列中的等待同一共享资源的一个线程
+  pool.run(print);
+  for (int i = 0; i < 10; ++i)//创建10个任务
+  {
+    char buf[32];
+    snprintf(buf, sizeof buf, "task %d", i);
+    pool.run(boost::bind(printString, std::string(buf)));//带参数的任务函数
+  }
+ 
+  /*演示绑定任务可以绑定类的成员函数，无实际意义*/
+  muduo::CountDownLatch latch(1);
+  pool.run(boost::bind(&muduo::CountDownLatch::countDown, &latch));//线程池中线程运行countDown，计数值为零时通知主线程
+  latch.wait();
+  /*演示绑定任务可以绑定类的成员函数，无实际意义*/
+ 
+  pool.stop();//如果没有这句，pool临时变量也会析构，在析构时会调用stop
+}
+
+
+
+
+
+

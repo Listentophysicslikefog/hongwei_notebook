@@ -151,7 +151,7 @@ Thread::Thread(ThreadFunc func, const string& n)   //构造函数
   setDefaultName();
 }
 
-Thread::~Thread()
+Thread::~Thread() //析构函数
 {
   if (started_ && !joined_)
   {

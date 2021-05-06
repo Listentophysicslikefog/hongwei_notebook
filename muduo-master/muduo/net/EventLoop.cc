@@ -126,7 +126,7 @@ void EventLoop::loop()  //事件循环，该函数不可以跨线程调用，只
     }
     currentActiveChannel_ = NULL;  //for循环全部处理完后置NULL
     eventHandling_ = false;   //置为false
-    doPendingFunctors();
+    doPendingFunctors();  // 执行pending里面的函数
   }
 
   LOG_TRACE << "EventLoop " << this << " stop looping";
@@ -135,16 +135,17 @@ void EventLoop::loop()  //事件循环，该函数不可以跨线程调用，只
 
 void EventLoop::quit()
 {
-  quit_ = true;
+  quit_ = true;  //退出事件循环
   // There is a chance that loop() just executes while(!quit_) and exits,
   // then EventLoop destructs, then we are accessing an invalid object.
   // Can be fixed using mutex_ in both places.
   if (!isInLoopThread())
   {
-    wakeup();
+    wakeup();  // 唤醒线程，然后判断quit_就可以退出事件循环了
   }
 }
-
+// https://blog.csdn.net/lovebasamessi/article/details/104666853/
+// run in loop怎么实现跨线程调用，为什么会有跨线程调用，和创建线程时返回的loop有关
 void EventLoop::runInLoop(Functor cb)
 {
   if (isInLoopThread())
@@ -164,7 +165,7 @@ void EventLoop::queueInLoop(Functor cb)
   pendingFunctors_.push_back(std::move(cb));
   }
 
-  if (!isInLoopThread() || callingPendingFunctors_)
+  if (!isInLoopThread() || callingPendingFunctors_)  //isInLoopThread 在queneinloop再判断一次是有可能在pendingFunctors_里面的函数再次调用queueInLoop()，那么就不能及时的调用执行doPendingFunctors()
   {
     wakeup();
   }
