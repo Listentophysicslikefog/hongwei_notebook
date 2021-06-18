@@ -110,7 +110,7 @@ freyr-21.03.23-482fb97-centos7-x86_64    hela-21.03.23-482fb97-centos7-x86_64   
 
 
 
-9. hochiminh01    5000   5001   5002   验证完成
+9. hochiminh01    5000   5001   5002  5003 验证完成
    
 
 
@@ -233,11 +233,16 @@ freyr-21.03.23-482fb97-centos7-x86_64    hela-21.03.23-482fb97-centos7-x86_64   
 
 
 
+2. hb06 3200 ...... 3222  变更验证完成  5000 5001 5002 ......... 5034 没有资源  变更完成
+
+3208开始
+
+./change_ymer_module.sh hb06 3200 3222 21.03.23-482fb97-centos7-x86_64
+
+hb06 3200 ~ 3206 不可以验证clone
 
 
-
-hb06 3000 ~ 3006 不可以验证clone
-
+3. hb05  3200  3101 3202 变更验证完成
 
 
 ./generate_idun_conf.py hb03 5029 tcp raw ssd 
@@ -245,8 +250,8 @@ hb06 3000 ~ 3006 不可以验证clone
 ./release.sh idun 21.03.23-482fb97-centos7-x86_64 idun_ips fast
 
 
-
-
+4. hb04 3200 3201 3202 3203 ......... 3225   5000 ...... 5025 变更验证完成
+ 
 
 
 
@@ -399,5 +404,170 @@ extern_id: bsi-zybtehdm, size: 220, create_time: 2021-04-02 21:57:18, status: 0,
 
 
 
+#include<stdio.h>
+  #include<fcntl.h>
+  #include<string.h>
+  #include<stdlib.h>
+  #include<libaio.h>
+  #include<errno.h>
+  #include<unistd.h>
+  int main(void){
+      int output_fd;
+     const char *content="hello world!";
+     const char *outputfile="hello.txt";
+     io_context_t ctx;
+     struct iocb io,*p=&io;
+     struct io_event e;
+     struct timespec timeout;
+     memset(&ctx,0,sizeof(ctx)); 
+     if(io_setup(10,&ctx)!=0){//init
+         printf("io_setup error\n"); 
+         return -1; 
+     }   
+     if((output_fd=open(outputfile,O_CREAT|O_WRONLY,0644))<0){   
+         perror("open error");
+         io_destroy(ctx);
+         return -1; 
+     }   
+     io_prep_pwrite(&io,output_fd,content,strlen(content),0);
+     io.data=content;
+     if(io_submit(ctx,1,&p)!=1){
+         io_destroy(ctx);
+         printf("io_submit error\n");    
+         return -1; 
+     }   
+     while(1){
+        timeout.tv_sec=0;
+         timeout.tv_nsec=500000000;//0.5s
+         if(io_getevents(ctx,0,1,&e,&timeout)==1){   
+            close(output_fd);
+             break;
+         }   
+         printf("haven't done\n");
+         sleep(1);
+     }   
+     io_destroy(ctx);
+     return 0;
+ }
 
 
+
+
+
+
+
+
+
+
+
+
+/*
+func GetAvailableOneNbd(OpTrack *OperationTrack, ctx CloneFrontConsistentCheckContext)(oneNbd string, rc *ResponseCode){
+	OpTrack.CurrOpTk.RemoteOp.Ip = ctx.HostIp
+       var allNbd []string
+		OpTrack.CurrOpTk.CurrentOperationDescrition = "获所有的nbd"
+		OpTrack.CurrOpTk.RemoteOp.Cmd = "ls /dev/nbd* | grep \"nbd[0-9]\\+$\""
+
+		nbds, rc := RemoteCmdRequestWithResultWithRN(
+			OpTrack.CurrOpTk.RemoteOp.User,
+			OpTrack.CurrOpTk.RemoteOp.Password,
+			OpTrack.CurrOpTk.RemoteOp.Ip,
+			OpTrack.CurrOpTk.RemoteOp.Cmd)
+		if rc != nil {
+			OpTrack.DumpLog(OPERATION_RESULT_FAIL, "RemoteCmdRequestWithResultWithRN failed")
+			return
+		}
+     nbds = strings.Replace(nbds, " ", "", -1) //去掉空格
+	 allNbd = strings.Split(nbds,"\n")
+	 allNbd = nbdres[0:len(allNbd)-1]
+	ctx.Base.INFOF("挂载nbd前: 获取所有的nbd目录: %s", nbds)
+	OpTrack.Reserved = nbds
+	OpTrack.DumpLog(OPERATION_RESULT_SUCCEED, "RemoteCmdRequestWithByteResult succeed")
+	for _,value:= range allNbd {
+		OpTrack.CurrOpTk.CurrentOperationDescrition = "获可以使用的一个nbd"
+		OpTrack.CurrOpTk.RemoteOp.Cmd = "ps aux | grep " + value + " | grep -cv grep"
+
+		canUse, rc := RemoteCmdRequestWithResultWithRN(
+			OpTrack.CurrOpTk.RemoteOp.User,
+			OpTrack.CurrOpTk.RemoteOp.Password,
+			OpTrack.CurrOpTk.RemoteOp.Ip,
+			OpTrack.CurrOpTk.RemoteOp.Cmd)
+		if rc != nil {
+			OpTrack.DumpLog(OPERATION_RESULT_FAIL, "RemoteCmdRequestWithResultWithRN failed")
+			return
+		}
+		OpTrack.Reserved = canUse
+	    OpTrack.DumpLog(OPERATION_RESULT_SUCCEED, "RemoteCmdRequestWithByteResult succeed")
+		canUse = strings.Replace(canUse, " ", "", -1)
+		canUse = strings.Replace(canUse, "\n", "", -1)
+		ctx.Base.INFOF("挂载nbd前: 获取一个没有被使用的nbd: %s", canUse)
+		if canUse == "0"{
+			ctx.Base.INFOF("This Nbd : %v Not Be Used", canUse)
+			return canUse,nil
+		}else{
+			ctx.Base.INFOF("This Nbd : %v Already Be Used, Will Check Next Nbd", canUse)
+		}
+	}
+
+	ctx.Base.INFOF("This Host All Nbd : %v Already Be Used, Please Change Host Ip", nbds)
+	return nil,
+
+}
+
+
+func GetCloneDiskIDMD5(nbd string, ConsistentCheckInfo *CloneFrontConsistentCheckDetail, OpTrack *OperationTrack, ctx CloneFrontConsistentCheckContext)(rc *ResponseCode){
+
+	OpTrack.CurrOpTk.RemoteOp.Ip = ctx.HostIp
+	var allNbd []string
+	 OpTrack.CurrOpTk.CurrentOperationDescrition = "挂载nbd"
+	 OpTrack.CurrOpTk.RemoteOp.Cmd = "qemu-nbd -c " + nbd "udisk:block-udisk:6688:" + ctx.CloneGenerateID + " -f raw"
+
+	 nbds, rc := RemoteCmdRequestWithResultWithRN(  //这里不用获取结果
+		 OpTrack.CurrOpTk.RemoteOp.User,
+		 OpTrack.CurrOpTk.RemoteOp.Password,
+		 OpTrack.CurrOpTk.RemoteOp.Ip,
+		 OpTrack.CurrOpTk.RemoteOp.Cmd)
+	 if rc != nil {
+		 OpTrack.DumpLog(OPERATION_RESULT_FAIL, "RemoteCmdRequestWithResultWithRN failed")
+		 return
+	 }
+// ps aux | grep "$vdisk_id " | grep nbd | grep -v grep | grep -Po "/dev/nbd[0-9]+"`
+// "no nbd thread, extern_id: $vdisk_id"
+// if 获取的nbd != nbd（传入的参数）  挂载有问题
+
+ ctx.Base.INFOF("挂载nbd成功: %v", rc)
+ //OpTrack.Reserved = nbds
+ OpTrack.DumpLog(OPERATION_RESULT_SUCCEED, "RemoteCmdRequestWithByteResult succeed")
+ for _,value:= range allNbd {
+	 OpTrack.CurrOpTk.CurrentOperationDescrition = "获取挂载的nbd目录"
+	 OpTrack.CurrOpTk.RemoteOp.Cmd = "ps aux | grep "+ ctx.CloneGenerateID + " | grep nbd | grep -v grep | grep -Po \"/dev/nbd[0-9]+\" "
+
+	 attatchNbd, rc := RemoteCmdRequestWithResultWithRN(
+		 OpTrack.CurrOpTk.RemoteOp.User,
+		 OpTrack.CurrOpTk.RemoteOp.Password,
+		 OpTrack.CurrOpTk.RemoteOp.Ip,
+		 OpTrack.CurrOpTk.RemoteOp.Cmd)
+	 if rc != nil {
+		 OpTrack.DumpLog(OPERATION_RESULT_FAIL, "RemoteCmdRequestWithResultWithRN failed")
+		 return
+	 }
+	 OpTrack.Reserved = canUse
+	 OpTrack.DumpLog(OPERATION_RESULT_SUCCEED, "RemoteCmdRequestWithByteResult succeed")
+	 canUse = strings.Replace(canUse, " ", "", -1)
+	 canUse = strings.Replace(canUse, "\n", "", -1)
+	 ctx.Base.INFOF("挂载nbd前: 获取一个没有被使用的nbd: %s", canUse)
+	 if canUse == "0"{
+		 ctx.Base.INFOF("This Nbd : %v Not Be Used", canUse)
+		 return canUse,nil
+	 }else{
+		 ctx.Base.INFOF("This Nbd : %v Already Be Used, Will Check Next Nbd", canUse)
+	 }
+ }
+
+ ctx.Base.INFOF("This Host All Nbd : %v Already Be Used, Please Change Host Ip", nbds)
+ return nil,
+
+
+}
+
+*/

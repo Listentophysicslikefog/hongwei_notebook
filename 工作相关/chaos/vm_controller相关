@@ -1,0 +1,10 @@
+bsi-kee4nwal  系统盘   虚机 id: uhost-pkkqhyvi
+
+
+virsh dumpxml  6c02e018-85d4-4235-ae83-815d8b97f6be | grep "bsr-y2iitvo0"  // dump续机的xml文件
+
+/etc/libvirt/qemu   //宿主机所有虚机的xml文件，包括没有启动的虚机
+
+virsh start     // 启动虚机
+
+add_udisk.py   // 挂载盘

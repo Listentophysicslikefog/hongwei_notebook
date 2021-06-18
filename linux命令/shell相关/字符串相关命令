@@ -3,4 +3,12 @@
 "${extern_id}_${chunk_id}_${diskPartition}.md5"
 
 
+shell执行命令显示中文问题：
+https://stackoverflow.com/questions/29609371/how-do-not-pass-locale-through-ssh
 
+vim ~/.bashrc 添加下面的命令：
+
+export LANG=en_US.UTF8
+source ~/.bashrc 
+
+重启进程

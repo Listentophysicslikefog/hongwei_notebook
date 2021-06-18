@@ -1,3 +1,11 @@
 命令参数过长删除失败：使用下面的删除即可
 
 find  /data/iotest/log/ -name "*.log" |xargs rm -rf
+
+
+大页内存相关： https://www.fcwys.cc/archives/474.html
+
+
+
+vim Metaserver.20210604-172632.manila01-udisk-set5000-meta0.28300.log +753862    打开文件并且到指定的行
+grep -n  "bsi-azj1elgc" Metaserver.20210604*    grep获取并且显示行数和文件名字

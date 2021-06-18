@@ -1,0 +1,77 @@
+ 1  ll
+    2  cd 
+    3  ll
+    4  cd wiwo/
+    5  ll
+    6  git branch
+    7  git pull
+    8  ll
+    9  cd 
+   10  ls -a
+   11  cd .ssh/
+   12  ll
+   13  vim known_hosts 
+   14  vim known_hosts 
+   15  cd 
+   16  ll
+   17  cd wiwo/
+   18  ll
+   19  git pull
+   20  cd 
+   21  ls -a
+   22  cd .ssh/
+   23  ll
+   24  cp known_hosts known_hosts.bak
+   25  ll
+   26  vim known_hosts
+   27  cd 
+   28  cd wiw
+   29  ll
+   30  cd message
+   31  ll
+   32  git pull
+   33  ll
+   34  cd ../
+   35  ll
+   36  cd ymer/
+   37  ll
+   38  cd hela/
+   39  ll
+   40  git branch
+   41  git fetch
+   42  git branch
+   43  git branch -a
+   44  git checkout 919_hela_bugfix
+   45  git pull
+   46  cd ..
+   47  ll
+   48  git submodule update --init
+   49  cd ../
+   50  ll
+   51  cd message
+   52  ll
+   53  ./dep-rapid-make.sh 
+   54  ll
+   55  cd ../
+   56  ll
+   57  cd ymer/
+   58  ll
+   59  git submodule init
+   60  git submodule update
+   61  ./do_cmake.sh 
+   62  cd build/
+   63  make -j20
+   64  ll
+   65  cd hela/
+   66  ll
+   67  cd ../
+   68  ll
+   69  cd hela/
+   70  ll
+   71  cd ../
+   72  ll
+   73  history
+
+docker exec -it compile.hongwei.liu scl enable devtoolset-8 bash 
+
+ymer 编译： https://git.ucloudadmin.com/block/udisk_doc/-/wikis/Ymer%E9%95%9C%E5%83%8FP2P%E5%88%86%E5%8F%91%E7%B3%BB%E7%BB%9F%E9%83%A8%E7%BD%B2%E6%94%BB%E7%95%A5

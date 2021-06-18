@@ -61,3 +61,328 @@ AutoRunChaosStatus: 4
 [2021-2-24 0:5:41.916028] [INFO]TaskRunTimeInfo: &{Name:GetIOstat Status:0 Info:debug Loop:1 SuccessTime:0 Period:0 ChaosStatus:0 UserRunFlag:true}
 
 
+4. 摸盘失败问题
+
+
+[root@HNSSN08-udisk-set5009-1 conf]# cd /root/udisk/format_log/                                                
+[root@HNSSN08-udisk-set5009-1 format_log]# ll -rt
+total 4
+-rw-r--r-- 1 root root 437 Jun  1 14:33 95-0000:3b:00.0.20210601-143318.HNSSN08-udisk-set5009-1.36141.log
+[root@HNSSN08-udisk-set5009-1 format_log]# vim 95-0000:3b:00.0.20210601-143318.HNSSN08-udisk-set5009-1.36141.log
+[root@HNSSN08-udisk-set5009-1 format_log]# vim 95-0000:3b:00.0.20210601-143318.HNSSN08-udisk-set5009-1.36141.log                                                                                                                             
+[root@HNSSN08-udisk-set5009-1 format_log]# pwd
+/root/udisk/format_log
+[root@HNSSN08-udisk-set5009-1 format_log]# #/root/udisk/chunk/tools/raw_chunk_storage_tool format 95-0000:3b:00.0 95 true true 4194304                                                                          
+[root@HNSSN08-udisk-set5009-1 format_log]# /root/udisk/chunk/tools/raw_chunk_storage_tool                                                  
+Usage: 
+/root/udisk/chunk/tools/raw_chunk_storage_tool [command] [args...] 
+help                                       | print this
+version                                    | print version
+format [dev chunk_id is_reset(true|false) has_journal(true|false) pc_size force(true|false) core_mask(optional)]
+| 格式化磁盘, is_reset=true 抹零, has_journal=true 开辟日志存储区, pc_size(byte), force默认为false 磁盘已格式化,则操作失败
+check [dev]                                | 检查元数据是否正常
+dumpSuperBlock [dev]                          | 打印Superblock
+dumpPCMeta [dev [pc_id]]                      | 打印pc meta
+dumpPCMetaJson [dev [pc_id]]                  | 按json格式打印pc meta
+dumpPCMetaJsonByType [dev is_used(true|false)] [out_file_name] | 按json格式打印所有已使用或未使用的pc meta到文件, 默认为true, 结果存放在/root/udisk/pc_meta_json_tmp
+dumpPCMetaJsonByIsUsed [dev is_used(true|false)] | 按json格式打印所有已使用或未使用的pc meta到屏幕, 默认为true
+dumpJournalMeta [dev [journal_id]]            | 打印pc meta
+
+dumpLCInfo [dev lc_id [offset [length]]]      | 根据lc_id打印pc meta
+example: 
+/root/udisk/chunk/tools/raw_chunk_storage_tool format /dev/sdz 10 false false 4194304 true 0x4
+/root/udisk/chunk/tools/raw_chunk_storage_tool dumpSuperBlock /dev/sdz
+/root/udisk/chunk/tools/raw_chunk_storage_tool dumpSuperBlock 1-0000:3c:00.0
+/root/udisk/chunk/tools/raw_chunk_storage_tool check /dev/sdz
+/root/udisk/chunk/tools/raw_chunk_storage_tool check 1-0000:3c:00.0
+/root/udisk/chunk/tools/raw_chunk_storage_tool dumpPCMeta /dev/sdz
+/root/udisk/chunk/tools/raw_chunk_storage_tool dumpPCMeta /dev/sdz 10
+/root/udisk/chunk/tools/raw_chunk_storage_tool dumpPCMetaJson /dev/sdz
+/root/udisk/chunk/tools/raw_chunk_storage_tool dumpPCMetaJson /dev/sdz 10
+/root/udisk/chunk/tools/raw_chunk_storage_tool dumpPCMetaJsonByType /dev/sdz false
+/root/udisk/chunk/tools/raw_chunk_storage_tool dumpPCMetaJsonByIsUsed /dev/sdz false
+/root/udisk/chunk/tools/raw_chunk_storage_tool dumpJournalMeta /dev/sdz
+/root/udisk/chunk/tools/raw_chunk_storage_tool dumpJournalMeta /dev/sdz 10
+/root/udisk/chunk/tools/raw_chunk_storage_tool dumpLCInfo /dev/sdz 1
+/root/udisk/chunk/tools/raw_chunk_storage_tool dumpLCInfo /dev/sdz 1 100M
+/root/udisk/chunk/tools/raw_chunk_storage_tool dumpLCInfo /dev/sdz 1 100M 200M
+[root@HNSSN08-udisk-set5009-1 format_log]# /root/udisk/chunk/tools/raw_chunk_storage_tool --help
+Usage: 
+/root/udisk/chunk/tools/raw_chunk_storage_tool [command] [args...] 
+help                                       | print this
+version                                    | print version
+format [dev chunk_id is_reset(true|false) has_journal(true|false) pc_size force(true|false) core_mask(optional)]
+| 格式化磁盘, is_reset=true 抹零, has_journal=true 开辟日志存储区, pc_size(byte), force默认为false 磁盘已格式化,则操作失败
+check [dev]                                | 检查元数据是否正常
+dumpSuperBlock [dev]                          | 打印Superblock
+dumpPCMeta [dev [pc_id]]                      | 打印pc meta
+dumpPCMetaJson [dev [pc_id]]                  | 按json格式打印pc meta
+dumpPCMetaJsonByType [dev is_used(true|false)] [out_file_name] | 按json格式打印所有已使用或未使用的pc meta到文件, 默认为true, 结果存放在/root/udisk/pc_meta_json_tmp
+dumpPCMetaJsonByIsUsed [dev is_used(true|false)] | 按json格式打印所有已使用或未使用的pc meta到屏幕, 默认为true
+dumpJournalMeta [dev [journal_id]]            | 打印pc meta
+
+dumpLCInfo [dev lc_id [offset [length]]]      | 根据lc_id打印pc meta
+example: 
+/root/udisk/chunk/tools/raw_chunk_storage_tool format /dev/sdz 10 false false 4194304 true 0x4
+/root/udisk/chunk/tools/raw_chunk_storage_tool dumpSuperBlock /dev/sdz
+/root/udisk/chunk/tools/raw_chunk_storage_tool dumpSuperBlock 1-0000:3c:00.0
+/root/udisk/chunk/tools/raw_chunk_storage_tool check /dev/sdz
+/root/udisk/chunk/tools/raw_chunk_storage_tool check 1-0000:3c:00.0
+/root/udisk/chunk/tools/raw_chunk_storage_tool dumpPCMeta /dev/sdz
+/root/udisk/chunk/tools/raw_chunk_storage_tool dumpPCMeta /dev/sdz 10
+/root/udisk/chunk/tools/raw_chunk_storage_tool dumpPCMetaJson /dev/sdz
+/root/udisk/chunk/tools/raw_chunk_storage_tool dumpPCMetaJson /dev/sdz 10
+/root/udisk/chunk/tools/raw_chunk_storage_tool dumpPCMetaJsonByType /dev/sdz false
+/root/udisk/chunk/tools/raw_chunk_storage_tool dumpPCMetaJsonByIsUsed /dev/sdz false
+/root/udisk/chunk/tools/raw_chunk_storage_tool dumpJournalMeta /dev/sdz
+/root/udisk/chunk/tools/raw_chunk_storage_tool dumpJournalMeta /dev/sdz 10
+/root/udisk/chunk/tools/raw_chunk_storage_tool dumpLCInfo /dev/sdz 1
+/root/udisk/chunk/tools/raw_chunk_storage_tool dumpLCInfo /dev/sdz 1 100M
+/root/udisk/chunk/tools/raw_chunk_storage_tool dumpLCInfo /dev/sdz 1 100M 200M
+[root@HNSSN08-udisk-set5009-1 format_log]# #/root/udisk/chunk/tools/raw_chunk_storage_tool format 95-0000:3b:00.0 95 true true 4194304 true 0x4
+[root@HNSSN08-udisk-set5009-1 format_log]# /root/udisk/chunk/tools/raw_chunk_storage_tool dumpSuperBlock 95-0000:3b:00.0                                                                                                                     
+20210601 16:47:28.568532Z  3923 ERROR spdk_nvme_probe() failed for transport address 0000:3b:00.0 - nvme_disk.cc:62
+open dev error
+[root@HNSSN08-udisk-set5009-1 format_log]# lsblk
+NAME    MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+nvme0n1 259:0    0    20G  0 disk 
+sda       8:0    0 222.6G  0 disk 
+├─sda2    8:2    0     2G  0 part 
+├─sda3    8:3    0 220.3G  0 part /
+└─sda1    8:1    0   300M  0 part /boot
+[root@HNSSN08-udisk-set5009-1 format_log]# /root/scripts/
+add_udisk.py         check_format.sh      eofnl                gen_ftl.sh           histogram.py         prep_benchmarks.sh   rpc/                 setup.sh             vagrant/             
+attach/              config_converter.py  fio.py               gen_nvme.sh          perf/                qat_setup.sh         rpc_http_proxy.py    spdkcli/             
+ceph/                detect_cc.sh         genconfig.py         gen_rbd.sh           pkgdep.sh            remove_udisk.py      rpc.py               spdkcli.py           
+[root@HNSSN08-udisk-set5009-1 format_log]# /root/scripts/rpc.py 
+/usr/bin/env: python3: No such file or directory
+[root@HNSSN08-udisk-set5009-1 format_log]# lsblk
+NAME    MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+nvme0n1 259:0    0    20G  0 disk 
+sda       8:0    0 222.6G  0 disk 
+├─sda2    8:2    0     2G  0 part 
+├─sda3    8:3    0 220.3G  0 part /
+└─sda1    8:1    0   300M  0 part /boot
+[root@HNSSN08-udisk-set5009-1 format_log]# /root/scripts/setup.sh --help
+Invalid argument '--help'
+
+Helper script for allocating hugepages and binding NVMe, I/OAT and Virtio devices to
+a generic VFIO kernel driver. If VFIO is not available on the system, this script will
+fall back to UIO. NVMe and Virtio devices with active mountpoints will be ignored.
+All hugepage operations use default hugepage size on the system (hugepagesz).
+Usage: setup.sh [config|reset|status|cleanup|help]
+
+[config|reset|status|cleanup|help] - as following:
+config            Default mode. Allocate hugepages and bind PCI devices.
+cleanup            Remove any orphaned files that can be left in the system after SPDK application exit
+reset             Rebind PCI devices back to their original drivers.
+                  Also cleanup any leftover spdk files/resources.
+                  Hugepage memory size will remain unchanged.
+status            Print status of all SPDK-compatible devices on the system.
+help              Print this help message.
+
+The following environment variables can be specified.
+HUGEMEM           Size of hugepage memory to allocate (in MB). 2048 by default.
+                  For NUMA systems, the hugepages will be evenly distributed
+                  between CPU nodes
+NRHUGE            Number of hugepages to allocate. This variable overwrites HUGEMEM.
+HUGENODE          Specific NUMA node to allocate hugepages on. To allocate
+                  hugepages on multiple nodes run this script multiple times -
+                  once for each node.
+PCI_WHITELIST
+PCI_BLACKLIST     Whitespace separated list of PCI devices (NVMe, I/OAT, Virtio).
+                  Each device must be specified as a full PCI address.
+                  E.g. PCI_WHITELIST="0000:01:00.0 0000:02:00.0"
+                  To blacklist all PCI devices use a non-valid address.
+                  E.g. PCI_WHITELIST="none"
+                  If PCI_WHITELIST and PCI_BLACKLIST are empty or unset, all PCI devices
+                  will be bound.
+                  Each device in PCI_BLACKLIST will be ignored (driver won't be changed).
+                  PCI_BLACKLIST has precedence over PCI_WHITELIST.
+TARGET_USER       User that will own hugepage mountpoint directory and vfio groups.
+                  By default the current user will be used.
+DRIVER_OVERRIDE   Disable automatic vfio-pci/uio_pci_generic selection and forcefully
+                  bind devices to the given driver.
+                  E.g. DRIVER_OVERRIDE=uio_pci_generic or DRIVER_OVERRIDE=/home/public/dpdk/build/kmod/igb_uio.ko
+[root@HNSSN08-udisk-set5009-1 format_log]# /root/scripts/setup.sh status
+Hugepages
+node     hugesize     free /  total
+node0   1048576kB       30 /     50
+node1   1048576kB       42 /     46
+
+NVMe devices
+BDF		Vendor	Device	NUMA	Driver		Device name
+0000:3b:00.0	19e5	3714	0	-		-
+0000:3c:00.0	19e5	3714	0	vfio-pci		-
+0000:3d:00.0	19e5	3714	0	vfio-pci		-
+0000:3e:00.0	19e5	3714	0	vfio-pci		-
+0000:d8:00.0	19e5	3714	1	vfio-pci		-
+0000:d9:00.0	19e5	3714	1	vfio-pci		-
+
+I/OAT DMA
+grep: /root/scripts/../include/spdk/pci_ids.h: No such file or directory
+BDF		Vendor	Device	NUMA	Driver
+
+virtio
+grep: /root/scripts/../include/spdk/pci_ids.h: No such file or directory
+BDF		Vendor	Device	NUMA	Driver		Device name
+[root@HNSSN08-udisk-set5009-1 format_log]# /root/udisk/chunk/tools/raw_chunk_storage_tool format 95-0000:3b:00.0 95 true true 4194304 true 0x4 
+20210601 16:49:17.346505Z 23176 INFO  userspace device use core: 0x4 - raw_chunk_storage_tool.cc:559
+log is in /root/udisk/format_log/
+[root@HNSSN08-udisk-set5009-1 format_log]# cd /root/udisk/format_log/
+[root@HNSSN08-udisk-set5009-1 format_log]# ll
+total 8
+-rw-r--r-- 1 root root 437 Jun  1 14:33 95-0000:3b:00.0.20210601-143318.HNSSN08-udisk-set5009-1.36141.log
+-rw-r--r-- 1 root root 437 Jun  1 16:49 95-0000:3b:00.0.20210601-164917.HNSSN08-udisk-set5009-1.23176.log
+[root@HNSSN08-udisk-set5009-1 format_log]# ll -rt
+total 8
+-rw-r--r-- 1 root root 437 Jun  1 14:33 95-0000:3b:00.0.20210601-143318.HNSSN08-udisk-set5009-1.36141.log
+-rw-r--r-- 1 root root 437 Jun  1 16:49 95-0000:3b:00.0.20210601-164917.HNSSN08-udisk-set5009-1.23176.log
+[root@HNSSN08-udisk-set5009-1 format_log]# date
+Tue Jun  1 16:49:32 CST 2021
+[root@HNSSN08-udisk-set5009-1 format_log]# vim 95-0000:3b:00.0.20210601-164917.HNSSN08-udisk-set5009-1.23176.log
+[root@HNSSN08-udisk-set5009-1 format_log]# vim 95-0000:3b:00.0.20210601-164917.HNSSN08-udisk-set5009-1.23176.log
+[root@HNSSN08-udisk-set5009-1 format_log]# vim 95-0000:3b:00.0.20210601-164917.HNSSN08-udisk-set5009-1.23176.log
+[root@HNSSN08-udisk-set5009-1 format_log]# 
+[root@HNSSN08-udisk-set5009-1 format_log]# 
+[root@HNSSN08-udisk-set5009-1 format_log]# 
+[root@HNSSN08-udisk-set5009-1 format_log]# vim /var/log/messages
+[root@HNSSN08-udisk-set5009-1 format_log]# nvme list
+/dev/nvme0n1: failed to obtain nvme info: Success
+Node             SN                   Model                                    Namespace Usage                      Format           FW Rev  
+---------------- -------------------- ---------------------------------------- --------- -------------------------- ---------------- --------
+[root@HNSSN08-udisk-set5009-1 format_log]# 
+[root@HNSSN08-udisk-set5009-1 format_log]# /root/udisk/scripts/setup.sh status
+Hugepages
+node     hugesize     free /  total
+node0   1048576kB       26 /     50
+node1   1048576kB       46 /     46
+
+NVMe devices
+BDF		Vendor	Device	NUMA	Driver		Device name
+0000:3b:00.0	19e5	3714	0	-		-
+0000:3c:00.0	19e5	3714	0	vfio-pci		-
+0000:3d:00.0	19e5	3714	0	vfio-pci		-
+0000:3e:00.0	19e5	3714	0	vfio-pci		-
+0000:d8:00.0	19e5	3714	1	vfio-pci		-
+0000:d9:00.0	19e5	3714	1	vfio-pci		-
+
+I/OAT DMA
+grep: /root/udisk/scripts/../include/spdk/pci_ids.h: No such file or directory
+BDF		Vendor	Device	NUMA	Driver
+
+virtio
+grep: /root/udisk/scripts/../include/spdk/pci_ids.h: No such file or directory
+BDF		Vendor	Device	NUMA	Driver		Device name
+VMD
+grep: /root/udisk/scripts/../include/spdk/pci_ids.h: No such file or directory
+BDF		Numa Node	Driver Name
+[root@HNSSN08-udisk-set5009-1 format_log]# 
+[root@HNSSN08-udisk-set5009-1 format_log]# 
+[root@HNSSN08-udisk-set5009-1 format_log]# 
+[root@HNSSN08-udisk-set5009-1 format_log]# 
+[root@HNSSN08-udisk-set5009-1 format_log]# /root/udisk/scripts/setup.sh help
+Helper script for allocating hugepages and binding NVMe, I/OAT, VMD and Virtio devices
+to a generic VFIO kernel driver. If VFIO is not available on the system, this script
+will fall back to UIO. NVMe and Virtio devices with active mountpoints will be ignored.
+All hugepage operations use default hugepage size on the system (hugepagesz).
+Usage: setup.sh [config|reset|status|cleanup|help]
+
+[config|reset|status|cleanup|help] - as following:
+config            Default mode. Allocate hugepages and bind PCI devices.
+cleanup            Remove any orphaned files that can be left in the system after SPDK application exit
+reset             Rebind PCI devices back to their original drivers.
+                  Also cleanup any leftover spdk files/resources.
+                  Hugepage memory size will remain unchanged.
+status            Print status of all SPDK-compatible devices on the system.
+help              Print this help message.
+
+The following environment variables can be specified.
+HUGEMEM           Size of hugepage memory to allocate (in MB). 2048 by default.
+                  For NUMA systems, the hugepages will be evenly distributed
+                  between CPU nodes
+NRHUGE            Number of hugepages to allocate. This variable overwrites HUGEMEM.
+HUGENODE          Specific NUMA node to allocate hugepages on. To allocate
+                  hugepages on multiple nodes run this script multiple times -
+                  once for each node.
+PCI_WHITELIST
+PCI_BLACKLIST     Whitespace separated list of PCI devices (NVMe, I/OAT, VMD, Virtio).
+                  Each device must be specified as a full PCI address.
+                  E.g. PCI_WHITELIST="0000:01:00.0 0000:02:00.0"
+                  To blacklist all PCI devices use a non-valid address.
+                  E.g. PCI_WHITELIST="none"
+                  If PCI_WHITELIST and PCI_BLACKLIST are empty or unset, all PCI devices
+                  will be bound.
+                  Each device in PCI_BLACKLIST will be ignored (driver won't be changed).
+                  PCI_BLACKLIST has precedence over PCI_WHITELIST.
+TARGET_USER       User that will own hugepage mountpoint directory and vfio groups.
+                  By default the current user will be used.
+DRIVER_OVERRIDE   Disable automatic vfio-pci/uio_pci_generic selection and forcefully
+                  bind devices to the given driver.
+                  E.g. DRIVER_OVERRIDE=uio_pci_generic or DRIVER_OVERRIDE=/home/public/dpdk/build/kmod/igb_uio.ko
+[root@HNSSN08-udisk-set5009-1 format_log]# /root/udisk/scripts/setup.sh^C   
+[root@HNSSN08-udisk-set5009-1 format_log]# /root/udisk/scripts/setup.sh^C
+[root@HNSSN08-udisk-set5009-1 format_log]# ^C
+[root@HNSSN08-udisk-set5009-1 format_log]# PCI_WHITELIST="0000:3b:00.0" /root/udisk/scripts/setup.sh ^C
+[root@HNSSN08-udisk-set5009-1 format_log]# cat /proc/meminfo | grep Hu
+AnonHugePages:   1234944 kB
+ShmemHugePages:        0 kB
+HugePages_Total:      96
+HugePages_Free:       72
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:    1048576 kB
+[root@HNSSN08-udisk-set5009-1 format_log]# 
+[root@HNSSN08-udisk-set5009-1 format_log]# NRHUGE=96 PCI_WHITELIST="0000:3b:00.0" /root/udisk/scripts/setup.sh 
+0000:3b:00.0 (19e5 3714): no driver -> vfio-pci
+0000:3c:00.0 (19e5 3714): Skipping un-whitelisted NVMe controller at 0000:3c:00.0
+0000:3d:00.0 (19e5 3714): Skipping un-whitelisted NVMe controller at 0000:3d:00.0
+0000:3e:00.0 (19e5 3714): Skipping un-whitelisted NVMe controller at 0000:3e:00.0
+0000:d8:00.0 (19e5 3714): Skipping un-whitelisted NVMe controller at 0000:d8:00.0
+0000:d9:00.0 (19e5 3714): Skipping un-whitelisted NVMe controller at 0000:d9:00.0
+grep: /root/udisk/scripts/../include/spdk/pci_ids.h: No such file or directory
+grep: /root/udisk/scripts/../include/spdk/pci_ids.h: No such file or directory
+grep: /root/udisk/scripts/../include/spdk/pci_ids.h: No such file or directory
+[root@HNSSN08-udisk-set5009-1 format_log]# 
+[root@HNSSN08-udisk-set5009-1 format_log]# 
+[root@HNSSN08-udisk-set5009-1 format_log]# 
+[root@HNSSN08-udisk-set5009-1 format_log]# nvme list
+/dev/nvme0n1: failed to obtain nvme info: Success
+Node             SN                   Model                                    Namespace Usage                      Format           FW Rev  
+---------------- -------------------- ---------------------------------------- --------- -------------------------- ---------------- --------
+[root@HNSSN08-udisk-set5009-1 format_log]# 
+[root@HNSSN08-udisk-set5009-1 format_log]# 
+[root@HNSSN08-udisk-set5009-1 format_log]# 
+[root@HNSSN08-udisk-set5009-1 format_log]# /root/udisk/scripts/setup.sh status
+Hugepages
+node     hugesize     free /  total
+node0   1048576kB       26 /     50
+node1   1048576kB       46 /     46
+
+NVMe devices
+BDF		Vendor	Device	NUMA	Driver		Device name
+0000:3b:00.0	19e5	3714	0	vfio-pci		-
+0000:3c:00.0	19e5	3714	0	vfio-pci		-
+0000:3d:00.0	19e5	3714	0	vfio-pci		-
+0000:3e:00.0	19e5	3714	0	vfio-pci		-
+0000:d8:00.0	19e5	3714	1	vfio-pci		-
+0000:d9:00.0	19e5	3714	1	vfio-pci		-
+
+I/OAT DMA
+grep: /root/udisk/scripts/../include/spdk/pci_ids.h: No such file or directory
+BDF		Vendor	Device	NUMA	Driver
+
+virtio
+grep: /root/udisk/scripts/../include/spdk/pci_ids.h: No such file or directory
+BDF		Vendor	Device	NUMA	Driver		Device name
+VMD
+grep: /root/udisk/scripts/../include/spdk/pci_ids.h: No such file or directory
+BDF		Numa Node	Driver Name
+[root@HNSSN08-udisk-set5009-1 format_log]# 
+[root@HNSSN08-udisk-set5009-1 format_log]# 
+[root@HNSSN08-udisk-set5009-1 format_log]# vim /var/log/messages
+[root@HNSSN08-udisk-set5009-1 format_log]# 
+[root@HNSSN08-udisk-set5009-1 format_log]# 
+[root@HNSSN08-udisk-set5009-1 format_log]# 
+[root@HNSSN08-udisk-set5009-1 format_log]# 
+[root@HNSSN08-udisk-set5009-1 format_log]# 

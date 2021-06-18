@@ -174,7 +174,7 @@ hela感知到路由变化：在进行某个pc任务时，直接停止任务，�
 
 2. hela读chunk也和上面一样
 
-在写chunk前不判断集群路由变化，写chunk后获取到返回值判断是否发送集群版本号变化，写成功应该就不用检测是否版本变化了。如果返回RETCODE_CLUSTER_VERSION_ERR
+在读chunk前不判断集群路由变化，写chunk后获取到返回值判断是否发送集群版本号变化，写成功应该就不用检测是否版本变化了。如果返回RETCODE_CLUSTER_VERSION_ERR
 那么就检测版本变化，如果没有变化直接返回写的chunk的在线状态  
 
 3. chono读也一样
@@ -221,7 +221,7 @@ fryer没有新chunk上线不会走修复流程
 
 
 
-
+ymer相关文档记录： https://git.ucloudadmin.com/block/udisk_doc/-/issues/549
 
 
 

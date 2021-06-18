@@ -19,3 +19,6 @@
 
 将本地机器的公钥添加到远程git仓库即可
 参考博客 : https://blog.csdn.net/qq_38741986/article/details/100137267
+
+
+更新master分支的信息到子分支： https://blog.csdn.net/chen134225/article/details/100128593
