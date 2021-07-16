@@ -107,9 +107,11 @@ virsh dumpxml  77059861-e7f6-4393-a358-0c80ed382acc  // dump 虚机的xmal文件
 
 
 
+12. rebase_logout失败
 
+https://git.ucloudadmin.com/block/udisk_doc/-/issues/773#note_390435
 
-
+盘在logout前已经卸载掉了，metaserver向gate获取的是缓存的数据以为gate端盘还没有logout，所以所以失败了
 
 
 

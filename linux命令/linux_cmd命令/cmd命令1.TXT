@@ -11,3 +11,18 @@
    2. 查看服务具体启动的时间
 
    ps -p pid -o lstart
+
+
+
+
+
+
+   cgroup 流控
+
+    限制盘的写带宽
+
+   鲍琨 2020-11-19 下午 3:47
+ echo "253:16 2097152" > /sys/fs/cgroup/blkio/blkio.throttle.write_bps_device
+ 
+ 鲍琨 2020-11-19 下午 3:47
+ echo "253:32 2097152" > /sys/fs/cgroup/blkio/blkio.throttle.write_bps_device
