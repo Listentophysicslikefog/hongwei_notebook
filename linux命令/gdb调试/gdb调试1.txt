@@ -1,3 +1,9 @@
 1. gdb调试首先要确定是否为core文件并且该core文件是由那个对应的二进制文件产生的通过 : file core文件   可以看到该core文件是由那个二进制产生的
 
 调试: gdb  二进制文件  core文件
+
+2. 查看core文件
+
+strings core.32637.0.idun_1629855625 | grep "get login request:"
+
+可以直接grep相关未来得及打印出的日志

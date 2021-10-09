@@ -1,0 +1,239 @@
+{
+"basic": {
+        "PublicKey"     : "r4A5SmiS4mN2ADPkJ/9gU44ZjvC0gCX4tAoPRpQhyhDeiaMTK8PJgPRDWSs=",
+        "PrivateKey"    : "NTKOs+7vD2cTysazxFg+wnDboh3brsOB245otVRII3nVPgkDK83Uzd9Gyzd/MUcA",
+        "ProjectId"     : "org-4kw3qi",
+        "Region"        : "cn-gd",
+        "Zone"          : "cn-gd-02",
+        "Tag"           : "ChaosEris_set3104",
+        "UHostPassword" : "ChaosPassword",
+        "This is a comment": "0 -  kernel-space raw chaoseris, 1 - user-space raw chaoseris, 2 - file system chaoseris",
+        "TestMode"      : 0,
+        "Manager_Addr"  : "http://172.27.26.10:4019"
+},
+"email":{
+        "HeartBeatPeriod"       : "60",
+        "ConsistentCheckPeriod" : "6",
+        "EmailReceiver"         : "hongwei.liu@ucloud.cn,peak.li@ucloud.cn,jason.jin@ucloud.cn"
+},
+"resource_init": {
+        "UHostSetId"      : 22,
+        "UHostPassword"   : "ChaosPassword",
+        "This is a comment PhysicalIpList"  : "172.27.44.138,172.27.34.194,172.27.33.223,172.27.44.135,172.27.44.137,172.27.35.9",
+        "PhysicalIpList"  : "172.27.44.138,172.27.34.194,172.27.33.223",
+        "UHostNumPerHost" : 1,
+        "UDiskNumPerUHost": 2,
+        "ImageId"         : "uimage-icbrlh",
+        "Disks0Type"      : "CLOUD_SSD",
+        "UdiskSetId"      : "3104",
+        "This is a comment, UdiskSize的单位是" : "GB",
+        "UdiskSize"       : 200,
+        "DiskType"        : "SSDDataDisk",
+        "MachineType"     : "N",
+        "CPU"             : "2",
+        "Memory"          : "4096"
+},
+"describe_image": {
+        "ImageType" : "Base",
+        "OsType" : "Linux"
+},
+"resource_destory": {
+        "Tag" : "ChaosEris_set3104"
+},
+"recycle_udisk": {
+        "Tag" : "Chaoseris_hn02_3104_RU",
+        "PhysicalIpList"  : "172.27.33.223",
+        "This is a comment" : "当前回收测试仅支持一台物理机上创建一个UHost,一个UHost上挂载一块磁盘",
+        "UHostNumPerHost" : 1,
+        "UDiskNumPerUHost": 0
+},
+"kill_service": {
+       "ChunkPeriod":"10",
+        "GatePeriod": "6000000",
+        "BlockGateName" : "block_gate",
+        "GracefulRestartBlockGateIpLists" : "123",
+        "This is s comment": "manager所在的服务器需能够免密登录到BlockGateIpLists列表中的机器",
+        "BlockGateIpLists" : "172.27.44.138,172.27.44.135,172.27.44.137,172.27.35.9,172.27.33.223",
+        "ChunkName"     : "chunk",
+        "This is s comment": "ChunkIpLists中如果填了ip列表，则只kill填写的ip上的chunk，不填，则随机kill该集群上的chunk",
+        "ChunkIpLists"  : "172.27.40.102,172.27.40.198,172.27.40.199,172.27.40.138,172.27.40.200,172.27.40.137"
+},
+"attach_detach": {
+        "PhysicalIpList"  : "10.189.152.67",
+        "This is s comment": "resource_init中指定IP上申请的UHost将会进行attach/detach测试",
+        "UDiskNumPerUHost": 10
+},
+"repair_chunk": {
+          "This is s comment"   : "新Chunk的容量",
+          "ChunkCapacity"       : "6288620650496",
+          "ConcurrentRepairNum" : 1
+},
+"front_io": {
+        "HeartBeatPeriod"       : "60",
+        "ConsistentCheckPeriod" : "6"
+},
+"run_auto_chaos": {
+        "This is s comment"               : "Run_front_io 为true的话，则front_io栏需要填写完整",
+        "Run_front_io"                    : "false",
+        "Run_get_iostat"                  : "false",
+        "Run_recycle_udisk"               : "false",
+        "Run_metainfo_compare"            : "false",
+        "Run_kill_service"                : "false",
+        "Run_attach_detach"               : "false",
+        "Run_repair_chunk"                : "false",
+        "Run_net_packet_loss"             : "true",
+        "Run_recycle_udisk_duration"      : "60",
+        "Run_repair_chunk_duration"       : "120"
+
+},
+"get_iostat": {
+            "Period"                        :2,
+            "LeastDisplayDay"               :5,
+            "LeastDisplayNum"               :10
+},
+"fio_test":{
+  "GetPlotPeroid"                 : 2,
+  "This is s comment"                  : "测试fio压测的的测试",
+  "TestCount"                    : 1,
+  "This is s comment"                  : "disk的类型,注意要和resource_init的DiskType保持一致,一般和测试集群类型一样。DataDisk（普通数据盘），SSDDataDisk（SSD数据盘），RSSDDataDisk（RSSD数据盘），默认值（
+DataDisk）",
+  "DiskType"                     : "SSDDataDisk",
+  "This is s comment"                  : "disk的单位为G,虚机挂载的磁盘大小",
+  "DiskSize"                     : 200,
+  "This is s comment"                  : "Runtime单位为秒",
+  "FioRuntime"                   : "360",
+  "This is s comment"                  : "FioIodepth为fio测试IO深度",
+  "FioIodepth"                   : "32",
+  "This is s comment"                  : "FioNumjobs为本次跑fio线程个数",
+  "FioNumjobs"                   : "32",
+  "This is s comment"                  : "FioRWMode表示fio测试时I/O类型",
+  "FioRWMode"                    : "randwrite",
+  "This is s comment"                  : "当FioRWMode的fio测试时I/O类型为randrw时才有作用，这个只针对iops测试有该模式，表示写占的比例为29%",
+  "FioIopsRWMixWrite"            : "29",
+  "This is s comment"                  : "单次io的块文件大小为16k,单位为k,1024k为1M",
+  "FioBs"                        : "4k" ,
+  "This is s comment"                  : "IoSize表示跑fio需要的大小，单位为G，一般为需要测的盘大小",
+  "IoSize"                       : "200G",
+  "This is s comment"                    : "AllFioTestUhostList表示所有跑fio的虚机列表,下面有一个bool的配置参数如果false就直接去chaos数据库里通过条件获取fio测试的虚机",
+  "AllFioTestUhostList"           : "10.13.0.79,10.13.0.141",
+  "This is s comment"                  : "AllTestDiskCount表示所有测试虚机AllFioTestUhostList有多少块盘跑fio",
+  "AllTestDiskCount"             : "1",
+
+  "This is s comment"                  : "AddTestDiskIpList表示这些虚机还要再加盘跑fio，为空就表示没有虚机要额外加盘跑fio,全部虚机跑的盘个数一样的，如果不为空就一定在AllFioTestUhostList里面或者chaos数据>库里通过条件获取fio测试的虚机里面",
+  "AddTestDiskIpList"            : "10.13.0.79",
+  "This is s comment"                  : "AddTestDiskCount表示这些虚机AddTestDiskIpList还要再加多少块盘跑fio",
+  "AddTestDiskCount"             : "2",
+  "This is s comment"                  : "GetFioTestIpMode 为bool类型，如果为true表示使用配置文件里的ip列表来进行压测，如果为false则就直接去chaos数据库里通过条件获取fio测试的虚机",
+  "GetFioTestIpMode"              : "true"
+ },
+"AddDeleteUdisk":{
+      "This is s comment"            : "每台虚机需要创建或者删除的盘个数,也可以在执行命令时通过自己输入",
+      "UdiskNumPerHost"              : "2",
+      "This is s comment"            : "指定虚机进行创建或者删除盘,如果不填写，默认对所有的虚机进行操作 ",
+      "InternalIpList"               : "10.13.0.79"
+},
+"simulation_network_environment":{
+"This is s comment"          : "用于辨认规则条数",
+   "Rules_Number"               :"2",
+   "1_PackageLossRules"              : "OUTPUT,172.27.119.31,2181,0.99,8,2,2181,172.27.5.45_172.27.5.44",
+   "2_PackageLossRules"              : "OUTPUT,172.27.119.31,2181,0.99,8,4,2181,172.27.5.44",
+   "This is s comment"              : "执行丢包命令的ip",
+   "ExecCmdIp"                  :"172.27.119.30",
+   "This is s comment"              : "与执行丢包命令的ip存在通信的对端ip，可以有多个ip，但是如果有多个ip，则他们与执行远程命令ip的端口必须英语",
+         "PeerIp"                     :"172.27.5.43,172.27.5.44,172.27.5.45",
+   "This is s comment"              : "与执行丢包命令的ip存在通信的对端ip的端口",
+         "PeerPort"                   :"2181",
+   "This is s comment"              : "执行丢包命令的ip给对端服务会包的port",
+         "ExecCmdPort"                :"2181",
+         "PacketLossRate"             :"0.92"
+ },
+"ymer_image_clone":{
+"This is s comment"          : "用于辨认镜像源个数",
+"Source_Image_Number"        : "2",
+"This is s comment"          : "镜像克隆规则：镜像源id,镜像大小,盘类型,克隆盘数量,镜像源MD5",
+"1_ImageParams"              : "bsi-o1y4hh,20,5,2,533a02f2a461fad61856c3656c60329b",
+"2_ImageParams"              : "bk_lt_220,220,5,2,80b075874e686e0617713ba04f2a8859",
+"CompanyId"                  : 50140849,
+"AccountId"                  : 50302161
+ },
+"ymer_clone_frount_consistent_check":{
+"This is s comment"          : "宿主机ip",
+"Host_ip"                    : "172.27.35.8",
+"This is s comment"          : "镜像源MD5",
+"Sourse_ImageMD5"            : "533a02f2a461fad61856c3656c60329b",
+"This is s comment"          : "克隆生成的盘",
+"Clone_Generate_ID"          : "bsr-xav25lpo",
+"This is s comment"          : "gate的类型 1 表示vhost_gate  2 表示block_gate",
+"GateType"                   : 2
+
+ },
+"ymer_consistentcheck_one_disk":{
+   "This is s comment"          : "2 文件系统  0  nvme内核态裸盘   1 sd* 内核态裸盘  3 用户态裸盘 4  df* 内核态裸盘",
+   "TestMode"                   : 0,
+   "DiskPartitionPrefix"        : "nvme"
+ },
+"source_image_list":[
+{
+"SourceImageId":"bsi_test04",
+"SourceImageSize":"40",
+"UdiskType":"5",
+"CloneUdiskNum":"6",
+"SourceImageMD5":"9ab61735ae1762aba8dd51ca97a79a8b"
+},
+{
+"SourceImageId":"bsi_test02",
+"SourceImageSize":"20",
+"UdiskType":"5",
+"CloneUdiskNum":"3",
+"SourceImageMD5":"4c354299737eba2674edbb85bc7b2a5b"
+}
+]
+}
+
+
+
+
+
+
+
+
+
+{
+  "common": {
+    "listen_port": 4019,
+    "超时时间设置": "超时时间设置，给Loki发送请求 LokiRepairChunkPrepareRequest 耗时较长，此处设置超时时间为20min",
+    "request_timeout": 2200,
+    "internal_url": "http://internal.api.ucloud.cn",
+    "external_url": "http://42.240.140.191:5009"
+  },
+  "log": {
+    "log_dir": "/data/chaos/chaos-hn02-3104/log",
+    "log_prefix": "manager",
+    "log_suffix": ".log",
+    "log_size": 50,
+    "log_level": "DEBUG",
+    "log_func_file_line": true
+  },
+  "chaos_env":{
+    "mongodbIpPort": "mongodb://42.240.140.191:1970",
+    "db_name": "chaoseris_hn02_3104",
+    "kill_chunk_iplist": "10.189.152.70,10.189.152.130,10.189.152.131,10.189.152.132,10.189.152.133,10.189.152.66",
+    "kill_block_get_iplist": ""
+  },
+  "udisk_env":{
+    "zk_addr" : "172.27.119.238:2181,172.27.26.76:2181,172.27.26.77:2181,172.27.4.2:2181",
+    "access_path": "/NS/udisk/global/access",
+    "global_zk_addr": "172.27.117.185:2181,172.27.117.186:2181,172.27.117.187:2181,172.27.117.188:2181,172.27.117.189:2181",
+    "metaserver_path" : "/NS/udisk/set3104/metaserver",
+    "mongodbIpPort": "mongodb://172.27.24.98:37018",
+     "metaserver0_ip" : "172.27.26.166",
+     "metaserver0_port" : "12500",
+     "metaserver1_ip" : "172.27.26.167",
+     "metaserver1_port" : "12500",
+    "loki_ip": "172.27.26.167",
+    "loki_port": 32500,
+    "thor_ip": "172.27.26.166",
+    "thor_port": 22500
+  }
+}
+~                 

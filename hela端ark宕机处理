@@ -1,0 +1,74 @@
+1. 
+[20210926 18:11:32.062738Z ][31896 ][ERROR ]{271316} obj_id:271316 timeout - transmission_handle.h:175
+[20210926 18:11:32.062740Z ][31896 ][ERROR ]desc: handle read koala timeout koala_ip(10.67.128.16) koala_port(9002) retry pc_no(14167) src_vdisk_id(bsi-206-220) - do_hela_pc_task.cc:271
+[20210926 18:11:32.062742Z ][31896 ][DEBUG ][ReportError] init currentBackoff to initialBackoff - exponential_backoff.cc:81
+[20210926 18:11:32.062743Z ][31896 ][WARN  ]hela pc task will retry read after 1 seconds pc_no(14167) src_vdisk_id(bsi-206-220) - do_hela_pc_task.cc:111
+
+
+2. 
+
+[20210926 18:11:33.062752Z ][31896 ][DEBUG ][HandleRetryCb] DoHelaPcTaskHandle::HandleTimerCb status(2) pc_no(14167) src_vdisk_id(bsi-206-220) - do_hela_pc_task.cc:175
+[20210926 18:11:33.062754Z ][31896 ][DEBUG ][grant] After Token=311446043, cap=314572800, token_size=262144. now=1632651093062753, base_time=1632651093062714 - flow_ctrl.cc:9
+[20210926 18:11:33.062765Z ][31896 ][INFO  ]connect to peer address:10.67.128.16:9002 connection handle:0x5F72B00 - connector_libevent.cc:40
+[20210926 18:11:33.062781Z ][31896 ][TRACE ][GetOutConnection] transmission create connector, ip(10.67.128.16) port(9002) - transmission_handle.cc:394
+[20210926 18:11:33.062782Z ][31896 ][TRACE ][SendRequest] conn<18143066597923> obj_id{274429} send io request to : 10.67.128.16:9002 - transmission_handle.cc:313
+[20210926 18:11:33.062784Z ][31896 ][TRACE ][RegisterResponse] obj_id{274429} register response cb entry - transmission_handle.cc:327
+[20210926 18:11:33.062786Z ][31896 ][DEBUG ][ReadDataFromKoala] desc: send koala read req succ pc_no(14167) image_id(bsi-206-220) version(1) sector(116057088) sector_num(512) sector_size(512) shard_idx(442) handle_id(274429) rc(0) - do_hela_pc_task.cc:490
+[20210926 18:11:33.062818Z ][31896 ][INFO  ]connect fail errcode:111; errmsg:Connection refused - connection_libevent.cc:48
+[20210926 18:11:33.062819Z ][31896 ][INFO  ]connect fail event:33 - connection_libevent.cc:50
+
+[20210926 18:11:48.062795Z ][31896 ][ERROR ]desc: handle read koala timeout koala_ip(10.67.128.16) koala_port(9002) retry pc_no(14167) src_vdisk_id(bsi-206-220) - do_hela_pc_task.cc:271
+[20210926 18:11:48.062797Z ][31896 ][WARN  ]hela pc task will retry read after 3 seconds pc_no(14167) src_vdisk_id(bsi-206-220) - do_hela_pc_task.cc:111
+[20210926 18:11:48.062799Z ][31896 ][TRACE ][UnregisterResponseCb] obj_id{274429} unregister response cb entry - transmission_handle.cc:348
+
+[20210926 18:11:51.062814Z ][31896 ][DEBUG ][HandleRetryCb] DoHelaPcTaskHandle::HandleTimerCb status(2) pc_no(14167) src_vdisk_id(bsi-206-220) - do_hela_pc_task.cc:175
+[20210926 18:11:51.062821Z ][31896 ][DEBUG ][grant] After Token=314572800, cap=314572800, token_size=262144. now=1632651111062821, base_time=1632651110867358 - flow_ctrl.cc:9
+[20210926 18:11:51.062835Z ][31896 ][INFO  ]connect to peer address:10.67.128.16:9002 connection handle:0x5F72B00 - connector_libevent.cc:40
+[20210926 18:11:51.062861Z ][31896 ][TRACE ][GetOutConnection] transmission create connector, ip(10.67.128.16) port(9002) - transmission_handle.cc:394
+[20210926 18:11:51.062864Z ][31896 ][TRACE ][SendRequest] conn<18143066597923> obj_id{275724} send io request to : 10.67.128.16:9002 - transmission_handle.cc:313
+[20210926 18:11:51.062867Z ][31896 ][TRACE ][RegisterResponse] obj_id{275724} register response cb entry - transmission_handle.cc:327
+[20210926 18:11:51.062873Z ][31896 ][DEBUG ][ReadDataFromKoala] desc: send koala read req succ pc_no(14167) image_id(bsi-206-220) version(1) sector(116057088) sector_num(512) sector_size(512) shard_idx(442) handle_id(275724) rc(0) - do_hela_pc_task.cc:490
+[20210926 18:11:51.062976Z ][31896 ][INFO  ]connect fail errcode:111; errmsg:Connection refused - connection_libevent.cc:48
+[20210926 18:11:51.062980Z ][31896 ][INFO  ]connect fail event:33 - connection_libevent.cc:50
+
+[20210926 18:12:06.062880Z ][31896 ][ERROR ]desc: handle read koala timeout koala_ip(10.67.128.16) koala_port(9002) retry pc_no(14167) src_vdisk_id(bsi-206-220) - do_hela_pc_task.cc:271
+[20210926 18:12:06.062883Z ][31896 ][WARN  ]hela pc task will retry read after 5 seconds pc_no(14167) src_vdisk_id(bsi-206-220) - do_hela_pc_task.cc:111
+[20210926 18:12:06.062886Z ][31896 ][TRACE ][UnregisterResponseCb] obj_id{275724} unregister response cb entry - transmission_handle.cc:348
+[20210926 18:12:06.066113Z ][31896 ][DEBUG ][HandleRetryCb] DoHelaPcTaskHandle::HandleTimerCb status(2) pc_no(14201) src_vdisk_id(bsi-206-220) - do_hela_pc_task.cc:175
+
+[20210926 18:12:11.062901Z ][31896 ][DEBUG ][HandleRetryCb] DoHelaPcTaskHandle::HandleTimerCb status(2) pc_no(14167) src_vdisk_id(bsi-206-220) - do_hela_pc_task.cc:175
+[20210926 18:12:11.062908Z ][31896 ][DEBUG ][grant] After Token=314572800, cap=314572800, token_size=262144. now=1632651131062908, base_time=1632651130967033 - flow_ctrl.cc:9
+[20210926 18:12:11.062924Z ][31896 ][INFO  ]connect to peer address:10.67.128.16:9002 connection handle:0x5F72B00 - connector_libevent.cc:40
+[20210926 18:12:11.062942Z ][31895 ][ERROR ]{275814} obj_id:275814 timeout - transmission_handle.h:175
+[20210926 18:12:11.062949Z ][31895 ][ERROR ]desc: handle read koala timeout koala_ip(10.67.128.16) koala_port(9022) retry pc_no(14901) src_vdisk_id(bsi-206-220) - do_hela_pc_task.cc:271
+[20210926 18:12:11.062953Z ][31895 ][WARN  ]hela pc task will retry read after 5 seconds pc_no(14901) src_vdisk_id(bsi-206-220) - do_hela_pc_task.cc:111
+[20210926 18:12:11.062953Z ][31896 ][TRACE ][GetOutConnection] transmission create connector, ip(10.67.128.16) port(9002) - transmission_handle.cc:394
+[20210926 18:12:11.062957Z ][31895 ][TRACE ][UnregisterResponseCb] obj_id{275814} unregister response cb entry - transmission_handle.cc:348
+[20210926 18:12:11.062957Z ][31896 ][TRACE ][SendRequest] conn<18143066597923> obj_id{276780} send io request to : 10.67.128.16:9002 - transmission_handle.cc:313
+[20210926 18:12:11.062961Z ][31896 ][TRACE ][RegisterResponse] obj_id{276780} register response cb entry - transmission_handle.cc:327
+[20210926 18:12:11.062965Z ][31896 ][DEBUG ][ReadDataFromKoala] desc: send koala read req succ pc_no(14167) image_id(bsi-206-220) version(1) sector(116057088) sector_num(512) sector_size(512) shard_idx(442) handle_id(276780) rc(0) - do_hela_pc_task.cc:490
+[20210926 18:12:11.063103Z ][31896 ][INFO  ]connect fail errcode:111; errmsg:Connection refused - connection_libevent.cc:48
+
+
+
+[20210926 18:18:00.065769Z ][31896 ][DEBUG ][HandleRetryCb] DoHelaPcTaskHandle::HandleTimerCb status(2) pc_no(14167) src_vdisk_id(bsi-206-220) - do_hela_pc_task.cc:175
+[20210926 18:18:00.065772Z ][31896 ][DEBUG ][grant] After Token=314572800, cap=314572800, token_size=262144. now=1632651480065772, base_time=1632651479215845 - flow_ctrl.cc:9
+[20210926 18:18:00.065795Z ][31896 ][INFO  ]connect to peer address:10.67.128.16:9002 connection handle:0x5F72840 - connector_libevent.cc:40
+[20210926 18:18:00.065834Z ][31896 ][TRACE ][GetOutConnection] transmission create connector, ip(10.67.128.16) port(9002) - transmission_handle.cc:394
+[20210926 18:18:00.065839Z ][31896 ][TRACE ][SendRequest] conn<18143066597923> obj_id{297240} send io request to : 10.67.128.16:9002 - transmission_handle.cc:313
+[20210926 18:18:00.065843Z ][31896 ][TRACE ][RegisterResponse] obj_id{297240} register response cb entry - transmission_handle.cc:327
+[20210926 18:18:00.065848Z ][31896 ][DEBUG ][ReadDataFromKoala] desc: send koala read req succ pc_no(14167) image_id(bsi-206-220) version(1) sector(116057600) sector_num(512) sector_size(512) shard_idx(442) handle_id(297240) rc(0) - do_hela_pc_task.cc:490
+[20210926 18:18:00.065891Z ][31897 ][ERROR ]{296266} obj_id:296266 timeout - transmission_handle.h:175
+
+3. 
+
+[20210926 18:17:36.065699Z ][31896 ][TRACE ][RegisterResponse] obj_id{296024} register response cb entry - transmission_handle.cc:327
+[20210926 18:17:36.065704Z ][31896 ][DEBUG ][ReadDataFromKoala] desc: send koala read req succ pc_no(14167) image_id(bsi-206-220) version(1) sector(116057600) sector_num(512) sector_size(512) shard_idx(442) handle_id(296024) rc(0) - do_hela_pc_task.cc:490
+[20210926 18:17:36.065741Z ][31897 ][TRACE ][GetOutConnection] transmission create connector, ip(10.67.128.16) port(9002) - transmission_handle.cc:394
+[20210926 18:17:36.065750Z ][31897 ][TRACE ][SendRequest] conn<18143066597923> obj_id{296023} send io request to : 10.67.128.16:9002 - transmission_handle.cc:313
+[20210926 18:17:36.065777Z ][31897 ][TRACE ][RegisterResponse] obj_id{296023} register response cb entry - transmission_handle.cc:327
+
+[20210926 18:17:51.065714Z ][31896 ][ERROR ]{296024} obj_id:296024 timeout - transmission_handle.h:175
+[20210926 18:17:51.065721Z ][31896 ][ERROR ]desc: handle read koala timeout koala_ip(10.67.128.16) koala_port(9002) retry pc_no(14167) src_vdisk_id(bsi-206-220) - do_hela_pc_task.cc:271
+[20210926 18:17:51.065725Z ][31896 ][WARN  ]hela pc task will retry read after 9 seconds pc_no(14167) src_vdisk_id(bsi-206-220) - do_hela_pc_task.cc:111
+

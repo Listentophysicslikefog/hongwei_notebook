@@ -1,2 +1,13 @@
 Linux下通过 rm -f 删除大量文件时报错：Argument list too long
 https://www.cnblogs.com/-abm/p/9283896.html
+
+cat /proc/5964/limits   5964 进程id ， 查看该进程相关设置
+
+
+ss -ntpa |grep 5974   查看该进程相关连接
+
+ps -eo pid,lstart,etime,cmd | grep watchdog
+
+更改某个文件的某个字段
+
+ssh -q -n root@10.67.134.22 "cd /root/udisk/freyr/conf/; sed -i \"/^enable_hela /{s/=.*/= 1/}\" freyr.conf; exit"
