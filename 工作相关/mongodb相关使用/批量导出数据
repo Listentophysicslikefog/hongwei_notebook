@@ -1,3 +1,8 @@
 /usr/bin/mongoexport -h 172.27.24.98 --port=37018 -d udisk -c t_lc_info -f extern_id --type=csv -q '{"status": 3}' -o udisk.drity
 
 // 批量导出  t_lc_info 表里面 extern_id  status状态为3的   extern_id  存放到 udisk.drity
+
+
+`是键盘左上角的反引号
+获取某一个字符串所在的行号
+line=`sshpass -p 'ChaosPassword' ssh root@10.13.0.79 -p 22 -q "cat /etc/fstab | grep -n \"UCLOUD_DISK_VDB\"" | awk -F ':' '{print \$1}'`

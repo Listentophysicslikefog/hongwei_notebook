@@ -9,3 +9,15 @@ find  /data/iotest/log/ -name "*.log" |xargs rm -rf
 
 vim Metaserver.20210604-172632.manila01-udisk-set5000-meta0.28300.log +753862    打开文件并且到指定的行
 grep -n  "bsi-azj1elgc" Metaserver.20210604*    grep获取并且显示行数和文件名字
+
+
+1. 批量重启服务
+
+pssh -h /root/limax/udisk/region/ap03/4000/host_info -l root -i "ps -ef | grep -w idun| grep -v grep | awk '{print \$2}' | xargs kill -9"
+
+2. 批量更改配置
+
+enable_hela               = 1 改为 enable_hela               = 0
+
+ssh -q -n root@10.189.149.66 "cd /root/udisk/freyr/conf/; sed -i \"/^enable_hela /{s/=.*/= 0/}\" freyr.conf; exit"
+

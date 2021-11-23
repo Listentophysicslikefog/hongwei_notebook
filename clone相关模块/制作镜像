@@ -21,6 +21,8 @@ pssh使用
 
 pssh -h host_info -l root -i "cd /var/log/udisk/hela/;cat Hela.20210316* | grep \"desc: write chunk queue full\""
 
+ssh 更改文件：
+ssh -q -n root@10.67.134.22 "cd /root/udisk/freyr/conf/; sed -i \"/^enable_hela /{s/=.*/= 1/}\" freyr.conf; exit"
 
 tailf grep结合使用：
 
