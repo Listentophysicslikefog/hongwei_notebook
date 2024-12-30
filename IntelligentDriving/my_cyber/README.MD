@@ -1,4 +1,4 @@
-1. log模块编译完成可以正常运行，需要安装protobufer
+1. log模块编译完成可以正常运行，需要安装protobufer 以及fastdds需要的环境
 
 启动需要配置日志的路径环境变量
 
@@ -24,4 +24,4 @@ proto的他文件是自己根据protobufer编译的，到proto的msg未文件夹
 
 fastdds编译相关报错解决需要使用cyber上传对应的版本头文件和so不能使用自己源码编译的不匹配的版本
 
-编译时需要解压 nlohmann_json.zip
+编译时需要解压 nlohmann_json.tar.gz 不需要解压了，已经推上去了
