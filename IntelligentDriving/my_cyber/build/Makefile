@@ -57,10 +57,10 @@ RM = /usr/local/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/midware/hongwei.liu/my_cyber/hongwei_notebook/IntelligentDriving/my_cyber
+CMAKE_SOURCE_DIR = /home/midware/hongwei.liu/my_cyber/1229/hongwei_notebook/IntelligentDriving/my_cyber
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/midware/hongwei.liu/my_cyber/hongwei_notebook/IntelligentDriving/my_cyber/build
+CMAKE_BINARY_DIR = /home/midware/hongwei.liu/my_cyber/1229/hongwei_notebook/IntelligentDriving/my_cyber/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,9 +87,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/midware/hongwei.liu/my_cyber/hongwei_notebook/IntelligentDriving/my_cyber/build/CMakeFiles /home/midware/hongwei.liu/my_cyber/hongwei_notebook/IntelligentDriving/my_cyber/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/midware/hongwei.liu/my_cyber/1229/hongwei_notebook/IntelligentDriving/my_cyber/build/CMakeFiles /home/midware/hongwei.liu/my_cyber/1229/hongwei_notebook/IntelligentDriving/my_cyber/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/midware/hongwei.liu/my_cyber/hongwei_notebook/IntelligentDriving/my_cyber/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/midware/hongwei.liu/my_cyber/1229/hongwei_notebook/IntelligentDriving/my_cyber/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -128,6 +128,19 @@ glog_test: cmake_check_build_system
 glog_test/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/glog_test.dir/build.make CMakeFiles/glog_test.dir/build
 .PHONY : glog_test/fast
+
+#=============================================================================
+# Target rules for targets named main_board
+
+# Build rule for target.
+main_board: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 main_board
+.PHONY : main_board
+
+# fast build rule for target.
+main_board/fast:
+	$(MAKE) $(MAKESILENT) -f mainboard/CMakeFiles/main_board.dir/build.make mainboard/CMakeFiles/main_board.dir/build
+.PHONY : main_board/fast
 
 binary.o: binary.cc.o
 .PHONY : binary.o
@@ -810,6 +823,7 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... glog_test"
+	@echo "... main_board"
 	@echo "... binary.o"
 	@echo "... binary.i"
 	@echo "... binary.s"

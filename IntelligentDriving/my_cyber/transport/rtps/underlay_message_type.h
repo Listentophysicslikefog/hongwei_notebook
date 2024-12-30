@@ -19,6 +19,7 @@
 
 #include "transport/rtps/underlay_message.h"
 #include "fastrtps/TopicDataType.h"
+// #include "fastdds/rtps/common/SerializedPayload.h"
 
 namespace apollo
 {
@@ -26,7 +27,7 @@ namespace apollo
   {
     namespace transport
     {
-
+      using namespace eprosima::fastrtps::rtps;
       /*!
        * @brief This class represents the TopicDataType of the type UnderlayMessage
        * defined by the user in the IDL file.

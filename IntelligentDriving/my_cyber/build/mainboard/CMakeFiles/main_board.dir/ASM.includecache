@@ -1,0 +1,10 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/midware/hongwei.liu/my_cyber/1229/hongwei_notebook/IntelligentDriving/my_cyber/croutine/detail/swap_x86_64.S
+

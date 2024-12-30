@@ -38,7 +38,7 @@ target_link_libraries(glog_test
     protobuf
 )
 
-
+add_subdirectory(mainboard)
 
 #protoc -I=./ --proto_path=. --cpp_out=./ *.proto
 
