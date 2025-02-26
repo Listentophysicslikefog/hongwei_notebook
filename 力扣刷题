@@ -1,1 +1,8 @@
-
+链表相关:
+  简单题型:
+1. 合并两个有序链表(23): https://leetcode.cn/problems/merge-two-sorted-lists/
+2. 删除排序链表中重复元素(83): https://leetcode.cn/problems/remove-duplicates-from-sorted-list/
+3. 环形链表(141): https://leetcode.cn/problems/linked-list-cycle/
+4. 相交链表(160): https://leetcode.cn/problems/intersection-of-two-linked-lists/description/
+5. 移除链表元素(203): https://leetcode.cn/problems/remove-linked-list-elements/description/
+6. 反转链表(206): https://leetcode.cn/problems/reverse-linked-list/description/
